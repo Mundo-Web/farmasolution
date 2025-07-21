@@ -102,6 +102,20 @@
                         "subcategories"
                     ]
                 }
+            },
+            {
+                "id": "MenuExpertFarma",
+                "name": "Menu - Expert Farma",
+                "image": "top-bar-simple.png",
+                "data": [
+                    "showCategories"
+                ],
+                "using": {
+                    "model": "Category",
+                    "with": [
+                        "subcategories"
+                    ]
+                }
             }
         ]
     },
