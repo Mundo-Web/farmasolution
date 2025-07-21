@@ -697,7 +697,7 @@ const HeaderSearchB = ({
                             />
                             <button
                                 type="submit"
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 bg-primary text-white rounded-lg hover:bg-primary hover:scale-105  transition-all duration-300"
                                 aria-label="Buscar"
                             >
                                 <Search />
