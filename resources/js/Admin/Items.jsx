@@ -41,6 +41,7 @@ const Items = ({ categories, brands, collections }) => {
     const brandRef = useRef();
     const nameRef = useRef();
     const colorRef = useRef();
+    const sizeRef = useRef();
     const summaryRef = useRef();
     const priceRef = useRef();
     const discountRef = useRef();
@@ -143,6 +144,7 @@ const Items = ({ categories, brands, collections }) => {
         nameRef.current.value = data?.name || "";
         skuRef.current.value = data?.sku || "";
         colorRef.current.value = data?.color || "";
+        sizeRef.current.value = data?.size || "";
         summaryRef.current.value = data?.summary || "";
         linkvideoRef.current.value = data?.linkvideo || "";
         priceRef.current.value = data?.price || 0;
@@ -227,6 +229,7 @@ const Items = ({ categories, brands, collections }) => {
             name: nameRef.current.value,
             sku: skuRef.current.value,
             color: colorRef.current.value,
+            size: sizeRef.current.value,
             summary: summaryRef.current.value,
             price: priceRef.current.value,
             discount: discountRef.current.value,
@@ -741,9 +744,16 @@ const Items = ({ categories, brands, collections }) => {
                             label="Nombre"
                             required
                         />
+                        
                         <InputFormGroup
                             eRef={colorRef}
                             label="Color"
+                            required
+                        />
+
+                        <InputFormGroup
+                            eRef={sizeRef}
+                            label="Talla"
                             required
                         />
 
