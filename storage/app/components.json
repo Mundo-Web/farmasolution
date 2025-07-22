@@ -546,7 +546,8 @@
                     "path",
                     "title",
                     "description",
-                    "link_cart"
+                    "link_cart",
+                    "class_button"
                 ],
                 "options": [
                     {
@@ -1055,7 +1056,8 @@
                 "image": "categories-simple.png",
                 "data": [
                     "title",
-                    "path"
+                    "path",
+                    "backgroundColor"
                 ],
                 "using": {
                     "model": "Category",
@@ -1289,7 +1291,10 @@
                     "path",
                     "description",
                     "link_catalog",
-                    "link_cart"
+                    "link_cart",
+                    "class_header",
+                    "class_content",
+                    "class_button"
                 ],
                 "using": {
                     "model": "Item",
@@ -1553,7 +1558,12 @@
                 "name": "BannerPublicitario",
                 "data": [
                     "title",
-                    "image_position"
+                    "image_position",
+                    "class_content",
+                    "class_image",
+                    "class_right",
+                    "class_button",
+                    "class_content_right"
                 ]
             },
             {
@@ -1715,7 +1725,10 @@
                 "id": "ProductDetailB",
                 "name": "ProductDetailB",
                 "data": [
-                    "link_cart"
+                    "link_cart",
+                    "class_button",
+                    "class_header",
+                    "class_content"
                 ],
                 "using": {
                     "model": "Item",
@@ -1886,7 +1899,8 @@
                 "id": "CheckoutSteps",
                 "name": "Steps",
                 "data": [
-                    "title"
+                    "title",
+                    "class_button"
                 ]
             },
             {
@@ -1997,7 +2011,8 @@
                     "description",
                     "second_title",
                     "second_description",
-                    "bool:show_seen"
+                    "bool:show_seen",
+                    "class_title"
                 ]
             },
             {
@@ -2257,6 +2272,18 @@
                 "id": "FooterB",
                 "name": "FooterB",
                 "image": "footer-simple.png",
+                "data": [
+                    "class_footer",
+                    "logo_footer_content",
+                    "logo_footer",
+                    "class_menu",
+                    "class_menu_list",
+                    "class_menu_item",
+                    "class_icon",
+                    "class_description",
+                    "class_button"
+
+                ],
                 "using": {
                     "model": "Social",
                     "limit": 10
