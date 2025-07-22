@@ -55,28 +55,32 @@ class UnifiedItemImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsO
     {
         return [
             'collection' => ['collection', 'colleccion', 'coleccion'],
-            'categoria' => ['categoria', 'category'],
+            'categoria' => ['categoria', 'category','Categoria'],
             'summary' => ['summary', 'resumen', 'descripcion_corta'],
             'subcategoria' => ['subcategoria', 'subcategory', 'sub_categoria'],
             'marca' => ['marca', 'brand'],
-            'sku' => ['sku', 'codigo', 'code'],
-            'nombre_producto' => ['nombre_de_producto', 'nombre_producto', 'name', 'producto'],
-            'descripcion' => ['descripcion', 'description'],
-            'precio' => ['precio', 'price'],
+            'sku' => ['sku', 'codigo', 'code','SKU'],
+            'nombre_producto' => ['nombre_de_producto', 'nombre_producto', 'nombre_del_producto', 'name', 'producto','Nombre del producto'],
+            'descripcion' => ['descripcion', 'description','Descripcion'],
+            'precio' => ['precio', 'price','Precio'],
             'descuento' => ['descuento', 'discount', 'precio_descuento'],
-            'stock' => ['stock', 'cantidad', 'inventory'],
+            'stock' => ['stock', 'cantidad', 'inventory','Stock'],
             'color' => ['color', 'colour'],
             'talla' => ['size', 'talla', 'size_talla'],
             'agrupador' => ['agrupador'],
             'especificaciones_principales' => [
                 'especificaciones_principales_separadas_por_comas',
+                'especificaciones_principales_separadas_por_coma',
                 'especificaciones_principales',
-                'specs_principales'
+                'specs_principales',
+                'Especificaciones principales (separadas por coma)'
             ],
             'especificaciones_generales' => [
                 'especificaciones_generales_separado_por_comas_y_dos_puntos',
+                'especificaciones_adicionales_separadas_por_coma_y_dos_puntos',
                 'especificaciones_generales',
-                'specs_generales'
+                'specs_generales',
+                'Especificaciones adicionales (separadas por coma y dos puntos)'
             ],
             'especificaciones_tecnicas' => [
                 'especificaciones_tecnicas_separado_por_slash_para_filas_y_dos_puntos_para_columnas',
@@ -153,6 +157,14 @@ class UnifiedItemImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsO
             // Obtener datos básicos del producto
             $sku = $this->getFieldValue($row, 'sku');
             $nombreProducto = $this->getFieldValue($row, 'nombre_producto');
+            
+            // Debug temporal - agregar logging
+            Log::info("Procesando fila:", [
+                'sku_encontrado' => $sku,
+                'nombre_encontrado' => $nombreProducto,
+                'campos_disponibles' => array_keys($row),
+                'mapeo_nombre' => $this->fieldMappings['nombre_producto'] ?? 'no definido'
+            ]);
             
             if (!$sku || !$nombreProducto) {
                 throw new Exception("SKU y nombre del producto son requeridos");

@@ -188,7 +188,7 @@ const MenuExpertFarma = ({ pages = [], items, data ,visible=false}) => {
                                 {data?.showCategories && 
                                 <li className=" py-3">
                                     <button
-                                        className="font-medium customtext-neutral-dark flex items-center gap-2  pr-6 transition-colors duration-300 relative before:absolute before:right-0 before:top-1/2 before:-translate-y-1/2 before:h-3 before:w-[1px] before:bg-gray-300"
+                                        className="font-medium customtext-neutral-dark flex items-center gap-2  pr-6 transition-colors duration-300 relative before:absolute before:right-0 before:top-1/2 before:-translate-y-1/2 before:h-3 before:w-[1px] before:bg-black"
                                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     >
                                         Categorías
@@ -289,7 +289,7 @@ const MenuExpertFarma = ({ pages = [], items, data ,visible=false}) => {
                                                 className={
                                                     " customtext-neutral-dark  cursor-pointer transition-all duration-300" +
                                                     (index !== arr.length - 1 
-                                                        ? " pr-6 relative before:absolute before:right-0 before:top-1/2 before:-translate-y-1/2 before:h-3 before:w-[1px] before:bg-gray-300"
+                                                        ? " pr-6 relative before:absolute before:right-0 before:top-1/2 before:-translate-y-1/2 before:h-3 before:w-[1px] before:bg-black"
                                                         : " pr-6")
                                                 }
                                             >
