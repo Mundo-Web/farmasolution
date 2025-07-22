@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { Toaster, toast } from "sonner";
 
 // Asume que tienes un servicio para guardar los datos
 import BaseAdminto from "../Components/Adminto/Base";
@@ -28,6 +29,7 @@ const Generals = ({ generals }) => {
   const [templateVariables, setTemplateVariables] = useState({});
   const [loadingVars, setLoadingVars] = useState(false);
   const [varsError, setVarsError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   // Fetch variables for selected template
   useEffect(() => {
     if (!selectedEmailCorrelative) return;
@@ -232,271 +234,279 @@ const Generals = ({ generals }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (isLoading) return; // Prevenir múltiples envíos
+    
+    setIsLoading(true);
+    
+    // Construir la estructura de datos que espera el backend
+    const dataToSend = [
+      // Guardar todos los templates de email
+      ...Object.keys(formData.email_templates).map(correlative => ({
+        correlative,
+        name: emailTemplates.find(t => t.correlative === correlative)?.name || correlative,
+        description: formData.email_templates[correlative] || "",
+      })),
+      {
+        correlative: "phone_contact",
+        name: "Teléfono de contacto",
+        description: formData.phones.join(","),
+      },
+      {
+        correlative: "email_contact",
+        name: "Correo de contacto",
+        description: formData.emails.join(","),
+      },
+      {
+        correlative: "address",
+        name: "Dirección",
+        description: formData.address || "",
+      },
+      {
+        correlative: "cintillo",
+        name: "Cintillo",
+        description: formData.cintillo || "",
+      },
+      {
+        correlative: "copyright",
+        name: "Copyright",
+        description: formData.copyright || "",
+      },
+      {
+        correlative: "opening_hours",
+        name: "Horarios de atención",
+        description: formData.openingHours || "",
+      },
+      {
+        correlative: "support_phone",
+        name: "Número de soporte",
+        description: formData.supportPhone || "",
+      },
+      {
+        correlative: "support_email",
+        name: "Correo de soporte",
+        description: formData.supportEmail || "",
+      },
+      {
+        correlative: "coorporative_email",
+        name: "Correo corporativo",
+        description: formData.coorporativeEmail || "",
+      },
+      {
+        correlative: "privacy_policy",
+        name: "Política de privacidad",
+        description: formData.privacyPolicy || "",
+      },
+      {
+        correlative: "terms_conditions",
+        name: "Términos y condiciones",
+        description: formData.termsConditions || "",
+      },
+      {
+        correlative: "delivery_policy",
+        name: "Políticas de envío",
+        description: formData.deliveryPolicy || "",
+      },
+      {
+        correlative: "saleback_policy",
+        name: "Políticas de devolucion y cambio",
+        description: formData.salebackPolicy || "",
+      },
+      {
+        correlative: "phone_whatsapp",
+        name: "Número de Whatsapp",
+        description: formData.phoneWhatsapp || "",
+      },
+      {
+        correlative: "message_whatsapp",
+        name: "Mensaje de Whatsapp",
+        description: formData.messageWhatsapp || "",
+      },
+      {
+        correlative: "igv_checkout",
+        name: "IGV en el checkout",
+        description: formData.igvCheckout || "",
+      },
+      {
+        correlative: "checkout_culqi",
+        name: "Habilitar Culqi",
+        description: formData.checkout_culqi || "",
+      },
+      {
+        correlative: 'checkout_culqi_name',
+        name: 'Nombre de la cuenta de Culqi',
+        description: formData.checkout_culqi_name || "",
+      },
+      {
+        correlative: 'checkout_culqi_public_key',
+        name: 'Llave pública de Culqi',
+        description: formData.checkout_culqi_public_key || "",
+      },
+      {
+        correlative: 'checkout_culqi_private_key',
+        name: 'Llave privada de Culqi',
+        description: formData.checkout_culqi_private_key || "",
+      },
+      {
+        correlative: "checkout_mercadopago",
+        name: "Habilitar Mercadopago",
+        description: formData.checkout_mercadopago || "",
+      },
+      {
+        correlative: 'checkout_mercadopago_name',
+        name: 'Nombre de la cuenta de Mercadopago',
+        description: formData.checkout_mercadopago_name || "",
+      },
+      {
+        correlative: 'checkout_mercadopago_public_key',
+        name: 'Llave pública de Mercadopago',
+        description: formData.checkout_mercadopago_public_key || "",
+      },
+      {
+        correlative: 'checkout_mercadopago_private_key',
+        name: 'Llave privada de Mercadopago',
+        description: formData.checkout_mercadopago_private_key || "",
+      },
+      {
+        correlative: 'checkout_dwallet',
+        name: 'Habilitar Yape/Plin',
+        description: formData.checkout_dwallet || "",
+      },
+      {
+        correlative: 'checkout_dwallet_qr',
+        name: 'QR Yape/Plin',
+        description: formData.checkout_dwallet_qr || "",
+      },
+      {
+        correlative: 'checkout_dwallet_name',
+        name: 'Título Yape/Plin',
+        description: formData.checkout_dwallet_name || "",
+      },
+      {
+        correlative: 'checkout_dwallet_description',
+        name: 'Descripción Yape/Plin',
+        description: formData.checkout_dwallet_description || "",
+      },
+      {
+        correlative: 'checkout_transfer',
+        name: 'Habilitar Transferencia',
+        description: formData.checkout_transfer || "",
+      },
+      {
+        correlative: "transfer_accounts",
+        name: "Cuentas Bancarias para Transferencia",
+        description: JSON.stringify(formData.transfer_accounts),
+      },
+      {
+        correlative: 'checkout_transfer_cci',
+        name: 'CCI Transferencia',
+        description: formData.checkout_transfer_cci || "",
+      },
+      {
+        correlative: 'checkout_transfer_name',
+        name: 'Nombre Transferencia',
+        description: formData.checkout_transfer_name || "",
+      },
+      {
+        correlative: 'checkout_transfer_description',
+        name: 'Descripción Transferencia',
+        description: formData.checkout_transfer_description || "",
+      },
+      {
+        correlative: "location",
+        name: "Ubicación",
+        description: `${formData.location.lat},${formData.location.lng}`,
+      },
+      {
+        correlative: 'shipping_free',
+        name: 'Envio gratis a partir de',
+        description: formData.shippingFree || "",
+      },
+      // Píxeles de tracking
+      {
+        correlative: "google_analytics_id",
+        name: "Google Analytics ID",
+        description: formData.googleAnalyticsId || "",
+      },
+      {
+        correlative: "google_tag_manager_id",
+        name: "Google Tag Manager ID",
+        description: formData.googleTagManagerId || "",
+      },
+      {
+        correlative: "facebook_pixel_id",
+        name: "Facebook Pixel ID",
+        description: formData.facebookPixelId || "",
+      },
+      {
+        correlative: "google_ads_conversion_id",
+        name: "Google Ads Conversion ID",
+        description: formData.googleAdsConversionId || "",
+      },
+      {
+        correlative: "google_ads_conversion_label",
+        name: "Google Ads Conversion Label",
+        description: formData.googleAdsConversionLabel || "",
+      },
+      {
+        correlative: "tiktok_pixel_id",
+        name: "TikTok Pixel ID",
+        description: formData.tiktokPixelId || "",
+      },
+      {
+        correlative: "hotjar_id",
+        name: "Hotjar ID",
+        description: formData.hotjarId || "",
+      },
+      {
+        correlative: "clarity_id",
+        name: "Microsoft Clarity ID",
+        description: formData.clarityId || "",
+      },
+      {
+        correlative: "linkedin_insight_tag",
+        name: "LinkedIn Insight Tag ID",
+        description: formData.linkedinInsightTag || "",
+      },
+      {
+        correlative: "twitter_pixel_id",
+        name: "Twitter Pixel ID",
+        description: formData.twitterPixelId || "",
+      },
+      {
+        correlative: "pinterest_tag_id",
+        name: "Pinterest Tag ID",
+        description: formData.pinterestTagId || "",
+      },
+      {
+        correlative: "snapchat_pixel_id",
+        name: "Snapchat Pixel ID",
+        description: formData.snapchatPixelId || "",
+      },
+      {
+        correlative: "custom_head_scripts",
+        name: "Scripts Personalizados (Head)",
+        description: formData.customHeadScripts || "",
+      },
+      {
+        correlative: "custom_body_scripts",
+        name: "Scripts Personalizados (Body)",
+        description: formData.customBodyScripts || "",
+      },
+    ];
+
     try {
-      // Guardar solo el template seleccionado
-      await generalsRest.save([
-        // Guardar solo el template seleccionado
-        ...Object.keys(formData.email_templates).map(correlative => ({
-          correlative,
-          name: emailTemplates.find(t => t.correlative === correlative)?.name || correlative,
-          description: formData.email_templates[correlative],
-        })),
-        {
-          correlative: "phone_contact",
-          name: "Teléfono de contacto",
-          description: formData.phones.join(","),
-        },
-        {
-          correlative: "email_contact",
-          name: "Correo de contacto",
-          description: formData.emails.join(","),
-        },
-        {
-          correlative: "address",
-          name: "Dirección",
-          description: formData.address,
-        },
-        {
-          correlative: "cintillo",
-          name: "Cintillo",
-          description: formData.cintillo,
-        },
-        {
-          correlative: "copyright",
-          name: "Copyright",
-          description: formData.copyright,
-        },
-        {
-          correlative: "opening_hours",
-          name: "Horarios de atención",
-          description: formData.openingHours,
-        },
-        {
-          correlative: "support_phone",
-          name: "Número de soporte",
-          description: formData.supportPhone,
-        },
-        {
-          correlative: "corporative_email",
-          name: "Correo corporativo",
-          description: formData.corporativeEmail,
-        },
-        {
-          correlative: "support_email",
-          name: "Correo de soporte",
-          description: formData.supportEmail,
-        },
-        {
-          correlative: "coorporative_email",
-          name: "Correo corporativo",
-          description: formData.coorporativeEmail,
-        },
-        {
-          correlative: "privacy_policy",
-          name: "Política de privacidad",
-          description: formData.privacyPolicy,
-        },
-        {
-          correlative: "terms_conditions",
-          name: "Términos y condiciones",
-          description: formData.termsConditions,
-        },
-        {
-          correlative: "delivery_policy",
-          name: "Políticas de envío",
-          description: formData.deliveryPolicy,
-        },
-        {
-          correlative: "saleback_policy",
-          name: "Políticas de devolucion y cambio",
-          description: formData.salebackPolicy,
-        },
-        {
-          correlative: "phone_whatsapp",
-          name: "Número de Whatsapp",
-          description: formData.phoneWhatsapp,
-        },
-        {
-          correlative: "message_whatsapp",
-          name: "Mensaje de Whatsapp",
-          description: formData.messageWhatsapp,
-        },
-        {
-          correlative: "igv_checkout",
-          name: "IGV en el checkout",
-          description: formData.igvCheckout,
-        },
-        {
-          correlative: "checkout_culqi",
-          name: "Habilitar Culqi",
-          description: formData.checkout_culqi,
-        },
-        {
-          correlative: 'checkout_culqi_name',
-          name: 'Nombre de la cuenta de Culqi',
-          description: formData.checkout_culqi_name,
-        },
-        {
-          correlative: 'checkout_culqi_public_key',
-          name: 'Llave pública de Culqi',
-          description: formData.checkout_culqi_public_key,
-        },
-        {
-          correlative: 'checkout_culqi_private_key',
-          name: 'Llave privada de Culqi',
-          description: formData.checkout_culqi_private_key,
-        },
-        {
-          correlative: "checkout_mercadopago",
-          name: "Habilitar Mercadopago",
-          description: formData.checkout_mercadopago,
-        },
-        {
-          correlative: 'checkout_mercadopago_name',
-          name: 'Nombre de la cuenta de Mercadopago',
-          description: formData.checkout_mercadopago_name,
-        },
-        {
-          correlative: 'checkout_mercadopago_public_key',
-          name: 'Llave pública de Mercadopago',
-          description: formData.checkout_mercadopago_public_key,
-        },
-        {
-          correlative: 'checkout_mercadopago_private_key',
-          name: 'Llave privada de Mercadopago',
-          description: formData.checkout_mercadopago_private_key,
-        },
-        {
-          correlative: 'checkout_dwallet',
-          name: 'Habilitar Yape/Plin',
-          description: formData.checkout_dwallet,
-        },
-        {
-          correlative: 'checkout_dwallet_qr',
-          name: 'QR Yape/Plin',
-          description: formData.checkout_dwallet_qr,
-        },
-        {
-          correlative: 'checkout_dwallet_name',
-          name: 'Título Yape/Plin',
-          description: formData.checkout_dwallet_name,
-        },
-        {
-          correlative: 'checkout_dwallet_description',
-          name: 'Descripción Yape/Plin',
-          description: formData.checkout_dwallet_description,
-        },
-        {
-          correlative: 'checkout_transfer',
-          name: 'Habilitar Transferencia',
-          description: formData.checkout_transfer,
-        },
-        {
-          correlative: "transfer_accounts",
-          name: "Cuentas Bancarias para Transferencia",
-          description: JSON.stringify(formData.transfer_accounts),
-        },
-        {
-          correlative: 'checkout_transfer_cci',
-          name: 'CCI Transferencia',
-          description: formData.checkout_transfer_cci,
-        },
-        {
-          correlative: 'checkout_transfer_name',
-          name: 'Nombre Transferencia',
-          description: formData.checkout_transfer_name,
-        },
-        {
-          correlative: 'checkout_transfer_description',
-          name: 'Descripción Transferencia',
-          description: formData.checkout_transfer_description,
-        },
-        {
-          correlative: "location",
-          name: "Ubicación",
-          description: `${formData.location.lat},${formData.location.lng}`,
-        },
-        {
-          correlative: 'shipping_free',
-          name: 'Envio gratis a partir de',
-          description: formData.shippingFree,
-        },
-        // Píxeles de tracking
-        {
-          correlative: "google_analytics_id",
-          name: "Google Analytics ID",
-          description: formData.googleAnalyticsId,
-        },
-        {
-          correlative: "google_tag_manager_id",
-          name: "Google Tag Manager ID",
-          description: formData.googleTagManagerId,
-        },
-        {
-          correlative: "facebook_pixel_id",
-          name: "Facebook Pixel ID",
-          description: formData.facebookPixelId,
-        },
-        {
-          correlative: "google_ads_conversion_id",
-          name: "Google Ads Conversion ID",
-          description: formData.googleAdsConversionId,
-        },
-        {
-          correlative: "google_ads_conversion_label",
-          name: "Google Ads Conversion Label",
-          description: formData.googleAdsConversionLabel,
-        },
-        {
-          correlative: "tiktok_pixel_id",
-          name: "TikTok Pixel ID",
-          description: formData.tiktokPixelId,
-        },
-        {
-          correlative: "hotjar_id",
-          name: "Hotjar ID",
-          description: formData.hotjarId,
-        },
-        {
-          correlative: "clarity_id",
-          name: "Microsoft Clarity ID",
-          description: formData.clarityId,
-        },
-        {
-          correlative: "linkedin_insight_tag",
-          name: "LinkedIn Insight Tag ID",
-          description: formData.linkedinInsightTag,
-        },
-        {
-          correlative: "twitter_pixel_id",
-          name: "Twitter Pixel ID",
-          description: formData.twitterPixelId,
-        },
-        {
-          correlative: "pinterest_tag_id",
-          name: "Pinterest Tag ID",
-          description: formData.pinterestTagId,
-        },
-        {
-          correlative: "snapchat_pixel_id",
-          name: "Snapchat Pixel ID",
-          description: formData.snapchatPixelId,
-        },
-        {
-          correlative: "custom_head_scripts",
-          name: "Scripts Personalizados (Head)",
-          description: formData.customHeadScripts,
-        },
-        {
-          correlative: "custom_body_scripts",
-          name: "Scripts Personalizados (Body)",
-          description: formData.customBodyScripts,
-        },
-      ]);
-      // alert('Datos guardados exitosamente');
+      const result = await generalsRest.save(dataToSend);
+      
+      if (result) {
+        console.log('Datos guardados exitosamente:', result);
+        // Las notificaciones se manejan automáticamente en BasicRest
+      }
     } catch (error) {
       console.error("Error al guardar los datos:", error);
-      // alert('Error al guardar los datos');
+      // Los errores también se manejan automáticamente en BasicRest
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -1743,9 +1753,21 @@ const Generals = ({ generals }) => {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary mt-3">
-          Guardar
+        <button 
+          type="submit" 
+          className="btn btn-primary mt-3"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Guardando...
+            </>
+          ) : (
+            'Guardar'
+          )}
         </button>
+        <Toaster />
       </form>
     </div>
   );

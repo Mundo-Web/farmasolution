@@ -1949,7 +1949,7 @@
     ]
   },
   "resources/js/Admin/Generals.jsx": {
-    "file": "assets/Generals-WjQkuzvA.js",
+    "file": "assets/Generals-BCLO2o0G.js",
     "name": "Generals",
     "src": "resources/js/Admin/Generals.jsx",
     "isEntry": true,
@@ -1957,6 +1957,7 @@
       "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
       "_index-BOnQTV8N.js",
       "_esm-B3ahtdks.js",
+      "_index-DRg3WPTA.js",
       "_Base-Dgrs-FZD.js",
       "_BasicRest-BCYKfs4R.js",
       "_CreateReactScript-BuAKasVo.js",
@@ -1977,7 +1978,6 @@
       "_MenuItemContainer-CryEU9TY.js",
       "_index.esm-0RgdCKj2.js",
       "_index-Dq7h7Pqt.js",
-      "_index-DRg3WPTA.js",
       "_General-BmbBKdsB.js",
       "_LaravelSession-Dz9cpV3l.js",
       "_index-6sXrSHvL.js",
