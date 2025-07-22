@@ -2221,6 +2221,10 @@
                 "name": "SimpleSF"
             },
             {
+                "id": "LoginSimpleD2",
+                "name": "SimpleD2"
+            },
+            {
                 "id": "LoginBananaLab",
                 "name": "LoginBananaLab"
             }
@@ -2237,6 +2241,10 @@
             {
                 "id": "SignUpSimpleSF",
                 "name": "SimpleSF"
+            },
+            {
+                "id": "SignUpSimpleD2",
+                "name": "SimpleD2"
             }
         ]
     },

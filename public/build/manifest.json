@@ -2021,7 +2021,7 @@
     ]
   },
   "resources/js/Admin/Items.jsx": {
-    "file": "assets/Items-xI9__xEe.js",
+    "file": "assets/Items-XKvl7gVz.js",
     "name": "Items",
     "src": "resources/js/Admin/Items.jsx",
     "isEntry": true,
@@ -6839,7 +6839,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Login.jsx": {
-    "file": "assets/Login-CQv2ICfF.js",
+    "file": "assets/Login-RKh2eetj.js",
     "name": "Login",
     "src": "resources/js/Components/Tailwind/Login.jsx",
     "isDynamicEntry": true,
@@ -6852,7 +6852,8 @@
     "dynamicImports": [
       "resources/js/Components/Tailwind/Login/LoginSimple.jsx",
       "resources/js/Components/Tailwind/Login/LoginSimpleSF.jsx",
-      "resources/js/Components/Tailwind/Login/LoginBananaLab.jsx"
+      "resources/js/Components/Tailwind/Login/LoginBananaLab.jsx",
+      "resources/js/Components/Tailwind/Login/LoginSimpleD2.jsx"
     ]
   },
   "resources/js/Components/Tailwind/Login/LoginBananaLab.jsx": {
@@ -6877,6 +6878,24 @@
     "file": "assets/LoginSimple-DBYfCoh7.js",
     "name": "LoginSimple",
     "src": "resources/js/Components/Tailwind/Login/LoginSimple.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BH53Isel.js",
+      "_JSEncrypt-BF8AmNNu.js",
+      "resources/js/Components/Tailwind/Components/ProductCard.jsx",
+      "_main-6DCdASTx.js",
+      "_index-BZYhE2TF.js",
+      "_index-yBjzXJbu.js",
+      "____vite-browser-external_commonjs-proxy-0zb4Agf2.js",
+      "_index-rimy3MAc.js",
+      "_index-fNjTmf9T.js"
+    ]
+  },
+  "resources/js/Components/Tailwind/Login/LoginSimpleD2.jsx": {
+    "file": "assets/LoginSimpleD2-DBYfCoh7.js",
+    "name": "LoginSimpleD2",
+    "src": "resources/js/Components/Tailwind/Login/LoginSimpleD2.jsx",
     "isEntry": true,
     "imports": [
       "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
@@ -8016,7 +8035,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Signup.jsx": {
-    "file": "assets/Signup-AOEy2ubk.js",
+    "file": "assets/Signup-C2KHlhuD.js",
     "name": "Signup",
     "src": "resources/js/Components/Tailwind/Signup.jsx",
     "isDynamicEntry": true,
@@ -8028,13 +8047,32 @@
     ],
     "dynamicImports": [
       "resources/js/Components/Tailwind/Signup/SignUpSimple.jsx",
-      "resources/js/Components/Tailwind/Signup/SignUpSimpleSF.jsx"
+      "resources/js/Components/Tailwind/Signup/SignUpSimpleSF.jsx",
+      "resources/js/Components/Tailwind/Signup/SignUpSimpleD2.jsx"
     ]
   },
   "resources/js/Components/Tailwind/Signup/SignUpSimple.jsx": {
     "file": "assets/SignUpSimple-BS1y5GNz.js",
     "name": "SignUpSimple",
     "src": "resources/js/Components/Tailwind/Signup/SignUpSimple.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_JSEncrypt-BF8AmNNu.js",
+      "_index-BH53Isel.js",
+      "_main-6DCdASTx.js",
+      "_index-BZYhE2TF.js",
+      "resources/js/Components/Tailwind/Components/ProductCard.jsx",
+      "_index-yBjzXJbu.js",
+      "____vite-browser-external_commonjs-proxy-0zb4Agf2.js",
+      "_index-rimy3MAc.js",
+      "_index-fNjTmf9T.js"
+    ]
+  },
+  "resources/js/Components/Tailwind/Signup/SignUpSimpleD2.jsx": {
+    "file": "assets/SignUpSimpleD2-BS1y5GNz.js",
+    "name": "SignUpSimpleD2",
+    "src": "resources/js/Components/Tailwind/Signup/SignUpSimpleD2.jsx",
     "isEntry": true,
     "imports": [
       "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
@@ -8924,7 +8962,7 @@
     ]
   },
   "resources/js/System.jsx": {
-    "file": "assets/System-Dobe-oDe.js",
+    "file": "assets/System-BLg3fSUH.js",
     "name": "System",
     "src": "resources/js/System.jsx",
     "isEntry": true,
@@ -9122,6 +9160,14 @@
   "resources/sources/images/login.png": {
     "file": "login.png",
     "src": "resources/sources/images/login.png"
+  },
+  "resources/sources/images/logind2.png": {
+    "file": "logind2.png",
+    "src": "resources/sources/images/logind2.png"
+  },
+  "resources/sources/images/registerd2.png": {
+    "file": "registerd2.png",
+    "src": "resources/sources/images/registerd2.png"
   },
   "resources/sources/images/reset-password.png": {
     "file": "reset-password.png",
