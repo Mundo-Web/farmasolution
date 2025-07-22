@@ -20,7 +20,7 @@ export default function UploadVoucherModalYape({
     onClose, 
     onUpload, 
     paymentMethod,
-    cart,
+    cart = [],
     subTotal,
     igv,
     envio,
@@ -75,7 +75,7 @@ export default function UploadVoucherModalYape({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
-                details: JSON.stringify(request.cart.map((item) => ({
+                details: JSON.stringify((request.cart || cart || []).map((item) => ({
                     id: item.id,
                     quantity: item.quantity
                 }))),
@@ -126,7 +126,7 @@ export default function UploadVoucherModalYape({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
-                details: JSON.stringify(request.cart.map((item) => ({
+                details: JSON.stringify((request.cart || cart || []).map((item) => ({
                     id: item.id,
                     quantity: item.quantity
                 }))),

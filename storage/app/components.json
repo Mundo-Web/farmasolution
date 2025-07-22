@@ -1907,7 +1907,8 @@
                 "id": "CheckoutStepsSF",
                 "name": "StepsSF",
                 "data": [
-                    "title"
+                    "title",
+                     "class_button"
                 ],
                 "json": {
                     "prefixes": "./prefijocelular.json"
