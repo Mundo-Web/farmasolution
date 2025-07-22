@@ -21,13 +21,13 @@ export default function UploadVoucherModalBancs({
     onClose, 
     onUpload, 
     paymentMethod,
-    cart,
+    cart = [],
     subTotal,
     igv,
     envio,
     totalFinal,
     request,
-    contacts,
+    contacts = [],
     coupon = null,
     descuentofinal = 0
 }) {
@@ -78,7 +78,7 @@ export default function UploadVoucherModalBancs({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
-                details: JSON.stringify(request.cart.map((item) => ({
+                details: JSON.stringify((request.cart || cart || []).map((item) => ({
                     id: item.id,
                     quantity: item.quantity
                 }))),
@@ -128,7 +128,7 @@ export default function UploadVoucherModalBancs({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
-                details: JSON.stringify(request.cart.map((item) => ({
+                details: JSON.stringify((request.cart || cart || []).map((item) => ({
                     id: item.id,
                     quantity: item.quantity
                 }))),

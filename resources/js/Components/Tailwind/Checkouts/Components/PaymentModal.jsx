@@ -5,7 +5,7 @@ import ReactModal from "react-modal";
 import General from "../../../../Utils/General";
 
 
-export default function PaymentModal({ isOpen, onClose, onPaymentComplete, contacts }) {
+export default function PaymentModal({ isOpen, onClose, onPaymentComplete, contacts = [] }) {
     
     const [paymentMethod, setPaymentMethod] = useState(null);
     const [saving, setSaving] = useState(false);
@@ -27,7 +27,7 @@ export default function PaymentModal({ isOpen, onClose, onPaymentComplete, conta
     };
     
     const isButtonDisabled = saving || !paymentMethod;
-    const ischeckmpobject = contacts.find(x => x.correlative === 'checkout_mercadopago');
+    const ischeckmpobject = contacts?.find(x => x.correlative === 'checkout_mercadopago');
 
     return (
         <ReactModal

@@ -15,6 +15,7 @@ import { renderToString } from "react-dom/server";
 import { debounce } from "lodash";
 import { useUbigeo } from "../../../../Utils/useUbigeo";
 import AsyncSelect from "react-select/async";
+import Select from "react-select";
 import PaymentModal from "./PaymentModal";
 import UploadVoucherModalYape from "./UploadVoucherModalYape";
 import UploadVoucherModalBancs from "./UploadVoucherModalBancs";
@@ -22,6 +23,8 @@ import { toast } from "sonner";
 import Global from "../../../../Utils/Global";
 import CouponsRest from "../../../../Actions/CouponsRest";
 import Tippy from "@tippyjs/react";
+import ReactModal from "react-modal";
+
 
 const couponRest = new CouponsRest();
 
@@ -45,11 +48,14 @@ export default function ShippingStepSF({
     totalPrice,
     descuentofinal,
     setDescuentoFinal,
+    data, // Para gradientes
+    openModal
 }) {
     const couponRef = useRef(null);
     const [coupon, setCoupon] = useState(null);
     const [selectedUbigeo, setSelectedUbigeo] = useState(null);
     const [defaultUbigeoOption, setDefaultUbigeoOption] = useState(null);
+    
     const [formData, setFormData] = useState({
         name: user?.name || "",
         lastname: user?.lastname || "",
@@ -951,43 +957,128 @@ export default function ShippingStepSF({
 
                                 {/* Celular */}
                                 <div className="w-full">
-                                    <label htmlFor="phone" className="block text-sm mb-1">
+                                    <label htmlFor="phone" className="block text-sm 2xl:text-base mb-1 customtext-neutral-dark">
                                         Celular <span className="text-red-500 ml-1">*</span>
                                     </label>
                                     <div className="flex gap-2 w-full">
-                                        <select
-                                            className="select2-prefix-selector max-w-[120px] p-2 border border-gray-300 rounded"
-                                            onChange={(e) => setSelectedPrefix(e.target.value)}
-                                            name="phone_prefix"
-                                            value={formData.phone_prefix}
-                                            styles={customStyles}
-                                            classnameprefix="select"
-                                        >
-                                            <option value="">Selecciona un país</option>
-                                            {
-                                            prefixes
-                                                .sort((a, b) => a.country.localeCompare(b.country))
-                                                .map((prefix, index) => (
-                                                <option
-                                                    key={index}
-                                                    value={prefix.realCode}
-                                                    data-code={prefix.beautyCode}
-                                                    data-flag={prefix.flag}
-                                                    data-country={prefix.country}
-                                                >
-                                                </option>
-                                                ))
-                                            }
-                                        </select>
-                                        <InputForm
-                                            type="text"
-                                            id="phone"
-                                            name="phone"
-                                            value={formData.phone}
-                                            error={errors.phone}
-                                            onChange={handleChange}
-                                            placeholder="000 000 000"
-                                        />
+                                        <div className="max-w-[120px]">
+                                            <Select
+                                                name="phone_prefix"
+                                                value={prefixes.find(p => p.realCode === formData.phone_prefix) ? {
+                                                    value: prefixes.find(p => p.realCode === formData.phone_prefix).realCode,
+                                                    label: `${prefixes.find(p => p.realCode === formData.phone_prefix).beautyCode}`,
+                                                    flag: prefixes.find(p => p.realCode === formData.phone_prefix).flag,
+                                                    code: prefixes.find(p => p.realCode === formData.phone_prefix).beautyCode,
+                                                    country: prefixes.find(p => p.realCode === formData.phone_prefix).country
+                                                } : null}
+                                                onChange={(selected) => setFormData(prev => ({ ...prev, phone_prefix: selected?.value || "" }))}
+                                                options={prefixes
+                                                    .sort((a, b) => a.country.localeCompare(b.country))
+                                                    .map(prefix => ({
+                                                        value: prefix.realCode,
+                                                        label: prefix.beautyCode,
+                                                        flag: prefix.flag,
+                                                        code: prefix.beautyCode,
+                                                        country: prefix.country
+                                                    }))
+                                                }
+                                                formatOptionLabel={({ flag, code, country }) => {
+                                                    // Buscar el país en el array de prefijos para obtener el código ISO
+                                                    const prefix = prefixes.find(p => p.country === country);
+                                                    const countryCode = prefix?.isoCode?.ISO1?.toLowerCase() || country.toLowerCase().substring(0, 2);
+                                                    
+                                                    // Lista de servicios de banderas ordenados por prioridad
+                                                    const flagServices = [
+                                                        `https://flagsapi.com/${countryCode.toUpperCase()}/flat/24.png`,
+                                                        `https://flagcdn.com/${countryCode}.svg`,
+                                                        `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode.toUpperCase()}.svg`,
+                                                        `https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/${countryCode}.svg`,
+                                                        `https://raw.githubusercontent.com/lipis/flag-icons/main/flags/4x3/${countryCode}.svg`
+                                                    ];
+                                                    
+                                                    let currentIndex = 0;
+                                                    
+                                                    const handleImageError = (e) => {
+                                                        currentIndex++;
+                                                        if (currentIndex < flagServices.length) {
+                                                            e.target.src = flagServices[currentIndex];
+                                                        } else {
+                                                            // Si todos los servicios fallan, ocultar imagen y mostrar fallback
+                                                            e.target.style.display = 'none';
+                                                            const fallback = e.target.nextElementSibling;
+                                                            if (fallback && fallback.classList.contains('flag-fallback')) {
+                                                                fallback.style.display = 'flex';
+                                                            }
+                                                        }
+                                                    };
+                                                    
+                                                    return (
+                                                        <div className="flex items-center gap-2">
+                                                            <img 
+                                                                src={flagServices[0]}
+                                                                alt={`Bandera de ${country}`}
+                                                                className="w-6 h-4 object-cover rounded-sm flex-shrink-0 border border-gray-200"
+                                                                onError={handleImageError}
+                                                                style={{ minWidth: '24px', minHeight: '16px' }}
+                                                            />
+                                                            <div className="flag-fallback w-6 h-4 bg-gray-200 rounded-sm flex items-center justify-center flex-shrink-0 border border-gray-300" style={{ display: 'none', minWidth: '24px', minHeight: '16px' }}>
+                                                                <span className="text-xs text-gray-500">{countryCode.toUpperCase()}</span>
+                                                            </div>
+                                                            <span className="font-medium text-sm">{code}</span>
+                                                          
+                                                        </div>
+                                                    );
+                                                }}
+                                                placeholder="País"
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                styles={{
+                                                    control: (base) => ({
+                                                        ...base,
+                                                        minHeight: '48px',
+                                                        border: '1px solid #d1d5db',
+                                                        borderRadius: '0.75rem',
+                                                        fontSize: '14px',
+                                                        '&:hover': { borderColor: '#9ca3af' },
+                                                        '&:focus-within': { 
+                                                            borderColor: '#3b82f6',
+                                                            boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.1)'
+                                                        }
+                                                    }),
+                                                    option: (base, state) => ({
+                                                        ...base,
+                                                        backgroundColor: state.isSelected ? '#3b82f6' : state.isFocused ? '#f3f4f6' : 'white',
+                                                        color: state.isSelected ? 'white' : '#374151',
+                                                        padding: '8px 12px'
+                                                    }),
+                                                    singleValue: (base) => ({
+                                                        ...base,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '6px'
+                                                    }),
+                                                    menu: (base) => ({
+                                                        ...base,
+                                                        zIndex: 9999
+                                                    })
+                                                }}
+                                                filterOption={(option, inputValue) => {
+                                                    return option.data.country.toLowerCase().includes(inputValue.toLowerCase()) ||
+                                                           option.data.code.toLowerCase().includes(inputValue.toLowerCase());
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <InputForm
+                                                type="text"
+                                                id="phone"
+                                                name="phone"
+                                                value={formData.phone}
+                                                error={errors.phone}
+                                                onChange={handleChange}
+                                                placeholder="000 000 000"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1337,13 +1428,13 @@ export default function ShippingStepSF({
                                 ref={couponRef}
                                 type="text"
                                 placeholder="Código de cupón"
-                                className="w-full rounded-l-md border border-gray-300 p-2 px-4 text-sm outline-none uppercase focus:border-[#C5B8D4]"
+                                className="w-full rounded-l-md border border-gray-300 py-3 px-4 text-sm outline-none uppercase focus:border-[#C5B8D4]"
                                 value={coupon?.name}
                                 onKeyDown={onCouponKeyDown}
                                 disabled={loading}
                             />
                             <button
-                                className="rounded-r-md bg-[#5339B1] px-4 py-2 text-sm text-white"
+                                className={`rounded-r-md px-4 py-2 text-sm text-white transition-all duration-300 hover:opacity-90 ${data?.gradient ? 'bg-gradient' : 'bg-primary'}`}
                                 type="button"
                                 onClick={onCouponApply}
                                 disabled={loading}
@@ -1422,35 +1513,24 @@ export default function ShippingStepSF({
                             </div>
                         </div>
                         <div className="space-y-2 pt-4">
-                            <ButtonPrimary className={'payment-button'}
-                                // onClick={() => {
-                                //     if (validateForm()) {
-                                //         setShowPaymentModal(true);
-                                //     }
-                                // }}
+                            <button
+                                className={`w-full py-3 px-6 rounded-full font-semibold text-lg transition-all duration-300 hover:opacity-90 bg-primary ${data?.class_button ||' text-white'}`}
                                 onClick={handleContinueClick}
                             >
-                                {" "}
                                 Continuar
-                            </ButtonPrimary>
+                            </button>
                             <div id="mercadopago-button-container" ></div>
-                            {/* style={{ display: "none" }} */}
-                            <ButtonSecondary onClick={noContinue}>
-                                {" "}
+                            <ButtonSecondary className="!rounded-full" onClick={noContinue}>
                                 Cancelar
                             </ButtonSecondary>
                         </div>
                         <div>
                             <p className="text-sm customtext-neutral-dark">
                                 Al realizar tu pedido, aceptas los 
-                                <a className="customtext-primary font-bold">
-                                    Términos y Condiciones
-                                </a>
+                                <a href="#" onClick={() => openModal && openModal(1)} className="customtext-primary font-bold"> Términos y Condiciones</a>
                                 , y que nosotros usaremos sus datos personales de
                                 acuerdo con nuestra 
-                                <a className="customtext-primary font-bold">
-                                    Política de Privacidad
-                                </a>
+                                <a href="#" onClick={() => openModal && openModal(0)} className="customtext-primary font-bold"> Política de Privacidad</a>
                                 .
                             </p>
                         </div>
