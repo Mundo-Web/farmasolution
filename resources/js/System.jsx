@@ -306,7 +306,7 @@ const System = ({
             case "collection":
                 return <Collection which={value} data={data} items={getItems(itemsId)} />
             case "slider":
-                return <Slider which={value} data={data} sliders={getItems(itemsId)} />
+                return <Slider which={value} data={data} sliders={getItems(itemsId)} generals={generals} />
             case "carrusel":
                 return <Carrusel which={value} data={data} items={getItems(itemsId)} />
             case "indicator":
