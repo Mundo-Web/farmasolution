@@ -108,7 +108,8 @@
                 "name": "Menu - Expert Farma",
                 "image": "top-bar-simple.png",
                 "data": [
-                    "showCategories"
+                    "showCategories",
+                    "backgroundColor"
                 ],
                 "using": {
                     "model": "Category",
@@ -141,7 +142,8 @@
                     "class",
                     "link_cart",
                     "showLoginCart",
-                    "mobileSearch"
+                    "mobileSearch",
+                    "backgroundColor"
                 ],
                 "using": {
                     "model": "Category",
@@ -412,7 +414,8 @@
                     "paginationAlignment",
                     "showNavigation",
                     "imageBgPosition",
-                    "overlayMobile"
+                    "overlayMobile",
+                    "whatsapp_info"
                 ],
                 "using": {
                     "model": "Slider",
@@ -423,7 +426,12 @@
                         "button_text",
                         "button_link"
                     ]
-                }
+                },
+                 "generals": [
+                    "phone_whatsapp",
+                    "message_whatsapp"
+                   
+                ]
             },
             {
                 "id": "SliderFeaturedMakita",

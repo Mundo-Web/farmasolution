@@ -105,8 +105,8 @@ const MenuExpertFarma = ({ pages = [], items, data ,visible=false}) => {
             className={
                 `${
                 showOnlyTagsMobile
-                        ? " block w-full relative md:block bg-secondary font-paragraph text-sm"
-                        : " relative w-full md:block bg-secondary font-paragraph text-sm"
+                        ? ` block w-full relative md:block ${data?.backgroundColor ? data?.backgroundColor : "bg-secondary"} font-paragraph text-sm`
+                        : ` relative w-full md:block ${data?.backgroundColor ? data?.backgroundColor : "bg-secondary"} font-paragraph text-sm`
                 }`
             }
             ref={menuRef}
@@ -173,8 +173,8 @@ const MenuExpertFarma = ({ pages = [], items, data ,visible=false}) => {
                                                 onClick={() => setCurrentTagIndex(i * 2)}
                                                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                                                     Math.floor(currentTagIndex / 2) === i 
-                                                        ? 'bg-primary shadow-lg' 
-                                                        : 'bg-neutral-light hover:bg-white/60'
+                                                        ? `${data?.backgroundColor ? data?.backgroundColor : "bg-primary"} shadow-lg` 
+                                                        : `bg-neutral-light hover:bg-white/60`
                                                 }`}
                                             />
                                         ))}
@@ -195,19 +195,19 @@ const MenuExpertFarma = ({ pages = [], items, data ,visible=false}) => {
                                         {isMenuOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                                     </button>
                                     {isMenuOpen && (
-                                        <div className="absolute z-50 top-11 left-0 bg-white shadow-2xl border rounded-lg transition-all duration-300 ease-in-out w-screen max-h-[50vh] overflow-hidden">
-                                            <div className="w-[95vw] max-w-7xl mx-auto flex h-full">
+                                        <div className="absolute z-50 top-11 left-0 bg-white shadow-2xl border rounded-lg transition-all duration-300 ease-in-out w-full max-w-[100vw] max-h-[50vh] overflow-hidden">
+                                            <div className="w-full max-w-7xl mx-auto flex h-full">
                                                 {/* Panel izquierdo - Lista de categorías */}
-                                                <div className="w-1/4 py-10 bg-gray-50 border-r border-gray-200">
+                                                <div className="w-1/4 min-w-[200px] py-10 bg-gray-50 border-r border-gray-200">
                                                   
                                                     <div className="overflow-y-auto max-h-[60vh]">
                                                         <ul className="py-2">
                                                             {[...items].sort((a, b) => a.name.localeCompare(b.name)).map((category, index) => (
                                                                 <li key={index}>
                                                                     <button
-                                                                        className={`w-full text-left rounded-sm overflow-hidden px-4 py-3 hover:bg-primary transition-colors duration-200 border-l-4 ${
+                                                                        className={`w-full text-left rounded-sm overflow-hidden px-4 py-3 hover:bg-secondary transition-colors duration-200 border-l-4 ${
                                                                             selectedCategory?.id === category.id
-                                                                                ? 'bg-primary border-neutral-dark customtext-neutral-dark font-semibold'
+                                                                                ? `${data?.backgroundColor ? data?.backgroundColor : "bg-primary"} border-neutral-dark customtext-neutral-dark font-semibold`
                                                                                 : 'border-transparent text-gray-700 hover:border-nuetral-dark'
                                                                         }`}
                                                                         onClick={() => setSelectedCategory(category)}
@@ -242,7 +242,7 @@ const MenuExpertFarma = ({ pages = [], items, data ,visible=false}) => {
                                                                         <a
                                                                             key={subIndex}
                                                                             href={`/catalogo?subcategory=${subcategory.slug}`}
-                                                                            className="block p-3 rounded-lg   hover:bg-[#F9ECC2] transition-all duration-200 group"
+                                                                            className="block p-3 rounded-lg   hover:bg-secondary transition-all duration-200 group"
                                                                         >
                                                                             <div className="flex items-center justify-between">
                                                                                 <div>
