@@ -53,6 +53,7 @@ export default function CartStepSF({
     }, [cart, subTotal]);
 
     const applyDiscountRules = async () => {
+        console.log('🔄 CartStepSF: Starting applyDiscountRules...');
         setIsLoadingDiscounts(true);
         try {
             // Debug: Log información detallada del carrito antes de enviar
@@ -72,7 +73,9 @@ export default function CartStepSF({
                 }))
             });
             
+            console.log('📡 CartStepSF: About to call DiscountRulesRest.applyToCart...');
             const result = await DiscountRulesRest.applyToCart(cart, totalWithoutDiscounts);
+            console.log('📡 CartStepSF: DiscountRulesRest.applyToCart completed');
             
             // Debug: Log respuesta completa del servidor
             console.log('📥 Server response:', {
@@ -218,6 +221,8 @@ export default function CartStepSF({
         <div className="grid lg:grid-cols-5 gap-4 md:gap-8">
             {/* Product List */}
             <div className="lg:col-span-3 space-y-4 md:space-y-6">
+              
+                
                 {isCartEmpty ? (
                     <div className="flex flex-col items-center justify-center p-8 text-center animate-fade-in">
                         <svg className="w-24 h-24 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,7 +271,7 @@ export default function CartStepSF({
                     
                     {!isLoadingDiscounts && appliedDiscounts.length > 0 && (
                         <div className="space-y-2">
-                            <div className="text-sm font-bold customtext-neutral-dark mb-2">
+                            <div className="text-xl md:text-2xl font-bold pb-4 md:pb-6 customtext-neutral-dark mb-2">
                                 🎉 Descuentos aplicados:
                             </div>
                             {appliedDiscounts.map((discount, index) => (
@@ -290,6 +295,8 @@ export default function CartStepSF({
                             </div>
                         </div>
                     )}
+                    
+                  
                     
                     <div className="py-3 border-y-2 mt-4 md:mt-6">
                         <div className="flex justify-between font-bold text-lg md:text-[20px] items-center">
