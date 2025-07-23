@@ -193,6 +193,24 @@ const SkeletonCard = ({ delay = 0 }) => {
 
 
 const CatalagoFiltros = ({ items, data, filteredData, cart, setCart }) => {
+    // Opciones de ordenación (mover al inicio para evitar problemas de hoisting)
+    const sortOptions = [
+        { value: "created_at:desc", label: "Más reciente" },
+        { value: "created_at:asc", label: "Mas antiguo" },
+        { value: "final_price:asc", label: "Precio: Menor a Mayor" },
+        { value: "final_price:desc", label: "Precio: Mayor a Menor" },
+        { value: "name:asc", label: "Nombre: A-Z" },
+        { value: "name:desc", label: "Nombre: Z-A" },
+        { value: "most_sold:desc", label: "Más vendidos" },
+        { value: "views:desc", label: "Más visitados" },
+        // { value: "discount_percent:desc", label: "Mayores descuentos" },
+        { value: "best_discount:desc", label: "Mejores ofertas" },
+        { value: "featured:desc", label: "Destacados" },
+        { value: "offering:desc", label: "En oferta" },
+        // { value: "is_new:desc", label: "Nuevos productos" },
+        // { value: "recommended:desc", label: "Recomendados por expertos" },
+    ];
+
     // Estado para el filtro padre (independiente)
     const [independentFilter, setIndependentFilter] = useState(null);
     const [brands, setBrands] = useState([]);
@@ -246,12 +264,39 @@ const CatalagoFiltros = ({ items, data, filteredData, cart, setCart }) => {
         tag_id: GET.tag ? GET.tag.split(',') : [], // Agregar soporte para tags
         price: [],
         name: GET.search || null,
-        sort: [
-            {
-                selector: "final_price",
-                desc: true,
-            },
-        ],
+        sort: (() => {
+            // Leer parámetro sortBy desde la URL
+            if (GET.sortBy) {
+                const sortValue = GET.sortBy;
+                
+                // Primero buscar por valor exacto (ej: "final_price:desc")
+                let validSortOption = sortOptions.find(option => option.value === sortValue);
+                
+                // Si no se encuentra, buscar por label (ej: "Destacados")
+                if (!validSortOption) {
+                    validSortOption = sortOptions.find(option => 
+                        option.label.toLowerCase() === sortValue.toLowerCase()
+                    );
+                }
+                
+                if (validSortOption) {
+                    const [selector, order] = validSortOption.value.split(":");
+                    return [
+                        {
+                            selector: selector,
+                            desc: order === "desc",
+                        },
+                    ];
+                }
+            }
+            // Valor por defecto si no hay parámetro o es inválido
+            return [
+                {
+                    selector: "final_price",
+                    desc: true,
+                },
+            ];
+        })(),
     });
 
     // Función para convertir slugs a IDs
@@ -312,6 +357,22 @@ const CatalagoFiltros = ({ items, data, filteredData, cart, setCart }) => {
 
     const transformFilters = (filters) => {
         const transformedFilters = [];
+
+        // Manejar campos especiales de sort que deben convertirse en filtros WHERE
+        if (filters.sort && Array.isArray(filters.sort)) {
+            const specialSortFields = ['featured', 'offering', 'is_new', 'recommended'];
+            
+            filters.sort.forEach(sortItem => {
+                if (specialSortFields.includes(sortItem.selector)) {
+                    // Convertir campo de ordenamiento especial a filtro WHERE
+                    transformedFilters.push([
+                        sortItem.selector,
+                        "=",
+                        1  // Solo mostrar productos donde el campo = 1 (true)
+                    ]);
+                }
+            });
+        }
 
         if (filters.collection_id.length > 0) {
             const collectionConditions = filters.collection_id.map((slug) => [
@@ -827,10 +888,21 @@ const CatalagoFiltros = ({ items, data, filteredData, cart, setCart }) => {
             console.log("Selected filters:", selectedFilters);
             console.log("Transformed filters:", filters);
             
+            // Filtrar el sort para remover campos especiales que ya se convirtieron en filtros WHERE
+            const specialSortFields = ['featured', 'offering', 'is_new', 'recommended'];
+            const filteredSort = selectedFilters.sort.filter(sortItem => 
+                !specialSortFields.includes(sortItem.selector)
+            );
+            
+            // Si no queda ningún sort válido, usar ordenamiento por defecto
+            const finalSort = filteredSort.length > 0 ? filteredSort : [
+                { selector: "final_price", desc: true }
+            ];
+            
             // Extraer los IDs de los filtros seleccionados (no slugs)
             const params = {
                 filter: filters,
-                sort: selectedFilters.sort,
+                sort: finalSort,
                 skip: (page - 1) * itemsPerPage,
                 take: itemsPerPage,
                 requireTotalCount: true,
@@ -839,6 +911,7 @@ const CatalagoFiltros = ({ items, data, filteredData, cart, setCart }) => {
             };
             
             console.log("API params:", params);
+            console.log("Final sort (filtered):", finalSort);
             
             const response = await itemsRest.paginate(params);
             
@@ -1072,25 +1145,6 @@ const CatalagoFiltros = ({ items, data, filteredData, cart, setCart }) => {
             return page !== "..." || array[index - 1] !== "...";
         });
     };
-    // Opciones de ordenación
-   const sortOptions = [
-    { value: "created_at:desc", label: "Más reciente" },
-    { value: "created_at:asc", label: "Mas antiguo" },
-    { value: "final_price:asc", label: "Precio: Menor a Mayor" },
-    { value: "final_price:desc", label: "Precio: Mayor a Menor" },
-    { value: "name:asc", label: "Nombre: A-Z" },
-    { value: "name:desc", label: "Nombre: Z-A" },
-    { value: "most_sold:desc", label: "Más vendidos" },
-    { value: "views:desc", label: "Más visitados" },
-   // { value: "discount_percent:desc", label: "Mayores descuentos" },
-    { value: "best_discount:desc", label: "Mejores ofertas" },
-   // { value: "offering:desc", label: "En oferta" },
- //   { value: "is_new:desc", label: "Nuevos productos" },
-   // { value: "featured:desc", label: "Destacados" },
-   
-   //{ value: "recommended:desc", label: "Recomendados por expertos" },
-];
-
 
     //}, [items]);
     // Manejar cambios en los filtros y mantener filterSequence
@@ -1277,6 +1331,11 @@ const CatalagoFiltros = ({ items, data, filteredData, cart, setCart }) => {
                                         ...prev,
                                         sort,
                                     }));
+                                    
+                                    // Actualizar la URL con el nuevo parámetro sortBy
+                                    const url = new URL(window.location);
+                                    url.searchParams.set('sortBy', value);
+                                    window.history.pushState({}, '', url);
                                 }}
                                 labelKey="label"
                                 valueKey="value"
@@ -1351,6 +1410,11 @@ const CatalagoFiltros = ({ items, data, filteredData, cart, setCart }) => {
                                         ...prev,
                                         sort,
                                     }));
+                                    
+                                    // Actualizar la URL con el nuevo parámetro sortBy
+                                    const url = new URL(window.location);
+                                    url.searchParams.set('sortBy', value);
+                                    window.history.pushState({}, '', url);
                                 }}
                                 labelKey="label"
                                 valueKey="value"
