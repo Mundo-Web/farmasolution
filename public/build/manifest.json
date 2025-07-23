@@ -1915,7 +1915,7 @@
     ]
   },
   "resources/js/Admin/Gallery.jsx": {
-    "file": "assets/Gallery-BmoC4Pnd.js",
+    "file": "assets/Gallery-CguBYl0A.js",
     "name": "Gallery",
     "src": "resources/js/Admin/Gallery.jsx",
     "isEntry": true,
@@ -1927,6 +1927,7 @@
       "_CreateReactScript-BuAKasVo.js",
       "_GalleryRest-e3DwqTSB.js",
       "_BasicRest-BCYKfs4R.js",
+      "_ImageFormGroup-BXNZhx8I.js",
       "_index-DRg3WPTA.js",
       "_index-yBjzXJbu.js",
       "__commonjsHelpers-D6-XlEtG.js",

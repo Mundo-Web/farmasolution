@@ -36,25 +36,31 @@ class GalleryController extends BasicController
         $systemImagesConfig = [
             'icon.png' => [
                 'name' => 'Icono del sistema',
+                'title' => 'Icono del sistema',
+                'filename' => 'icon',
                 'description' => 'Icono principal usado en favicon, navegadores, etc. (1:1)',
                 'src' => 'icon.png',
-                'fit' => 'contain',
+                'fit' => 'cover',
                 'aspect' => '1',
                 'is_system' => true
             ],
             'logo.png' => [
                 'name' => 'Logo principal',
+                'title' => 'Logo principal', 
+                'filename' => 'logo',
                 'description' => 'Logo principal del sitio web (13:4)',
                 'src' => 'logo.png',
-                'fit' => 'contain',
+                'fit' => 'cover',
                 'aspect' => '13/4',
                 'is_system' => true
             ],
             'logo-footer.png' => [
                 'name' => 'Logo del footer',
+                'title' => 'Logo del footer',
+                'filename' => 'logo-footer',
                 'description' => 'Logo usado en el pie de página (1:1)',
                 'src' => 'logo-footer.png',
-                'fit' => 'contain',
+                'fit' => 'cover',
                 'aspect' => '1',
                 'is_system' => true
             ]
@@ -86,9 +92,17 @@ class GalleryController extends BasicController
                 if (!isset($image['name']) || empty($image['name'])) {
                     $image['name'] = $systemImagesConfig[$image['src']]['name'];
                 }
+                if (!isset($image['title']) || empty($image['title'])) {
+                    $image['title'] = $systemImagesConfig[$image['src']]['title'];
+                }
+                if (!isset($image['filename']) || empty($image['filename'])) {
+                    $image['filename'] = $systemImagesConfig[$image['src']]['filename'];
+                }
                 if (!isset($image['description']) || empty($image['description'])) {
                     $image['description'] = $systemImagesConfig[$image['src']]['description'];
                 }
+                // Forzar cover para imágenes del sistema
+                $image['fit'] = 'cover';
             }
             return $image;
         }, $dynamicImages);
