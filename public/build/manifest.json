@@ -888,13 +888,6 @@
       "_createLucideIcon-DfjclApS.js"
     ]
   },
-  "_login-CjATaXhS.js": {
-    "file": "assets/login-CjATaXhS.js",
-    "name": "login",
-    "assets": [
-      "login.png"
-    ]
-  },
   "_mail-drJGpT4k.js": {
     "file": "assets/mail-drJGpT4k.js",
     "name": "mail",
@@ -1031,13 +1024,6 @@
     "name": "shopping-cart",
     "imports": [
       "_createLucideIcon-DfjclApS.js"
-    ]
-  },
-  "_signup-C805LP6T.js": {
-    "file": "assets/signup-C805LP6T.js",
-    "name": "signup",
-    "assets": [
-      "signup.png"
     ]
   },
   "_sliders-vertical-BKVsqP9q.js": {
@@ -6644,7 +6630,7 @@
     ]
   },
   "resources/js/Components/Tailwind/ForgotPassword.jsx": {
-    "file": "assets/ForgotPassword-CvWqEDoa.js",
+    "file": "assets/ForgotPassword-DISEMgQa.js",
     "name": "ForgotPassword",
     "src": "resources/js/Components/Tailwind/ForgotPassword.jsx",
     "isDynamicEntry": true,
@@ -7154,7 +7140,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Login.jsx": {
-    "file": "assets/Login-DS52EWud.js",
+    "file": "assets/Login-Cx6KjDNd.js",
     "name": "Login",
     "src": "resources/js/Components/Tailwind/Login.jsx",
     "isDynamicEntry": true,
@@ -8173,7 +8159,7 @@
     ]
   },
   "resources/js/Components/Tailwind/ResetPassword.jsx": {
-    "file": "assets/ResetPassword-1F_N2P7R.js",
+    "file": "assets/ResetPassword-we5d5uae.js",
     "name": "ResetPassword",
     "src": "resources/js/Components/Tailwind/ResetPassword.jsx",
     "isDynamicEntry": true,
@@ -8403,7 +8389,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Signup.jsx": {
-    "file": "assets/Signup-q7CgNnZD.js",
+    "file": "assets/Signup-CxpYXfwl.js",
     "name": "Signup",
     "src": "resources/js/Components/Tailwind/Signup.jsx",
     "isDynamicEntry": true,
@@ -9379,7 +9365,7 @@
     ]
   },
   "resources/js/System.jsx": {
-    "file": "assets/System-C2tU0TAx.js",
+    "file": "assets/System-CuapA9Zx.js",
     "name": "System",
     "src": "resources/js/System.jsx",
     "isEntry": true,

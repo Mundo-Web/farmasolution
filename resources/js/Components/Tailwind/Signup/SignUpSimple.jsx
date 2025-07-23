@@ -79,11 +79,15 @@ export default function SignUpSimple() {
                     <div className="flex flex-col lg:flex-row">
 
                         <div className="hidden lg:block lg:w-1/2 relative">
-                            <img
-                                src={`/assets/${Global.APP_CORRELATIVE}/signup.png` || image}
-                                alt="Imagen decorativa"
+
+                            <img src={`/assets/resources/signup.png?v=${crypto.randomUUID()}`} alt={Global.APP_NAME}
                                 className="absolute inset-0 w-full h-full object-cover"
-                            />
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = '/assets/img/logo-bk.svg';
+                                }} />
+
+
                             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                         </div>
                         <div className="w-full lg:w-1/2 px-6 py-12 sm:px-12 lg:px-16">
