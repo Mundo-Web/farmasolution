@@ -6,7 +6,17 @@ import { Local } from "sode-extend-react";
 import Global from "../../../../Utils/Global";
 
 
-export default function ConfirmationStepSF({ setCart, cart, code, delivery, data }) {
+export default function ConfirmationStepSF({ 
+    setCart, 
+    cart, 
+    code, 
+    delivery, 
+    data,
+    automaticDiscounts = [],
+    automaticDiscountTotal = 0,
+    couponDiscount = 0,
+    couponCode = null
+}) {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -66,14 +76,16 @@ export default function ConfirmationStepSF({ setCart, cart, code, delivery, data
         return acc + (itemPrice * quantity);
     }, 0) || 0;
 
-    // Calcular el subtotal sin IGV (precio base)
-    const subTotal = (totalPrice / 1.18).toFixed(2);
-
-    // Calcular el IGV (18% del subtotal)
-    const igv = (subTotal * 0.18).toFixed(2);
-
-    // Calcular el total final (subtotal sin IGV + IGV + envío)
-    const totalFinal = parseFloat(subTotal) + parseFloat(igv) + parseFloat(order.delivery) - parseFloat(order.coupon_discount || 0);
+    // Replicar exactamente la lógica de ConfirmationStep.jsx
+    const subTotal = parseFloat((totalPrice / 1.18).toFixed(2));
+    const igv = parseFloat((totalPrice - subTotal).toFixed(2));
+    const deliveryCost = parseFloat(order.delivery || 0);
+    const couponDiscountAmount = parseFloat(order.coupon_discount || 0);
+    const automaticDiscount = parseFloat(order.automatic_discount_total || 0);
+    
+    // Calcular igual que en ConfirmationStep.jsx
+    const totalBeforeDiscount = parseFloat(subTotal) + parseFloat(igv) + deliveryCost;
+    const totalFinal = totalBeforeDiscount - couponDiscountAmount - automaticDiscount;
     console.log(order.delivery, "order.coupon_discount");
     return (
         <div className="mx-auto">
@@ -103,6 +115,11 @@ export default function ConfirmationStepSF({ setCart, cart, code, delivery, data
                                         <div className="text-start">
                                             <h3 className="font-medium text-lg">
                                                 {item.name}
+                                                {item.is_free && (
+                                                    <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                                        ¡GRATIS!
+                                                    </span>
+                                                )}
                                             </h3>
                                             {item?.color && (
                                                 <p className="text-sm customtext-neutral-light">
@@ -113,11 +130,56 @@ export default function ConfirmationStepSF({ setCart, cart, code, delivery, data
                                             <p className="text-sm customtext-neutral-light">
                                                 Cantidad: <span className="customtext-neutral-dark">{parseInt(item.quantity)}</span> -
                                                 Precio: <span className="customtext-neutral-dark"> S/ {Number2Currency(item.price)}</span>
+                                                {item.is_free && (
+                                                    <span className="ml-1 text-green-600 font-semibold">(Promoción)</span>
+                                                )}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
+                            
+                            {/* Mostrar productos gratuitos de descuentos automáticos */}
+                            {order.free_items && order.free_items.length > 0 && (
+                                <>
+                                    <div className="pt-4 border-t border-dashed border-green-300">
+                                        <h4 className="text-sm font-bold text-green-600 mb-3">
+                                            🎁 Productos gratuitos por promociones:
+                                        </h4>
+                                        {order.free_items.map((item, index) => (
+                                            <div key={`free-${index}`} className="rounded-lg">
+                                                <div className="flex gap-4">
+                                                    <div className="bg-white rounded-xl w-max border-2 border-green-200">
+                                                        <img
+                                                            src={item.image ? `/storage/images/item/${item.image}` : '/assets/img/noimage/no_img.jpg'}
+                                                            alt={item.name}
+                                                            className="w-20 h-20 object-cover rounded"
+                                                            onError={(e) => (e.target.src = "/assets/img/noimage/no_img.jpg")}
+                                                        />
+                                                    </div>
+                                                    <div className="text-start">
+                                                        <h3 className="font-medium text-lg">
+                                                            {item.name}
+                                                            <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                                                ¡GRATIS!
+                                                            </span>
+                                                        </h3>
+                                                        {item?.color && (
+                                                            <p className="text-sm customtext-neutral-light">
+                                                                Color: <span className="customtext-neutral-dark">{item.color}</span>
+                                                            </p>
+                                                        )}
+                                                        <p className="text-sm customtext-neutral-light">
+                                                            Cantidad: <span className="customtext-neutral-dark">{parseInt(item.quantity)}</span>
+                                                            <span className="ml-1 text-green-600 font-semibold">- Por promoción "Compra X Lleva Y"</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         <div className="space-y-4 mt-6">
@@ -128,6 +190,10 @@ export default function ConfirmationStepSF({ setCart, cart, code, delivery, data
                             <div className="flex justify-between">
                                 <span className="customtext-neutral-dark">IGV</span>
                                 <span className="font-semibold">S/ {Number2Currency(igv)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="customtext-neutral-dark">Envío</span>
+                                <span className="font-semibold">S/ {Number2Currency(order.delivery)}</span>
                             </div>
                             {order.coupon_id && (
                                 <div className="mb-2 mt-2 flex justify-between items-center border-b pb-2 text-sm font-bold">
@@ -142,10 +208,30 @@ export default function ConfirmationStepSF({ setCart, cart, code, delivery, data
                                     </span>
                                 </div>
                             )}
-                            <div className="flex justify-between">
-                                <span className="customtext-neutral-dark">Envío</span>
-                                <span className="font-semibold">S/ {Number2Currency(order.delivery)}</span>
-                            </div>
+                            {order.automatic_discounts && order.automatic_discounts.length > 0 && (
+                                <div className="mb-2 mt-2 border-b pb-2">
+                                    <div className="text-sm font-bold text-green-600 mb-1">
+                                        Descuentos automáticos aplicados:
+                                    </div>
+                                    {order.automatic_discounts.map((discount, index) => (
+                                        <div key={index} className="flex justify-between items-center text-sm">
+                                            <span className="text-green-700">
+                                                {discount.rule_name || discount.name || 'Descuento automático'}
+                                                <small className="block text-xs font-light text-gray-600">
+                                                    {discount.description || 'Promoción especial'}
+                                                </small>
+                                            </span>
+                                            <span className="font-semibold text-green-600">
+                                                S/ -{Number2Currency(discount.discount_amount || discount.amount || 0)}
+                                            </span>
+                                        </div>
+                                    ))}
+                                    <div className="flex justify-between items-center text-sm font-bold text-green-600 mt-1 pt-1 border-t">
+                                        <span>Total descuentos automáticos:</span>
+                                        <span>S/ -{Number2Currency(order.automatic_discount_total || 0)}</span>
+                                    </div>
+                                </div>
+                            )}
                             <div className="py-3 border-y-2 mt-6">
                                 <div className="flex justify-between font-bold text-[20px] items-center">
                                     <span>Total</span>

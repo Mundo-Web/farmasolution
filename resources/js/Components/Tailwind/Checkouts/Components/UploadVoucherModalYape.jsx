@@ -26,7 +26,9 @@ export default function UploadVoucherModalYape({
     totalFinal,
     request,
     coupon = null,
-    descuentofinal = 0
+    descuentofinal = 0,
+    autoDiscounts = [],
+    autoDiscountTotal = 0
 }) {
     const [file, setFile] = useState(null);
     const [saving, setSaving] = useState(false);
@@ -74,11 +76,21 @@ export default function UploadVoucherModalYape({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
+                // Asegurar que delivery_type tenga un valor por defecto
+                delivery_type: request.delivery_type || 'domicilio',
+                // Asegurar que applied_promotions sea JSON string si existe
+                applied_promotions: request.applied_promotions 
+                    ? (typeof request.applied_promotions === 'string' 
+                        ? request.applied_promotions 
+                        : JSON.stringify(request.applied_promotions))
+                    : null
             };
             
             const formData = new FormData();
             Object.keys(updatedRequest).forEach(key => {
-                formData.append(key, updatedRequest[key]);
+                if (updatedRequest[key] !== null && updatedRequest[key] !== undefined) {
+                    formData.append(key, updatedRequest[key]);
+                }
             });
     
             const result = await salesRest.save(formData);
@@ -266,7 +278,7 @@ export default function UploadVoucherModalYape({
                                             ></i>
                                         </Tippy>
                                         <small className="block text-xs font-light">
-                                            {coupon.name}{" "}
+                                            {coupon.code}{" "}
                                             <Tippy
                                                 content={
                                                     coupon.description
@@ -275,8 +287,8 @@ export default function UploadVoucherModalYape({
                                                 <i className="mdi mdi-information-outline ms-1"></i>
                                             </Tippy>{" "}
                                             ({coupon.type === 'percentage' 
-                                                ? `-${Math.round(coupon.amount * 100) / 100}%`
-                                                : `S/ -${Number2Currency(coupon.amount)}`})
+                                                ? `${coupon.value}%`
+                                                    : `S/ ${Number2Currency(coupon.value)}`})
                                         </small>
                                     </span>
                                     <span>
@@ -285,6 +297,15 @@ export default function UploadVoucherModalYape({
                                             descuentofinal
                                         )}
                                     </span>
+                                </div>
+                            )}
+                            {autoDiscounts && autoDiscounts.length > 0 && (
+                                <div className="mb-2 mt-2 border-b pb-2">
+                                   
+                                    <div className="flex justify-between items-center text-sm font-bold text-green-600 mt-1 pt-1 border-t">
+                                        <span>Total descuentos automáticos:</span>
+                                        <span>S/ -{Number2Currency(autoDiscountTotal)}</span>
+                                    </div>
                                 </div>
                             )}
                         <div className="flex justify-between text-sm 2xl:text-base">
