@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('items', function (Blueprint $table) {
-            $table->string('grouper')->nullable()->after('sku');
+        Schema::table('sales', function (Blueprint $table) {
+            $table->decimal('total_amount', 10, 2)->nullable()->after('promotion_discount');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('items', function (Blueprint $table) {
-            $table->dropColumn('grouper');
+        Schema::table('sales', function (Blueprint $table) {
+            $table->dropColumn('total_amount');
         });
     }
 };

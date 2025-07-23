@@ -725,7 +725,10 @@ export default function ShippingStepSF({
                     comment: formData?.comment || "",
                     amount: totalPrice || 0,
                     delivery: envio,
-                    cart: cart,
+                    details: JSON.stringify(cart.map((item) => ({
+                        id: item.id,
+                        quantity: item.quantity
+                    }))),
                     invoiceType: formData.invoiceType || "",
                     documentType: formData.documentType || "",
                     document: formData.document || "",
@@ -759,7 +762,10 @@ export default function ShippingStepSF({
                     comment: formData?.comment || "",
                     amount: totalPrice || 0,
                     delivery: envio,
-                    cart: cart,
+                    details: JSON.stringify(cart.map((item) => ({
+                        id: item.id,
+                        quantity: item.quantity
+                    }))),
                     invoiceType: formData.invoiceType || "",
                     documentType: formData.documentType || "",
                     document: formData.document || "",
@@ -1404,12 +1410,15 @@ export default function ShippingStepSF({
                                             {item.name}
                                         </h3>
 
-                                        <p className="text-sm customtext-neutral-light">
+                                     {item?.color && (
+
+                                           <p className="text-sm customtext-neutral-light">
                                             Color:{" "}
                                             <span className="customtext-neutral-dark">
                                                 {item.color}
                                             </span>
                                         </p>
+                                     )}
                                         <p className="text-sm customtext-neutral-light">
                                             Cantidad:{" "}
                                             <span className="customtext-neutral-dark">

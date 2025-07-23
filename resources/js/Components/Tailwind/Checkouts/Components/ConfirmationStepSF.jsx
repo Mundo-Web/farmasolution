@@ -6,15 +6,15 @@ import { Local } from "sode-extend-react";
 import Global from "../../../../Utils/Global";
 
 
-export default function ConfirmationStepSF({setCart, cart, code, delivery }) {
+export default function ConfirmationStepSF({ setCart, cart, code, delivery, data }) {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     useEffect(() => {
         const fetchOrderDetails = async () => {
             try {
-                const response = await recoveryOrderData({code});
+                const response = await recoveryOrderData({ code });
                 setOrder(response.order);
             } catch (err) {
                 setError(err.message);
@@ -22,11 +22,11 @@ export default function ConfirmationStepSF({setCart, cart, code, delivery }) {
                 setLoading(false);
             }
         };
-        
+
         if (code) {
             fetchOrderDetails();
             Local.delete(`${Global.APP_CORRELATIVE}_cart`);
-            Local.set(`${Global.APP_CORRELATIVE}_cart`,[]);
+            Local.set(`${Global.APP_CORRELATIVE}_cart`, []);
         }
     }, [code]);
 
@@ -59,10 +59,10 @@ export default function ConfirmationStepSF({setCart, cart, code, delivery }) {
             </div>
         );
     }
-    
+
     const totalPrice = order?.items?.reduce((acc, item) => {
-        const itemPrice = item.price || 0; 
-        const quantity = item.quantity || 0; 
+        const itemPrice = item.price || 0;
+        const quantity = item.quantity || 0;
         return acc + (itemPrice * quantity);
     }, 0) || 0;
 
@@ -89,7 +89,7 @@ export default function ConfirmationStepSF({setCart, cart, code, delivery }) {
 
                     <div className="space-y-4 max-w-lg bg-[#F7F9FB] mx-auto p-8 rounded-xl">
                         <div className="space-y-6 border-b-2 pb-6">
-                        {order.items.map((item, index) => (
+                            {order.items.map((item, index) => (
                                 <div key={index} className="rounded-lg">
                                     <div className="flex gap-4">
                                         <div className="bg-white rounded-xl w-max">
@@ -104,11 +104,14 @@ export default function ConfirmationStepSF({setCart, cart, code, delivery }) {
                                             <h3 className="font-medium text-lg">
                                                 {item.name}
                                             </h3>
+                                            {item?.color && (
+                                                <p className="text-sm customtext-neutral-light">
+                                                    Color: <span className="customtext-neutral-dark">{item.color}</span>
+                                                </p>
+
+                                            )}
                                             <p className="text-sm customtext-neutral-light">
-                                                Color: <span className="customtext-neutral-dark">{item.color}</span>
-                                            </p>
-                                            <p className="text-sm customtext-neutral-light">
-                                                Cantidad: <span className="customtext-neutral-dark">{parseInt(item.quantity)}</span> - 
+                                                Cantidad: <span className="customtext-neutral-dark">{parseInt(item.quantity)}</span> -
                                                 Precio: <span className="customtext-neutral-dark"> S/ {Number2Currency(item.price)}</span>
                                             </p>
                                         </div>
@@ -134,7 +137,7 @@ export default function ConfirmationStepSF({setCart, cart, code, delivery }) {
                                     <span>
                                         S/ -
                                         {Number2Currency(
-                                           order.coupon_discount
+                                            order.coupon_discount
                                         )}
                                     </span>
                                 </div>
@@ -151,7 +154,7 @@ export default function ConfirmationStepSF({setCart, cart, code, delivery }) {
                             </div>
                         </div>
                         <div className="pt-3">
-                            <ButtonPrimary href="/catalogo" >  Seguir Comprando</ButtonPrimary>
+                            <ButtonPrimary href="/catalogo" className={` !rounded-full ${data?.class_button} `}>  Seguir Comprando</ButtonPrimary>
 
                         </div>
 

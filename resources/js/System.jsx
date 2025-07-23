@@ -249,7 +249,7 @@ const System = ({
             const criticalComponents = ['Header', 'Footer', 'Product', 'Cart'];
             
             criticalComponents.forEach(component => {
-                import(`./Components/Tailwind/${component}`).catch(() => {
+                import(`./Components/Tailwind/${component}.jsx`).catch(() => {
                     // Silenciar errores de preload
                 });
             });
