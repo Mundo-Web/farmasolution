@@ -29,7 +29,9 @@ export default function UploadVoucherModalBancs({
     request,
     contacts = [],
     coupon = null,
-    descuentofinal = 0
+    descuentofinal = 0,
+    autoDiscounts = [],
+    autoDiscountTotal = 0
 }) {
     const [file, setFile] = useState(null);
     const [saving, setSaving] = useState(false);
@@ -283,6 +285,30 @@ export default function UploadVoucherModalBancs({
                                         descuentofinal
                                     )}
                                 </span>
+                            </div>
+                        )}
+                        {autoDiscounts && autoDiscounts.length > 0 && (
+                            <div className="mb-2 mt-2 border-b pb-2">
+                                <div className="text-sm font-bold text-green-600 mb-1">
+                                    Descuentos automáticos aplicados:
+                                </div>
+                                {autoDiscounts.map((discount, index) => (
+                                    <div key={index} className="flex justify-between items-center text-sm">
+                                        <span className="text-green-700">
+                                            {discount.rule_name || discount.name || 'Descuento automático'}
+                                            <small className="block text-xs font-light text-gray-600">
+                                                {discount.description || 'Promoción especial'}
+                                            </small>
+                                        </span>
+                                        <span className="font-semibold text-green-600">
+                                            S/ -{Number2Currency(discount.discount_amount || discount.amount || 0)}
+                                        </span>
+                                    </div>
+                                ))}
+                                <div className="flex justify-between items-center text-sm font-bold text-green-600 mt-1 pt-1 border-t">
+                                    <span>Total descuentos automáticos:</span>
+                                    <span>S/ -{Number2Currency(autoDiscountTotal)}</span>
+                                </div>
                             </div>
                         )}
                         <div className="flex justify-between text-sm 2xl:text-base">

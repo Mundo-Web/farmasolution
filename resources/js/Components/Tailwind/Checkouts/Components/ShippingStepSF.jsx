@@ -9,7 +9,7 @@ import ButtonSecondary from "./ButtonSecondary";
 import InputForm from "./InputForm";
 import SelectForm from "./SelectForm";
 import OptionCard from "./OptionCard";
-import { CheckCircleIcon, CircleX, InfoIcon } from "lucide-react";
+import { CheckCircleIcon, CircleX, InfoIcon, UserRoundX, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { Notify } from "sode-extend-react";
 import { renderToString } from "react-dom/server";
 import { debounce } from "lodash";
@@ -24,9 +24,11 @@ import Global from "../../../../Utils/Global";
 import CouponsRest from "../../../../Actions/CouponsRest";
 import Tippy from "@tippyjs/react";
 import ReactModal from "react-modal";
+import DiscountRulesRest from "../../../../Actions/DiscountRulesRest";
 
 
-const couponRest = new CouponsRest();
+
+
 
 export default function ShippingStepSF({
     cart,
@@ -49,12 +51,86 @@ export default function ShippingStepSF({
     descuentofinal,
     setDescuentoFinal,
     data, // Para gradientes
-    openModal
+    openModal,
+    setCouponDiscount: setParentCouponDiscount,
+    setCouponCode: setParentCouponCode,
+    automaticDiscounts = [], // Se usará como reglas, no como descuentos ya calculados
+    automaticDiscountTotal = 0,
+    totalWithoutDiscounts,
+    conversionScripts,
+    setConversionScripts,
+    onPurchaseComplete,
 }) {
     const couponRef = useRef(null);
     const [coupon, setCoupon] = useState(null);
     const [selectedUbigeo, setSelectedUbigeo] = useState(null);
     const [defaultUbigeoOption, setDefaultUbigeoOption] = useState(null);
+    
+    // Estados para los descuentos automáticos calculados
+    const [autoDiscounts, setAutoDiscounts] = useState([]);
+    const [autoDiscountTotal, setAutoDiscountTotal] = useState(0);
+
+    // Get free items from automatic discounts calculados
+    const freeItems = autoDiscounts.reduce((items, discount) => {
+        if (discount.free_items && Array.isArray(discount.free_items)) {
+            return items.concat(discount.free_items);
+        }
+        return items;
+    }, []);
+
+    // Función para calcular todos los descuentos automáticos
+    const calculateAutomaticDiscounts = async (cart, rules) => {
+        if (!cart || cart.length === 0) {
+            return { discounts: [], total: 0 };
+        }
+
+        try {
+            console.log('🔄 ShippingStepSF: Calculating automatic discounts...', { cart, totalWithoutDiscounts });
+            
+            const result = await DiscountRulesRest.applyToCart(cart, totalWithoutDiscounts);
+            
+            if (result.success && result.data) {
+                const discounts = DiscountRulesRest.formatDiscounts(result.data.applied_discounts);
+                const discountAmount = result.data.total_discount || 0;
+                
+                console.log('✅ ShippingStepSF: Automatic discounts calculated', {
+                    discounts,
+                    discountAmount,
+                    freeItems: result.data.free_items
+                });
+                
+                return {
+                    discounts: result.data.applied_discounts,
+                    total: discountAmount
+                };
+            }
+        } catch (error) {
+            console.error('❌ Error calculating automatic discounts:', error);
+        }
+        
+        return { discounts: [], total: 0 };
+    };
+
+    // Recalcular descuentos automáticos cuando cambie el carrito o las reglas
+    useEffect(() => {
+        if (cart && cart.length > 0 && totalWithoutDiscounts) {
+            calculateAutomaticDiscounts(cart, automaticDiscounts).then(result => {
+                setAutoDiscounts(result.discounts);
+                setAutoDiscountTotal(result.total);
+            });
+        } else {
+            setAutoDiscounts([]);
+            setAutoDiscountTotal(0);
+        }
+    }, [cart, automaticDiscounts, totalWithoutDiscounts]);
+    
+    // Tipos de documentos como en ComplaintStech
+    const typesDocument = [
+        { value: "dni", label: "DNI" },
+        { value: "ruc", label: "RUC" },
+        { value: "ce", label: "CE" },
+        { value: "pasaporte", label: "Pasaporte" },
+    ];
     
     const [formData, setFormData] = useState({
         name: user?.name || "",
@@ -62,20 +138,46 @@ export default function ShippingStepSF({
         email: user?.email || "",
         phone_prefix: user?.phone_prefix || "51", //telf
         phone: user?.phone || "",   //telf
+        documentType: user?.document_type?.toLowerCase() || "dni",
+        document: user?.document_number || "",
         department: user?.department || "",
         province: user?.province || "",
         district: user?.district || "",
         address: user?.address || "",
         number: user?.number || "",
         comment: user?.comment || "",
-        /*reference: user?.reference || "",*/
+        reference: user?.reference || "",
         shippingOption: "delivery", // Valor predeterminado
         ubigeo: user?.ubigeo || null,
         invoiceType: user?.invoiceType || "boleta", // Nuevo campo para tipo de comprobante
-        documentType: user?.documentType || "dni", 
-        document: user?.dni || "", 
         businessName: user?.businessName || "", // Nuevo campo para Razón Social
     });
+    
+    // Efecto para actualizar formData cuando cambien los datos del usuario
+    useEffect(() => {
+        if (user) {
+            setFormData(prev => ({
+                ...prev,
+                name: user.name || "",
+                lastname: user.lastname || "",
+                email: user.email || "",
+                phone_prefix: user.phone_prefix || "51",
+                phone: user.phone || "",
+                documentType: user.document_type?.toLowerCase() || "dni",
+                document: user.document_number || "",
+                department: user.department || "",
+                province: user.province || "",
+                district: user.district || "",
+                address: user.address || "",
+                number: user.number || "",
+                comment: user.comment || "",
+                reference: user.reference || "",
+                ubigeo: user.ubigeo || null,
+                invoiceType: user.invoiceType || "boleta",
+                businessName: user.businessName || "",
+            }));
+        }
+    }, [user]);
     
     useEffect(() => {
         if (user?.ubigeo && user?.district && user?.province && user?.department) {
@@ -118,37 +220,125 @@ export default function ShippingStepSF({
     };
 
     // Estados para manejar los valores seleccionados
-    // const [departamento, setDepartamento] = useState("");
-    // const [provincia, setProvincia] = useState("");
-    // const [distrito, setDistrito] = useState("");
-
-    // Estados para las opciones dinámicas
-    // const [departamentos, setDepartamentos] = useState([]);
-    // const [provincias, setProvincias] = useState([]);
-    // const [distritos, setDistritos] = useState([]);
-    
-    // Estado para el precio de envío
-    const [shippingCost, setShippingCost] = useState(0);
-
-    // Estado para el ubigeo
     const [loading, setLoading] = useState(false);
+    const [paymentLoading, setPaymentLoading] = useState(false);
     const [shippingOptions, setShippingOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
     const [costsGet, setCostsGet] = useState(null);
     const [errors, setErrors] = useState({});
+    const [searchInput, setSearchInput] = useState("");
+    const [expandedCharacteristics, setExpandedCharacteristics] = useState(false);
+    
+    // Estados para cupones mejorados
+    const [couponCode, setCouponCode] = useState("");
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    // El descuento del cupón se calcula sobre el total real, no solo el subtotal
+    const [couponDiscount, setCouponDiscount] = useState(0); // solo para compatibilidad visual
+    const [couponLoading, setCouponLoading] = useState(false);
+    const [couponError, setCouponError] = useState("");
+
+    // Estados para retiro en tienda
+    const [selectedStore, setSelectedStore] = useState(null);
+    const [showStoreSelector, setShowStoreSelector] = useState(false);
+
+    // Estado para modal de login
+    const [showLoginModal, setShowLoginModal] = useState(false);
 
     // Cargar los departamentos al iniciar el componente
-    // useEffect(() => {
-    //     const uniqueDepartamentos = [
-    //         ...new Set(ubigeoData.map((item) => item.departamento)),
-    //     ];
-    //     setDepartamentos(uniqueDepartamentos);
-    // }, []);
     const numericSubTotal = typeof subTotal === 'number' ? subTotal : parseFloat(subTotal) || 0;
     const numericIgv = typeof igv === 'number' ? igv : parseFloat(igv) || 0;
     const hasShippingFree = parseFloat(getContact("shipping_free"));
    
-    const subFinal = numericSubTotal + numericIgv - descuentofinal;
+    const subFinal = numericSubTotal + numericIgv - descuentofinal - autoDiscountTotal;
+    
+    // Función de validación mejorada con alertas específicas
+    const validateForm = () => {
+        const newErrors = {};
+        
+        // Validación de campos obligatorios
+        if (!formData.name) newErrors.name = "Nombre es requerido";
+        if (!formData.lastname) newErrors.lastname = "Apellido es requerido";
+        if (!formData.email) newErrors.email = "Email es requerido";
+        if (!formData.phone) newErrors.phone = "Teléfono es requerido";
+        if (!formData.ubigeo) newErrors.ubigeo = "Ubicación es requerida";
+        if (!formData.address) newErrors.address = "Dirección es requerida";
+        if (!formData.number) newErrors.number = "Número es requerido";
+        if (!formData.document) newErrors.document = "Documento es requerido";
+
+        // Validación de email
+        if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = "Email inválido";
+        }
+
+        // Validación de documento según tipo
+        if (formData.document) {
+            if (formData.documentType === "dni" && formData.document.length !== 8) {
+                newErrors.document = "DNI debe tener 8 dígitos";
+            } else if (formData.documentType === "ruc" && formData.document.length !== 11) {
+                newErrors.document = "RUC debe tener 11 dígitos";
+            }
+        }
+
+        // Validación de razón social para factura
+        if (formData.invoiceType === "factura" && !formData.businessName) {
+            newErrors.businessName = "Razón social es requerida para factura";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    // Función para manejar la selección de tienda
+    const handleStoreSelect = (store) => {
+        setSelectedStore(store);
+        setShowStoreSelector(false);
+        setFormData(prev => ({
+            ...prev,
+            shippingOption: "pickup",
+            address: store.address,
+            department: store.department,
+            province: store.province,
+            district: store.district
+        }));
+    };
+
+    // Función para enfocar el primer campo con error y hacer scroll suave
+    const focusFirstError = (errors) => {
+        const firstErrorKey = Object.keys(errors)[0];
+        
+        setTimeout(() => {
+            let targetElement = null;
+            
+            if (firstErrorKey === 'ubigeo') {
+                targetElement = document.getElementById('ubigeo-select-container');
+            } else if (firstErrorKey === 'phone_prefix') {
+                targetElement = document.querySelector('.select2-prefix-selector')?.parentElement;
+            } else {
+                targetElement = document.querySelector(`[name="${firstErrorKey}"]`);
+            }
+
+            if (targetElement) {
+                highlightElement(targetElement);
+                
+                // Scroll suave al elemento
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                
+                // Enfocar si es un input
+                if (['INPUT', 'SELECT', 'TEXTAREA'].includes(targetElement.tagName)) {
+                    targetElement.focus();
+                }
+            }
+        }, 100);
+    };
+
+    // Función auxiliar para agregar efecto visual temporal a un elemento
+    const highlightElement = (element) => {
+        element.classList.add('highlight-error');
+        setTimeout(() => element.classList.remove('highlight-error'), 2000);
+    };
     
     const handleUbigeoChange = async (selected) => {
         if (!selected) return;
@@ -362,42 +552,21 @@ export default function ShippingStepSF({
         }
 
         if (!user) {
-            toast.error("Acceso requerido", {
-                description: `Debe iniciar sesión para continuar.`,
-                icon: <UserRoundX className="h-5 w-5 text-red-500" />,
-                duration: 3000,
-                position: "bottom-center",
-            });
-
-
+            setShowLoginModal(true);
             return;
         }
 
-        if (
-            !formData.name ||
-            !formData.lastname ||
-            !formData.email ||
-            !formData.address ||
-            !formData.phone ||
-            !formData.ubigeo || 
-            !formData.number 
-        ) {
-            Notify.add({
-                icon: "/assets/img/icon.svg",
-                title: "Campos incompletos",
-                body: "Complete todos los campos obligatorios",
-                type: "danger",
-            });
-
+        if (!validateForm()) {
+            focusFirstError(errors);
             return;
         }
 
         if (!selectedOption) {
-            Notify.add({
-                icon: "/assets/img/icon.svg",
-                title: "Seleccione envío",
-                body: "Debe elegir una zona de envío valido",
-                type: "danger",
+            toast.error("Seleccione envío", {
+                description: `Debe elegir un método de envío`,
+                icon: <CircleX className="h-5 w-5 text-red-500" />,
+                duration: 3000,
+                position: "bottom-center",
             });
             return;
         }
@@ -408,6 +577,10 @@ export default function ShippingStepSF({
         }
 
         try {
+            // Obtener el delivery_type del shipping option seleccionado
+            const selectedShippingOption = shippingOptions.find(option => option.type === selectedOption);
+            const deliveryType = selectedShippingOption ? selectedShippingOption.deliveryType : 'domicilio';
+
             const request = {
                 user_id: user?.id || "",
                 name: formData?.name || "",
@@ -424,14 +597,21 @@ export default function ShippingStepSF({
                 address: formData?.address || "",
                 number: formData?.number || "",
                 comment: formData?.comment || "",
-                /*reference: formData?.reference || "",*/
+                reference: formData?.reference || "",
                 amount: totalFinal || 0,
                 delivery: envio,
+                delivery_type: deliveryType, // Agregar delivery_type
                 cart: cart,
                 invoiceType: formData.invoiceType || "",
                 documentType: formData.documentType || "",
                 document: formData.document || "",
                 businessName: formData.businessName || "",
+                // Agregar descuentos automáticos
+                automatic_discounts: autoDiscounts,
+                automatic_discount_total: autoDiscountTotal,
+                coupon_id: coupon ? coupon.id : null,
+                coupon_discount: descuentofinal || 0,
+                total_amount: totalFinal || 0,
             };
            
             const response = await processMercadoPagoPayment(request)
@@ -442,21 +622,37 @@ export default function ShippingStepSF({
                 setDelivery(data.delivery);
                 setCode(data.code);
                 
+                // Ejecutar scripts de conversión si existen
+                if (conversionScripts && Array.isArray(conversionScripts)) {
+                    conversionScripts.forEach(script => {
+                        try {
+                            eval(script);
+                        } catch (error) {
+                            console.error('Error executing conversion script:', error);
+                        }
+                    });
+                }
+
+                // Llamar callback de compra completada
+                if (onPurchaseComplete) {
+                    onPurchaseComplete(data);
+                }
+                
             } else {
-                Notify.add({
-                    icon: "/assets/img/icon.svg",
-                    title: "Error en el Pago",
-                    body: "El pago ha sido rechazado",
-                    type: "danger",
+                toast.error("Error en el Pago", {
+                    description: "El pago ha sido rechazado",
+                    icon: <CircleX className="h-5 w-5 text-red-500" />,
+                    duration: 3000,
+                    position: "bottom-center",
                 });
             }
         } catch (error) {
             console.log(error);
-            Notify.add({
-                icon: "/assets/img/icon.svg",
-                title: "Error en el Pago",
-                body: "No se llegó a procesar el pago",
-                type: "danger",
+            toast.error("Error en el Pago", {
+                description: "No se llegó a procesar el pago",
+                icon: <CircleX className="h-5 w-5 text-red-500" />,
+                duration: 3000,
+                position: "bottom-center",
             });
         }
     };
@@ -520,26 +716,22 @@ export default function ShippingStepSF({
             e.preventDefault();
         }
 
-        // if (!user) {
-        //     toast.success('Iniciar Sesión', {
-        //         description: `Se requiere que incie sesión para realizar la compra`,
-        //         icon: <CircleX className="h-5 w-5 text-red-500" />,
-        //         duration: 3000,
-        //         position: 'top-right',
-        //     });
-        //     return;
-        // }
+        if (!user) {
+            setShowLoginModal(true);
+            return;
+        }
 
         if (!validateForm()) {
+            focusFirstError(errors);
             return;
         }
     
         if (!selectedOption) {
-            toast.success('Seleccione envío', {
+            toast.error('Seleccione envío', {
                 description: `Debe elegir un método de envío`,
                 icon: <CircleX className="h-5 w-5 text-red-500" />,
                 duration: 3000,
-                position: 'top-right',
+                position: 'bottom-center',
             });
             return;
         }
@@ -547,7 +739,7 @@ export default function ShippingStepSF({
         setShowPaymentModal(true);
     };
 
-    const validateForm = () => {
+    const validateFormOld = () => {
         const newErrors = {};
         
         // Validación de campos
@@ -650,6 +842,10 @@ export default function ShippingStepSF({
                     return
                 }
 
+                // Obtener el delivery_type del shipping option seleccionado
+                const selectedShippingOption = shippingOptions.find(option => option.type === selectedOption);
+                const deliveryType = selectedShippingOption ? selectedShippingOption.deliveryType : 'domicilio';
+
                 const request = {
                     user_id: user?.id || "",
                     name: formData?.name || "",
@@ -666,17 +862,23 @@ export default function ShippingStepSF({
                     address: formData?.address || "",
                     number: formData?.number || "",
                     comment: formData?.comment || "",
+                    reference: formData?.reference || "",
                     amount: totalPrice || 0,
                     delivery: envio,
+                    delivery_type: deliveryType, // Agregar delivery_type
                     cart: cart,
                     invoiceType: formData.invoiceType || "",
                     documentType: formData.documentType || "",
                     document: formData.document || "",
                     businessName: formData.businessName || "",
                     payment_method: paymentMethod || null,
-                    coupon_id: coupon ? coupon.id : null,
-                    coupon_discount: descuentofinal || 0,
-                    total_amount: totalFinal || 0,
+                    // Cupón aplicado
+                    coupon_id: appliedCoupon ? appliedCoupon.id : null,
+                    coupon_discount: calculatedCouponDiscount || 0,
+                    // Descuentos automáticos
+                    automatic_discounts: autoDiscounts,
+                    automatic_discount_total: autoDiscountTotal,
+                    total_amount: finalTotalWithCoupon || 0,
                 };
                 
                 try {
@@ -688,24 +890,44 @@ export default function ShippingStepSF({
                         setDelivery(data.delivery);
                         setCode(data.code);
                         
+                        // Ejecutar scripts de conversión si existen
+                        if (conversionScripts && Array.isArray(conversionScripts)) {
+                            conversionScripts.forEach(script => {
+                                try {
+                                    eval(script);
+                                } catch (error) {
+                                    console.error('Error executing conversion script:', error);
+                                }
+                            });
+                        }
+
+                        // Llamar callback de compra completada
+                        if (onPurchaseComplete) {
+                            onPurchaseComplete(data);
+                        }
+                        
                     } else {
-                        toast.success('Error en el Pago', {
+                        toast.error('Error en el Pago', {
                             description: `El pago ha sido rechazado`,
                             icon: <CircleX className="h-5 w-5 text-red-500" />,
                             duration: 3000,
-                            position: 'top-right',
+                            position: 'bottom-center',
                         });
                     }
                 } catch (error) {
                     console.log(error);
-                    toast.success('Error en el Pago', {
+                    toast.error('Error en el Pago', {
                         description: `No se llegó a procesar el pago`,
                         icon: <CircleX className="h-5 w-5 text-red-500" />,
                         duration: 3000,
-                        position: 'top-right',
+                        position: 'bottom-center',
                     });
                 }
             }else if(paymentMethod === "yape") {
+
+                // Obtener el delivery_type del shipping option seleccionado
+                const selectedShippingOption = shippingOptions.find(option => option.type === selectedOption);
+                const deliveryType = selectedShippingOption ? selectedShippingOption.deliveryType : 'domicilio';
 
                 const request = {
                     user_id: user?.id || "",
@@ -723,8 +945,10 @@ export default function ShippingStepSF({
                     address: formData?.address || "",
                     number: formData?.number || "",
                     comment: formData?.comment || "",
+                    reference: formData?.reference || "",
                     amount: totalPrice || 0,
                     delivery: envio,
+                    delivery_type: deliveryType, // Agregar delivery_type
                     details: JSON.stringify(cart.map((item) => ({
                         id: item.id,
                         quantity: item.quantity
@@ -735,15 +959,23 @@ export default function ShippingStepSF({
                     businessName: formData.businessName || "",
                     payment_method: paymentMethod || null,
                     payment_proof: null,
-                    coupon_id: coupon ? coupon.id : null,
-                    coupon_discount: descuentofinal || 0,
-                    total_amount: totalFinal || 0,
+                    // Cupón aplicado
+                    coupon_id: appliedCoupon ? appliedCoupon.id : null,
+                    coupon_discount: calculatedCouponDiscount || 0,
+                    // Descuentos automáticos
+                    automatic_discounts: autoDiscounts,
+                    automatic_discount_total: autoDiscountTotal,
+                    total_amount: finalTotalWithCoupon || 0,
                 };
 
                 setPaymentRequest(request);
                 setShowVoucherModal(true);
             }else if(paymentMethod === "transferencia") {
 
+                // Obtener el delivery_type del shipping option seleccionado
+                const selectedShippingOption = shippingOptions.find(option => option.type === selectedOption);
+                const deliveryType = selectedShippingOption ? selectedShippingOption.deliveryType : 'domicilio';
+
                 const request = {
                     user_id: user?.id || "",
                     name: formData?.name || "",
@@ -760,8 +992,10 @@ export default function ShippingStepSF({
                     address: formData?.address || "",
                     number: formData?.number || "",
                     comment: formData?.comment || "",
+                    reference: formData?.reference || "",
                     amount: totalPrice || 0,
                     delivery: envio,
+                    delivery_type: deliveryType, // Agregar delivery_type
                     details: JSON.stringify(cart.map((item) => ({
                         id: item.id,
                         quantity: item.quantity
@@ -772,20 +1006,24 @@ export default function ShippingStepSF({
                     businessName: formData.businessName || "",
                     payment_method: paymentMethod || null,
                     payment_proof: null,
-                    coupon_id: coupon ? coupon.id : null,
-                    coupon_discount: descuentofinal || 0,
-                    total_amount: totalFinal || 0,
+                    // Cupón aplicado
+                    coupon_id: appliedCoupon ? appliedCoupon.id : null,
+                    coupon_discount: calculatedCouponDiscount || 0,
+                    // Descuentos automáticos
+                    automatic_discounts: autoDiscounts,
+                    automatic_discount_total: autoDiscountTotal,
+                    total_amount: finalTotalWithCoupon || 0,
                 };
                 setPaymentRequest(request);
                 setShowVoucherModalBancs(true);
             }
         } catch (error) {
             console.error("Error en el pago:", error);
-            toast.success('Error en el Pago', {
+            toast.error('Error en el Pago', {
                 description: `No se llegó a procesar el pago`,
                 icon: <CircleX className="h-5 w-5 text-red-500" />,
                 duration: 3000,
-                position: 'top-right',
+                position: 'bottom-center',
             });
         }
     };
@@ -802,6 +1040,176 @@ export default function ShippingStepSF({
     }, [formData]);
 
     
+    // Función para validar cupón
+    const validateCoupon = async () => {
+        if (!couponCode.trim()) {
+            setCouponError("Ingrese un código de cupón");
+            return;
+        }
+
+        setCouponLoading(true);
+        setCouponError("");
+
+        try {
+            // Mostrar información sobre el cupón antes de validar
+            if (couponCode.toUpperCase() === 'TEST50' && subTotal < 100) {
+                toast.warning("Información importante", {
+                    description: `El cupón TEST50 requiere un monto mínimo de S/ 100.00. Tu carrito actual: S/ ${Number2Currency(subTotal)}`,
+                    icon: <AlertTriangle className="h-5 w-5 text-yellow-500" />,
+                    duration: 5000,
+                    position: "bottom-center",
+                });
+            }
+
+            // Extraer IDs de categorías y productos del carrito
+            const categoryIds = [...new Set(cart.map(item => item.category_id).filter(Boolean))];
+            const productIds = [...new Set(cart.map(item => item.id || item.item_id).filter(Boolean))];
+
+            console.log("Validando cupón:", {
+                code: couponCode.trim(),
+                cart_total: subTotal,
+                category_ids: categoryIds,
+                product_ids: productIds
+            });
+
+            const response = await CouponsRest.validateCoupon({
+                code: couponCode.trim(),
+                cart_total: subTotal,
+                category_ids: categoryIds,
+                product_ids: productIds
+            });
+
+            console.log("Respuesta del cupón:", response);
+
+            // Manejar diferentes estructuras de respuesta
+            const data = response.data || response; // response.data para nueva estructura, response para estructura anterior
+            
+            if (data && data.valid) {
+                setAppliedCoupon(data.coupon);
+                // Redondear el descuento a 2 decimales para evitar problemas de precisión
+                const roundedDiscount = Math.round(data.discount * 100) / 100;
+                setCouponDiscount(roundedDiscount);
+                setCouponCode("");
+                
+                // Actualizar estados del padre si existen
+                if (setParentCouponCode) setParentCouponCode(data.coupon.code);
+                if (setParentCouponDiscount) setParentCouponDiscount(roundedDiscount);
+                
+                toast.success("Cupón aplicado", {
+                    description: `Descuento de S/ ${Number2Currency(roundedDiscount)} aplicado`,
+                    icon: <CheckCircleIcon className="h-5 w-5 text-green-500" />,
+                    duration: 3000,
+                    position: "bottom-center",
+                });
+            } else {
+                const errorMessage = data?.message || "Cupón inválido o no aplicable a estos productos";
+                setCouponError(errorMessage);
+                
+                // Mejorar el mensaje de error para casos específicos
+                let toastMessage = errorMessage;
+                if (errorMessage.includes("monto mínimo")) {
+                    toastMessage = `${errorMessage} Tu carrito actual: S/ ${Number2Currency(subTotal)}`;
+                }
+                
+                toast.error("Cupón inválido", {
+                    description: toastMessage,
+                    icon: <CircleX className="h-5 w-5 text-red-500" />,
+                    duration: 4000,
+                    position: "bottom-center",
+                });
+            }
+        } catch (error) {
+            console.error("Error validating coupon:", error);
+            const errorMessage = error.response?.data?.message || "Error al validar el cupón";
+            setCouponError(errorMessage);
+            
+            toast.error("Error de validación", {
+                description: errorMessage,
+                icon: <CircleX className="h-5 w-5 text-red-500" />,
+                duration: 3000,
+                position: "bottom-center",
+            });
+        } finally {
+            setCouponLoading(false);
+        }
+    };
+
+    // Función para remover cupón
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode("");
+        setCouponDiscount(0);
+        setCouponError("");
+        
+        // Actualizar estados del padre si existen
+        if (setParentCouponCode) setParentCouponCode("");
+        if (setParentCouponDiscount) setParentCouponDiscount(0);
+        
+        toast.success("Cupón removido", {
+            description: "El cupón ha sido removido del pedido",
+            icon: <InfoIcon className="h-5 w-5 text-blue-500" />,
+            duration: 2000,
+            position: "bottom-center",
+        });
+    };
+
+    // Función auxiliar para redondear valores monetarios con mayor precisión
+    const roundToTwoDecimals = (num) => {
+        return Math.round((parseFloat(num) + Number.EPSILON) * 100) / 100;
+    };
+
+    // Calcular el total base antes de cupón
+    const totalBase = roundToTwoDecimals(subTotal) + roundToTwoDecimals(igv) + roundToTwoDecimals(envio) - roundToTwoDecimals(autoDiscountTotal);
+
+    // El descuento del cupón ya viene calculado desde el backend
+    let calculatedCouponDiscount = couponDiscount || 0;
+    
+    // Sincronizar el estado para mantener compatibilidad visual
+    useEffect(() => {
+        if (setParentCouponDiscount) {
+            setParentCouponDiscount(calculatedCouponDiscount);
+        }
+    }, [appliedCoupon, couponDiscount, setParentCouponDiscount]);
+
+    const finalTotalWithCoupon = Math.max(0, roundToTwoDecimals(totalBase - calculatedCouponDiscount));
+
+    // Componente Modal de Login
+    const LoginModal = () => {
+        return (
+            <ReactModal
+                isOpen={showLoginModal}
+                onRequestClose={() => setShowLoginModal(false)}
+                className="modal-content max-w-md mx-auto mt-20 bg-white rounded-lg p-6"
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            >
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold mb-4">Iniciar Sesión Requerido</h2>
+                    <p className="text-gray-600 mb-6">
+                        Debe iniciar sesión para continuar con su compra
+                    </p>
+                    <div className="flex gap-4 justify-center">
+                        <button
+                            onClick={() => setShowLoginModal(false)}
+                            className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={() => {
+                                setShowLoginModal(false);
+                                // Redirigir a login o abrir modal de login
+                                window.location.href = '/login';
+                            }}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </div>
+            </ReactModal>
+        );
+    };
+
     const selectStyles = (hasError) => ({
         control: (base) => ({
             ...base,
@@ -910,6 +1318,29 @@ export default function ShippingStepSF({
 
     return (
         <>
+            <style jsx>{`
+                .highlight-error {
+                    animation: highlight 2s ease-in-out;
+                    border: 2px solid #ef4444 !important;
+                    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3) !important;
+                }
+                
+                @keyframes highlight {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.02); }
+                    100% { transform: scale(1); }
+                }
+                
+                .modal-overlay {
+                    z-index: 9999;
+                }
+                
+                .modal-content {
+                    max-height: 90vh;
+                    overflow-y: auto;
+                }
+            `}</style>
+            
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-y-8 lg:gap-8 ">
                 <div className="lg:col-span-3">
                     {/* Formulario */}
@@ -1228,7 +1659,7 @@ export default function ShippingStepSF({
                                 />
 
                                 <InputForm
-                                    label="Dpto./ Interior/ Piso/ Lote/ Bloque (opcional)"
+                                    label="Dpto./ Interior/ Piso/ Lote/ Bloque"
                                     type="text"
                                     name="comment"
                                     value={formData.comment}
@@ -1338,27 +1769,49 @@ export default function ShippingStepSF({
                                 Tipo de comprobante
                             </label>
                             <div className="flex gap-4">
-                                <label className="inline-flex items-center">
-                                    <input
-                                        type="radio"
-                                        className="form-radio"
-                                        name="invoiceType"
-                                        value="boleta"
-                                        checked={formData.invoiceType === "boleta"}
-                                        onChange={handleChange}
-                                    />
-                                    <span className="ml-2">Boleta</span>
+                                <label className="inline-flex items-center cursor-pointer group">
+                                    <div className="relative">
+                                        <input
+                                            type="radio"
+                                            className="sr-only"
+                                            name="invoiceType"
+                                            value="boleta"
+                                            checked={formData.invoiceType === "boleta"}
+                                            onChange={handleChange}
+                                        />
+                                        <div className={`w-5 h-5 border-2 rounded-full transition-all duration-200 ${
+                                            formData.invoiceType === "boleta" 
+                                                ? 'border-primary bg-primary' 
+                                                : 'border-gray-300 bg-white group-hover:border-gray-400'
+                                        }`}>
+                                            {formData.invoiceType === "boleta" && (
+                                                <div className="w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <span className="ml-3 text-sm font-medium customtext-neutral-dark">Boleta</span>
                                 </label>
-                                <label className="inline-flex items-center">
-                                    <input
-                                        type="radio"
-                                        className="form-radio"
-                                        name="invoiceType"
-                                        value="factura"
-                                        checked={formData.invoiceType === "factura"}
-                                        onChange={handleChange}
-                                    />
-                                    <span className="ml-2">Factura</span>
+                                <label className="inline-flex items-center cursor-pointer group">
+                                    <div className="relative">
+                                        <input
+                                            type="radio"
+                                            className="sr-only"
+                                            name="invoiceType"
+                                            value="factura"
+                                            checked={formData.invoiceType === "factura"}
+                                            onChange={handleChange}
+                                        />
+                                        <div className={`w-5 h-5 border-2 rounded-full transition-all duration-200 ${
+                                            formData.invoiceType === "factura" 
+                                                ? 'border-primary bg-primary' 
+                                                : 'border-gray-300 bg-white group-hover:border-gray-400'
+                                        }`}>
+                                            {formData.invoiceType === "factura" && (
+                                                <div className="w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <span className="ml-3 text-sm font-medium customtext-neutral-dark">Factura</span>
                                 </label>
                             </div>
                         </div>
@@ -1431,27 +1884,85 @@ export default function ShippingStepSF({
                         ))}
                     </div>
 
-                    {!coupon && (
-                        <div className="mt-6 flex">
-                            <input
-                                ref={couponRef}
-                                type="text"
-                                placeholder="Código de cupón"
-                                className="w-full rounded-l-md border border-gray-300 py-3 px-4 text-sm outline-none uppercase focus:border-[#C5B8D4]"
-                                value={coupon?.name}
-                                onKeyDown={onCouponKeyDown}
-                                disabled={loading}
-                            />
-                            <button
-                                className={`rounded-r-md px-4 py-2 text-sm text-white transition-all duration-300 hover:opacity-90 ${data?.gradient ? 'bg-gradient' : 'bg-primary'}`}
-                                type="button"
-                                onClick={onCouponApply}
-                                disabled={loading}
-                            >
-                                Aplicar
-                            </button>
-                        </div>
+                    {/* Sección de cupón siempre visible */}
+                    <div className="mt-6">
+                        {!appliedCoupon ? (
+                            <div>
+                                <div className="flex">
+                                    <input
+                                        type="text"
+                                        placeholder="Código de cupón"
+                                        className={`w-full rounded-l-md border py-3 px-4 text-sm outline-none uppercase focus:border-[#C5B8D4] ${
+                                            couponError ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                        value={couponCode}
+                                        onChange={(e) => {
+                                            setCouponCode(e.target.value);
+                                            setCouponError("");
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault();
+                                                validateCoupon();
+                                            }
+                                        }}
+                                        disabled={couponLoading}
+                                    />
+                                    <button
+                                        className={`rounded-r-md px-4 py-2 text-sm text-white transition-all duration-300 hover:opacity-90 ${
+                                            couponLoading 
+                                                ? 'bg-gray-400 cursor-not-allowed' 
+                                                : data?.gradient ? 'bg-gradient' : 'bg-primary'
+                                        }`}
+                                        type="button"
+                                        onClick={validateCoupon}
+                                        disabled={couponLoading}
+                                    >
+                                        {couponLoading ? "..." : "Aplicar"}
+                                    </button>
+                                </div>
+                              
+                            </div>
+                        ) : (
+                            <div className="bg-secondary border  rounded-lg p-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium customtext-neutral-dark   ">
+                                                Cupón aplicado: {appliedCoupon.code}
+                                            </p>
+                                          
+                                            <p className="text-xs customtext-neutral-light">
+                                                Descuento: {appliedCoupon.type === 'percentage' 
+                                                    ? `${appliedCoupon.value}%`
+                                                    : `S/ ${Number2Currency(appliedCoupon.value)}`}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={removeCoupon}
+                                        className="text-red-600 hover:text-red-700 transition-colors"
+                                        title="Remover cupón"
+                                    >
+                                      <XCircle/>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {couponError && (
+                        <div className="mt-2 text-red-500 text-sm">{couponError}</div>
                     )}
+
+              
+
+                 
 
                     <div className="space-y-4 mt-6">
                         <div className="flex justify-between">
@@ -1468,46 +1979,28 @@ export default function ShippingStepSF({
                                 S/ {Number2Currency(igv)}
                             </span>
                         </div>
-                        {coupon && (
-                            <div className="mb-2 mt-2 flex justify-between items-center border-b pb-2 text-sm font-bold">
-                                <span>
-                                    Cupón aplicado{" "}
-                                    <Tippy content="Eliminar">
-                                        <i
-                                            className="mdi mdi-close text-red-500 cursor-pointer"
-                                            onClick={() =>{
-                                                setCoupon(null);
-                                                couponRef.current.value = "";
-                                                }
-                                            }
-                                        ></i>
-                                    </Tippy>
-                                    <small className="block text-xs font-light">
-                                        {coupon.name}{" "}
-                                        <Tippy
-                                            content={
-                                                coupon.description
-                                            }
-                                        >
-                                            <i className="mdi mdi-information-outline ms-1"></i>
-                                        </Tippy>{" "}
-                                        ({coupon.type === 'percentage' 
-                                            ? `-${Math.round(coupon.amount * 100) / 100}%`
-                                            : `S/ -${Number2Currency(coupon.amount)}`})
-                                    </small>
+                        
+                        {/* Mostrar descuentos automáticos en el resumen */}
+                        {autoDiscountTotal > 0 && (
+                            <div className="flex justify-between text-green-600">
+                                <span>Descuentos automáticos</span>
+                                <span className="font-semibold">
+                                    -S/ {Number2Currency(autoDiscountTotal)}
                                 </span>
-                                <span>
-                                    S/ -
-                                    {Number2Currency(
-                                        descuentofinal
-                                    )}
+                            </div>
+                        )}
+                        
+                        {appliedCoupon && (
+                            <div className="flex justify-between text-blue-600">
+                                <span>Descuento cupón ({appliedCoupon.code})</span>
+                                <span className="font-semibold">
+                                    -S/ {Number2Currency(calculatedCouponDiscount)}
                                 </span>
                             </div>
                         )}
                         <div className="flex justify-between">
                             <span className="customtext-neutral-dark">Envío</span>
                             <span className="font-semibold">
-                                {/* S/ {Number2Currency(envio)} */}
                                 {hasShippingFree != null && subFinal >= hasShippingFree ? (
                                     <span className="customtext-neutral-dark">Gratis (Compra mayor a S/{hasShippingFree})</span>
                                 ) : (
@@ -1518,7 +2011,7 @@ export default function ShippingStepSF({
                         <div className="py-3 border-y-2 mt-6">
                             <div className="flex justify-between font-bold text-[20px] items-center">
                                 <span>Total</span>
-                                <span>S/ {Number2Currency(totalFinal)}</span>
+                                <span>S/ {Number2Currency(appliedCoupon ? finalTotalWithCoupon : totalFinal)}</span>
                             </div>
                         </div>
                         <div className="space-y-2 pt-4">
@@ -1560,13 +2053,15 @@ export default function ShippingStepSF({
                 cart={cart}
                 subTotal={subTotal}
                 igv={igv}
-                totalFinal={totalFinal}
+                totalFinal={appliedCoupon ? finalTotalWithCoupon : totalFinal}
                 envio={envio}
                 request={paymentRequest}
                 onClose={() => setShowVoucherModal(false)}
                 paymentMethod={currentPaymentMethod}
-                coupon={coupon}
-                descuentofinal={descuentofinal}
+                coupon={appliedCoupon}
+                descuentofinal={calculatedCouponDiscount}
+                autoDiscounts={autoDiscounts}
+                autoDiscountTotal={autoDiscountTotal}
             />
 
             <UploadVoucherModalBancs
@@ -1574,16 +2069,19 @@ export default function ShippingStepSF({
                 cart={cart}
                 subTotal={subTotal}
                 igv={igv}
-                totalFinal={totalFinal}
+                totalFinal={appliedCoupon ? finalTotalWithCoupon : totalFinal}
                 envio={envio}
                 contacts={contacts}
                 request={paymentRequest}
                 onClose={() => setShowVoucherModalBancs(false)}
                 paymentMethod={currentPaymentMethod}
-                coupon={coupon}
-                descuentofinal={descuentofinal}
+                coupon={appliedCoupon}
+                descuentofinal={calculatedCouponDiscount}
+                autoDiscounts={autoDiscounts}
+                autoDiscountTotal={autoDiscountTotal}
             />
 
+            <LoginModal />
         </>
     );
 }
