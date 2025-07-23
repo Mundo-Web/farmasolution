@@ -78,10 +78,6 @@ export default function UploadVoucherModalBancs({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
-                details: JSON.stringify((request.cart || cart || []).map((item) => ({
-                    id: item.id,
-                    quantity: item.quantity
-                }))),
             };
             
             const formData = new FormData();
@@ -128,10 +124,6 @@ export default function UploadVoucherModalBancs({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
-                details: JSON.stringify((request.cart || cart || []).map((item) => ({
-                    id: item.id,
-                    quantity: item.quantity
-                }))),
             };
             
             const formData = new FormData();

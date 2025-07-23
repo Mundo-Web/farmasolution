@@ -74,10 +74,6 @@ export default function UploadVoucherModalYape({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
-                details: JSON.stringify((request.cart || cart || []).map((item) => ({
-                    id: item.id,
-                    quantity: item.quantity
-                }))),
             };
             
             const formData = new FormData();
@@ -125,10 +121,6 @@ export default function UploadVoucherModalYape({
             const updatedRequest = {
                 ...request,
                 payment_proof: voucher,
-                details: JSON.stringify((request.cart || cart || []).map((item) => ({
-                    id: item.id,
-                    quantity: item.quantity
-                }))),
             };
             
             const formData = new FormData();
@@ -225,12 +217,15 @@ export default function UploadVoucherModalYape({
                                             {item.name}
                                         </h3>
 
-                                        <p className="text-xs 2xl:text-sm customtext-neutral-light opacity-70">
+                                       {item?.color && (
+
+                                         <p className="text-xs 2xl:text-sm customtext-neutral-light opacity-70">
                                             Color:{" "}
                                             <span className="customtext-neutral-dark">
                                                 {item.color}
                                             </span>
                                         </p>
+                                       )}
                                         <p className="text-xs 2xl:text-sm customtext-neutral-light opacity-70">
                                             Cantidad:{" "}
                                             <span className="customtext-neutral-dark">

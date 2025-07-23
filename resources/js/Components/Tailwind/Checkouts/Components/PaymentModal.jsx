@@ -41,11 +41,16 @@ export default function PaymentModal({ isOpen, onClose, onPaymentComplete, conta
             <div className="grid grid-cols-1 md:grid-cols-2">
                 {/* Imagen decorativa - lado izquierdo */}
                 <div className="hidden md:block bg-[#f8f5f2] h-full">
-                    <img
-                        src={`/assets/img/${Global.APP_CORRELATIVE}/portadapagos.png`}
-                        alt="Métodos de pago"
-                        className="h-full w-full object-cover"
-                    />
+                     <img
+                                                src={`/assets/resources/payments.png?v=${crypto.randomUUID()}`}
+                                                alt={Global.APP_NAME}
+                                             className="h-full w-full object-cover"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = "/assets/img/logo-bk.svg";
+                                                }}
+                                            />
+
                 </div>
 
                 {/* Contenido del modal - lado derecho */}
