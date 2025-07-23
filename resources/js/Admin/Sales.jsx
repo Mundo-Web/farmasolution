@@ -30,6 +30,31 @@ const Sales = ({ statuses = [] }) => {
     const [saleStatuses, setSaleStatuses] = useState([]);
     const [statusLoading, setStatusLoading] = useState(false);
 
+    // Agregar estilos personalizados para el select
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+            .select2-container--default .select2-results__option {
+                padding: 4px !important;
+                background: white !important;
+            }
+            .select2-container--default .select2-results__option--highlighted[aria-selected] {
+                background-color: #f8f9fa !important;
+            }
+            .select2-container--default .select2-results__option:hover {
+                background-color: #f8f9fa !important;
+            }
+            .select2-container--default .select2-selection--single {
+                border: 1px solid #e3ebf0 !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, []);
+
     const onStatusChange = async (e, sale) => {
         console.log({sale, saleLoaded})
         const status = statuses.find((s) => s.id == e.target.value)
@@ -53,7 +78,14 @@ const Sales = ({ statuses = [] }) => {
         if (!result) return;
         const newSale = await salesRest.get(sale.id);
         setSaleLoaded(newSale.data);
-        setSaleStatuses(newSale.data.tracking.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        // Validar que tracking existe y es un array antes de hacer sort
+        const tracking = newSale.data.tracking;
+        if (tracking && Array.isArray(tracking)) {
+            setSaleStatuses(tracking.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        } else {
+            console.warn("Tracking data is missing or invalid:", tracking);
+            setSaleStatuses([]);
+        }
         $(gridRef.current).dxDataGrid("instance").refresh();
     };
 
@@ -76,8 +108,18 @@ const Sales = ({ statuses = [] }) => {
         notifyClientRef.current.checked = true
         const newSale = await salesRest.get(saleId);
         console.log("Sale data loaded:", newSale.data); // Debug: ver todos los datos que llegan
+        console.log("Status data:", newSale.data.status); // Debug: ver estado específico
+        console.log("Status reversible:", newSale.data.status?.reversible); // Debug: ver reversible
+        console.log("All statuses:", statuses); // Debug: ver todos los estados disponibles
         setSaleLoaded(newSale.data);
-        setSaleStatuses(newSale.data.tracking.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        // Validar que tracking existe y es un array antes de hacer sort
+        const tracking = newSale.data.tracking;
+        if (tracking && Array.isArray(tracking)) {
+            setSaleStatuses(tracking.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        } else {
+            console.warn("Tracking data is missing or invalid:", tracking);
+            setSaleStatuses([]);
+        }
         $(modalRef.current).modal("show");
     };
 
@@ -482,10 +524,31 @@ const Sales = ({ statuses = [] }) => {
     const statusTemplate = (e) => {
         const data = $(e.element).data('status')
         if (!e.id) return
-        return $(renderToString(<span title={data.description}>
-            <i className={`${data?.icon || 'mdi mdi-circle'} me-1`}></i>
-            {e.text}
-        </span>))
+        
+        const baseColor = data?.color || "#333";
+        const element = $(renderToString(
+            <span 
+                title={data?.description || ''}
+                className="d-flex align-items-center"
+                style={{
+                    color: baseColor,
+                    padding: "4px 8px",
+                    fontSize: "14px",
+                    fontWeight: "500"
+                }}
+            >
+                <i 
+                    className={`${data?.icon || 'mdi mdi-circle'} me-2`}
+                    style={{ 
+                        color: baseColor,
+                        fontSize: "12px"
+                    }}
+                ></i>
+                {e.text}
+            </span>
+        ));
+        
+        return element;
     }
 
     const totalAmount =
@@ -1037,6 +1100,10 @@ const Sales = ({ statuses = [] }) => {
                             </div>
                             <div className="card-body p-2 d-flex flex-column gap-1">
                                 {saleStatuses?.map((ss, index) => {
+                                    // Buscar el color del estado desde la lista de estados disponibles
+                                    const statusData = statuses.find(s => s.id === ss.status_id || s.name === ss.name);
+                                    const statusColor = statusData?.color || ss.color || "#333";
+                                    
                                     return (
                                         <article
                                             key={index}
@@ -1045,17 +1112,15 @@ const Sales = ({ statuses = [] }) => {
                                                 position: "relative",
                                                 borderRadius:
                                                     "16px 4px 4px 16px",
-                                                backgroundColor: ss.color
-                                                    ? `${ss.color}2e`
+                                                backgroundColor: statusColor
+                                                    ? `${statusColor}2e`
                                                     : "#3333332e",
                                             }}
                                         >
                                             <i
-                                                className={`${ss.icon || 'mdi mdi-circle'} left-2`}
+                                                className={`${ss.icon || statusData?.icon || 'mdi mdi-circle'} left-2`}
                                                 style={{
-                                                    color:
-                                                        ss.color ||
-                                                        "#333",
+                                                    color: statusColor,
                                                     position: "absolute",
                                                     left: "-25px",
                                                     top: "50%",
@@ -1065,9 +1130,7 @@ const Sales = ({ statuses = [] }) => {
                                             ></i>
                                             <b
                                                 style={{
-                                                    color:
-                                                        ss.color ||
-                                                        "#333",
+                                                    color: statusColor,
                                                 }}
                                             >
                                                 {ss?.name}
