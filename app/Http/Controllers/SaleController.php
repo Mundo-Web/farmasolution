@@ -28,6 +28,26 @@ class SaleController extends BasicController
     public $model = Sale::class;
     public $imageFields = ['payment_proof'];
 
+    /**
+     * Limpiar número de teléfono removiendo el prefijo si está presente
+     */
+    private static function cleanPhoneNumber($phoneNumber, $prefix = '51') {
+        if (empty($phoneNumber)) {
+            return $phoneNumber;
+        }
+        
+        // Convertir a string y remover espacios
+        $phone = trim((string)$phoneNumber);
+        $cleanPrefix = trim((string)$prefix);
+        
+        // Si el número empieza con el prefijo, removerlo
+        if (strpos($phone, $cleanPrefix) === 0) {
+            $phone = substr($phone, strlen($cleanPrefix));
+        }
+        
+        return $phone;
+    }
+
     public function track(Request $request, string $code) {
         $response = Response::simpleTryCatch(function () use ($code) {
             $sale = Sale::select(['id', 'code', 'status_id', 'updated_at'])
@@ -98,7 +118,11 @@ class SaleController extends BasicController
 
             if (Auth::check()) {
                 $userJpa = User::find(Auth::user()->id);
-                $userJpa->phone = $sale['phone'];
+                // Limpiar el número de teléfono removiendo el prefijo antes de guardarlo
+                $phonePrefix = $sale['phone_prefix'] ?? '51';
+                $cleanPhone = self::cleanPhoneNumber($sale['phone'], $phonePrefix);
+                $userJpa->phone = $cleanPhone;
+                $userJpa->phone_prefix = $phonePrefix;
                 $userJpa->country = $sale['country'];
                 $userJpa->department = $sale['department'];
                 $userJpa->province = $sale['province'];
@@ -326,7 +350,11 @@ class SaleController extends BasicController
 
         if (Auth::check()) {
             $userJpa = User::find(Auth::user()->id);
-            $userJpa->phone = $request->phone;
+            // Limpiar el número de teléfono removiendo el prefijo antes de guardarlo
+            $phonePrefix = $request->phone_prefix ?? '51';
+            $cleanPhone = self::cleanPhoneNumber($request->phone, $phonePrefix);
+            $userJpa->phone = $cleanPhone;
+            $userJpa->phone_prefix = $phonePrefix;
             $userJpa->document_type = $request->documentType ?? $request->document_type;
             $userJpa->document_number = $request->document;
             $userJpa->dni = $request->document; // Mantener compatibilidad

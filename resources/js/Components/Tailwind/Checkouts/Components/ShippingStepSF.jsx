@@ -61,6 +61,31 @@ export default function ShippingStepSF({
     setConversionScripts,
     onPurchaseComplete,
 }) {
+    // Función para formatear el número de teléfono evitando duplicación de prefijos
+    const formatPhoneNumber = (phonePrefix, phoneNumber) => {
+        if (!phoneNumber) return "";
+        
+        // Si el número ya comienza con el prefijo, no lo agregamos de nuevo
+        if (phoneNumber.startsWith(phonePrefix)) {
+            return phoneNumber;
+        }
+        
+        // Si no, concatenamos el prefijo
+        return `${phonePrefix}${phoneNumber}`;
+    };
+
+    // Función para limpiar el número de teléfono del usuario removiendo prefijos duplicados
+    const cleanPhoneNumber = (phoneNumber, phonePrefix) => {
+        if (!phoneNumber) return "";
+        
+        // Si el número comienza con el prefijo, lo removemos
+        if (phoneNumber.startsWith(phonePrefix)) {
+            return phoneNumber.substring(phonePrefix.length);
+        }
+        
+        return phoneNumber;
+    };
+
     const couponRef = useRef(null);
     const [coupon, setCoupon] = useState(null);
     const [selectedUbigeo, setSelectedUbigeo] = useState(null);
@@ -132,37 +157,45 @@ export default function ShippingStepSF({
         { value: "pasaporte", label: "Pasaporte" },
     ];
     
-    const [formData, setFormData] = useState({
-        name: user?.name || "",
-        lastname: user?.lastname || "",
-        email: user?.email || "",
-        phone_prefix: user?.phone_prefix || "51", //telf
-        phone: user?.phone || "",   //telf
-        documentType: user?.document_type?.toLowerCase() || "dni",
-        document: user?.document_number || "",
-        department: user?.department || "",
-        province: user?.province || "",
-        district: user?.district || "",
-        address: user?.address || "",
-        number: user?.number || "",
-        comment: user?.comment || "",
-        reference: user?.reference || "",
-        shippingOption: "delivery", // Valor predeterminado
-        ubigeo: user?.ubigeo || null,
-        invoiceType: user?.invoiceType || "boleta", // Nuevo campo para tipo de comprobante
-        businessName: user?.businessName || "", // Nuevo campo para Razón Social
+    const [formData, setFormData] = useState(() => {
+        const initialPhonePrefix = user?.phone_prefix || "51";
+        const initialPhone = cleanPhoneNumber(user?.phone || "", initialPhonePrefix);
+        
+        return {
+            name: user?.name || "",
+            lastname: user?.lastname || "",
+            email: user?.email || "",
+            phone_prefix: initialPhonePrefix, //telf
+            phone: initialPhone,   //telf
+            documentType: user?.document_type?.toLowerCase() || "dni",
+            document: user?.document_number || "",
+            department: user?.department || "",
+            province: user?.province || "",
+            district: user?.district || "",
+            address: user?.address || "",
+            number: user?.number || "",
+            comment: user?.comment || "",
+            reference: user?.reference || "",
+            shippingOption: "delivery", // Valor predeterminado
+            ubigeo: user?.ubigeo || null,
+            invoiceType: user?.invoiceType || "boleta", // Nuevo campo para tipo de comprobante
+            businessName: user?.businessName || "", // Nuevo campo para Razón Social
+        };
     });
     
     // Efecto para actualizar formData cuando cambien los datos del usuario
     useEffect(() => {
         if (user) {
+            const userPhonePrefix = user.phone_prefix || "51";
+            const cleanedPhone = cleanPhoneNumber(user.phone || "", userPhonePrefix);
+            
             setFormData(prev => ({
                 ...prev,
                 name: user.name || "",
                 lastname: user.lastname || "",
                 email: user.email || "",
-                phone_prefix: user.phone_prefix || "51",
-                phone: user.phone || "",
+                phone_prefix: userPhonePrefix,
+                phone: cleanedPhone,
                 documentType: user.document_type?.toLowerCase() || "dni",
                 document: user.document_number || "",
                 department: user.department || "",
@@ -588,7 +621,7 @@ export default function ShippingStepSF({
                 fullname: `${formData?.name} ${formData?.lastname}`,
                 phone_prefix: formData?.phone_prefix || "51",
                 email: formData?.email || "",
-                phone: `${formData.phone_prefix}${formData.phone}`,
+                phone: formatPhoneNumber(formData.phone_prefix || "51", formData.phone),
                 country: "Perú",
                 department: formData?.department || "",
                 province: formData?.province || "",
@@ -853,7 +886,7 @@ export default function ShippingStepSF({
                     fullname: `${formData?.name} ${formData?.lastname}`,
                     phone_prefix: formData?.phone_prefix || "51",
                     email: formData?.email || "",
-                    phone: `${formData.phone_prefix}${formData.phone}`,
+                    phone: formatPhoneNumber(formData.phone_prefix || "51", formData.phone),
                     country: "Perú",
                     department: formData?.department || "",
                     province: formData?.province || "",
@@ -936,7 +969,7 @@ export default function ShippingStepSF({
                     fullname: `${formData?.name} ${formData?.lastname}`,
                     phone_prefix: formData?.phone_prefix || "51",
                     email: formData?.email || "",
-                    phone: `${formData.phone_prefix}${formData.phone}`,
+                    phone: formatPhoneNumber(formData.phone_prefix || "51", formData.phone),
                     country: "Perú",
                     department: formData?.department || "",
                     province: formData?.province || "",
@@ -983,7 +1016,7 @@ export default function ShippingStepSF({
                     fullname: `${formData?.name} ${formData?.lastname}`,
                     phone_prefix: formData?.phone_prefix || "51",
                     email: formData?.email || "",
-                    phone: `${formData.phone_prefix}${formData.phone}`,
+                    phone: formatPhoneNumber(formData.phone_prefix || "51", formData.phone),
                     country: "Perú",
                     department: formData?.department || "",
                     province: formData?.province || "",
