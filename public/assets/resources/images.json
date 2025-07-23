@@ -1,9 +1,47 @@
 [
     {
-        "name": "login",
-        "description": "Login",
+        "name": "Imagen del Login",
+        "title": "Imagen del Login",
+        "filename": "login",
+        "description": "Imagen del formulario del login",
         "src": "login.png",
         "fit": "cover",
-        "aspect": "auto"
+        "aspect": "3\/5"
+    },
+    {
+        "name": "Imagen de Crear Cuenta",
+        "title": "Imagen de Crear Cuenta",
+        "filename": "signup",
+        "description": "Imagen del formulario de crear cuenta",
+        "src": "signup.png",
+        "fit": "cover",
+        "aspect": "3\/5"
+    },
+    {
+        "name": "Imagen Restablecer Contrase\u00f1a",
+        "title": "Imagen Restablecer Contrase\u00f1a",
+        "filename": "restore",
+        "description": "Imagen del formulario de restablecer contrase\u00f1a",
+        "src": "restore.png",
+        "fit": "cover",
+        "aspect": "2\/3"
+    },
+    {
+        "name": "Imagen de Olvidaste tu Contrase\u00f1a",
+        "title": "Imagen de Olvidaste tu Contrase\u00f1a",
+        "filename": "reset",
+        "description": "Imagen del formulario olvidaste tu contrase\u00f1a",
+        "src": "reset.png",
+        "fit": "cover",
+        "aspect": "3\/5"
+    },
+    {
+        "name": "Imagen M\u00e9todos de Pago",
+        "title": "Imagen M\u00e9todos de Pago",
+        "filename": "payments",
+        "description": "Imagen del formlario de m\u00e9teodos de pago",
+        "src": "payments.png",
+        "fit": "cover",
+        "aspect": "3\/5"
     }
 ]

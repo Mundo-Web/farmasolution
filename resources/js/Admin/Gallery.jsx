@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import BaseAdminto from '@Adminto/Base';
 import CreateReactScript from '../Utils/CreateReactScript';
 import GalleryRest from '../Actions/Admin/GalleryRest';
 import GalleryConfigRest from '../Actions/Admin/GalleryConfigRest';
+import ImageFormGroup from '../Components/Adminto/Form/ImageFormGroup';
 import slugify from '../Utils/slugify';
 import { toast, Toaster } from 'sonner';
 
@@ -20,15 +21,19 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingImage, setEditingImage] = useState(null);
   const [newImageForm, setNewImageForm] = useState({
-    name: '',
+    title: '', // Nombre que se mostrará en el card
+    filename: '', // Nombre del archivo
     description: '',
     src: '',
-    fit: 'contain',
+    fit: 'cover', // Siempre será cover
     aspect: '1',
     file: null
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
+  // Ref para el ImageFormGroup
+  const imageFormRef = useRef();
 
   // Verificar si estamos en entorno local/desarrollo
   // Combina verificación del cliente Y del servidor para mayor seguridad
@@ -84,10 +89,11 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
 
   const handleAddNewImage = () => {
     setNewImageForm({
-      name: '',
+      title: '',
+      filename: '',
       description: '',
       src: '',
-      fit: 'contain',
+      fit: 'cover',
       aspect: '1',
       file: null
     });
@@ -97,14 +103,19 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
 
   const handleEditImage = (image, index) => {
     setNewImageForm({
-      ...image,
+      title: image.name || image.title, // Compatibilidad con nombres existentes
+      filename: image.filename || image.src,
+      description: image.description,
+      src: image.src,
+      fit: 'cover', // Siempre cover
+      aspect: image.aspect,
       file: null // No hay archivo al editar, solo propiedades
     });
     setEditingImage(index);
     setShowAddModal(true);
   }
 
-  const handleFileChange = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files?.[0] ?? null;
     if (file) {
       // Validar que sea una imagen
@@ -118,14 +129,20 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
       setNewImageForm(prev => ({
         ...prev,
         file: file,
-        src: file.name // Mostrar el nombre del archivo seleccionado
+        src: file.name, // Mostrar el nombre del archivo original
+        filename: prev.filename || file.name.split('.')[0] // Auto-generar filename si está vacío
       }));
     }
   }
 
   const handleSaveImageConfig = async () => {
-    if (!newImageForm.name) {
-      toast.error('Por favor completa el nombre de la imagen');
+    if (!newImageForm.title) {
+      toast.error('Por favor completa el título de la imagen');
+      return;
+    }
+
+    if (!newImageForm.filename) {
+      toast.error('Por favor completa el nombre del archivo');
       return;
     }
 
@@ -144,9 +161,9 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
         const formData = new FormData();
         formData.append('image', newImageForm.file);
         
-        // Generar nombre del archivo basado en el nombre de la imagen
+        // Generar nombre del archivo basado en el filename
         const fileExtension = newImageForm.file.name.split('.').pop();
-        const fileName = `${newImageForm.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.${fileExtension}`;
+        const fileName = `${newImageForm.filename.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.${fileExtension}`;
         
         formData.append('name', fileName);
         
@@ -161,10 +178,12 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
 
       const updatedImages = [...images];
       const imageData = {
-        name: newImageForm.name,
+        name: newImageForm.title, // Usar title como name para mostrar en el card
+        title: newImageForm.title, // Mantener title también
+        filename: newImageForm.filename,
         description: newImageForm.description,
         src: imageSrc,
-        fit: newImageForm.fit,
+        fit: 'cover', // Siempre cover
         aspect: newImageForm.aspect,
         uuid: crypto.randomUUID()
       };
@@ -236,13 +255,7 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
   return (<div className='port'>
     {/* Header con botón agregar - Solo en desarrollo */}
     <div className="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h4 className="header-title">Galería de Imágenes</h4>
-        <p className="text-muted mb-0">
-          Gestiona todas las imágenes del sistema. Las imágenes marcadas como "SISTEMA" son esenciales 
-          (icono, logo, logo-footer) y solo se puede cambiar su archivo.
-        </p>
-      </div>
+      
       {isLocalEnvironment && (
         <button 
           type="button" 
@@ -285,7 +298,7 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
               <img src={`/assets/resources/${image.src}?v=${image.uuid}`} className="thumb-img img-fluid"
                 alt="work-thumbnail" onError={e => e.target.src = '/assets/resources/cover-404.svg'} style={{
                   aspectRatio: image.aspect,
-                  objectFit: image.fit,
+                  objectFit: 'cover', // Siempre cover
                   objectPosition: 'center',
                   width: '100%'
                 }} />
@@ -356,7 +369,7 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
               {/* Información técnica solo en desarrollo */}
               {isLocalEnvironment && (
                 <small className="text-muted">
-                  Aspect: {image.aspect} | Fit: {image.fit}
+                  Aspect: {image.aspect} | Archivo: {image.filename || image.src}
                   {isSystemImage && <span className="text-primary"> | Imagen del sistema</span>}
                 </small>
               )}
@@ -387,52 +400,61 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
                 <div className="row">
                   <div className="col-md-6">
                     <div className="mb-3">
-                      <label className="form-label">Nombre de la imagen *</label>
+                      <label className="form-label">Título de la imagen *</label>
                       <input 
                         type="text" 
                         className="form-control"
                         placeholder="Ej: Logo de login, Imagen de signup, etc."
-                        value={newImageForm.name}
-                        onChange={(e) => setNewImageForm({...newImageForm, name: e.target.value})}
+                        value={newImageForm.title}
+                        onChange={(e) => setNewImageForm({...newImageForm, title: e.target.value})}
                         disabled={isLoading}
                       />
+                      <small className="text-muted">Este es el nombre que se mostrará en el card</small>
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="mb-3">
-                      <label className="form-label">
-                        {editingImage !== null ? 'Cambiar archivo (opcional)' : 'Archivo de imagen *'}
-                      </label>
+                      <label className="form-label">Nombre del archivo *</label>
                       <input 
-                        type="file" 
+                        type="text" 
                         className="form-control"
-                        accept="image/*"
-                        onChange={handleFileChange}
+                        placeholder="Ej: logo-login, bg-signup, header-email"
+                        value={newImageForm.filename}
+                        onChange={(e) => setNewImageForm({...newImageForm, filename: e.target.value})}
                         disabled={isLoading}
                       />
-                      {newImageForm.src && (
-                        <small className="text-muted">
-                          {editingImage !== null ? `Actual: ${newImageForm.src}` : `Seleccionado: ${newImageForm.src}`}
-                        </small>
-                      )}
+                      <small className="text-muted">Solo letras, números y guiones (sin espacios ni caracteres especiales)</small>
                     </div>
                   </div>
                 </div>
 
-                <div className="mb-3">
-                  <label className="form-label">Descripción</label>
-                  <textarea 
-                    className="form-control" 
-                    rows="3"
-                    placeholder="Descripción de dónde y cómo se usa esta imagen"
-                    value={newImageForm.description}
-                    onChange={(e) => setNewImageForm({...newImageForm, description: e.target.value})}
-                    disabled={isLoading}
-                  ></textarea>
+                <div className="row">
+                  <div className="col-md-6">
+                    <ImageFormGroup
+                      ref={imageFormRef}
+                      label={editingImage !== null ? 'Cambiar imagen (opcional)' : 'Imagen *'}
+                      aspect={newImageForm.aspect}
+                      onChange={handleImageChange}
+                      required={editingImage === null}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label className="form-label">Descripción</label>
+                      <textarea 
+                        className="form-control" 
+                        rows="4"
+                        placeholder="Descripción de dónde y cómo se usa esta imagen"
+                        value={newImageForm.description}
+                        onChange={(e) => setNewImageForm({...newImageForm, description: e.target.value})}
+                        disabled={isLoading}
+                      ></textarea>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="row">
-                  <div className="col-md-6">
+                  <div className="col-md-12">
                     <div className="mb-3">
                       <label className="form-label">Aspect Ratio</label>
                       <select 
@@ -441,28 +463,27 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
                         onChange={(e) => setNewImageForm({...newImageForm, aspect: e.target.value})}
                         disabled={isLoading}
                       >
-                        <option value="1">1:1 (Cuadrado)</option>
-                        <option value="4/3">4:3 (Estándar)</option>
-                        <option value="16/9">16:9 (Panorámico)</option>
-                        <option value="3/2">3:2 (Fotografía)</option>
-                        <option value="13/4">13:4 (Logo horizontal)</option>
-                        <option value="auto">Auto (Original)</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="mb-3">
-                      <label className="form-label">Object Fit</label>
-                      <select 
-                        className="form-select"
-                        value={newImageForm.fit}
-                        onChange={(e) => setNewImageForm({...newImageForm, fit: e.target.value})}
-                        disabled={isLoading}
-                      >
-                        <option value="contain">Contain (Imagen completa)</option>
-                        <option value="cover">Cover (Recortar si es necesario)</option>
-                        <option value="fill">Fill (Estirar)</option>
-                        <option value="scale-down">Scale Down (Reducir si es necesario)</option>
+                        <optgroup label="Cuadrados">
+                          <option value="1">1:1 (Cuadrado)</option>
+                        </optgroup>
+                        <optgroup label="Horizontales (Landscape)">
+                          <option value="4/3">4:3 (Estándar)</option>
+                          <option value="16/9">16:9 (Panorámico)</option>
+                          <option value="3/2">3:2 (Fotografía)</option>
+                          <option value="21/9">21:9 (Ultrawide)</option>
+                          <option value="5/3">5:3 (Ancho)</option>
+                          <option value="2/1">2:1 (Banner)</option>
+                        </optgroup>
+                        <optgroup label="Verticales (Portrait)">
+                          <option value="3/4">3:4 (Vertical estándar)</option>
+                          <option value="9/16">9:16 (Vertical móvil)</option>
+                          <option value="2/3">2:3 (Fotografía vertical)</option>
+                          <option value="3/5">3:5 (Vertical estrecho)</option>
+                          <option value="1/2">1:2 (Vertical banner)</option>
+                        </optgroup>
+                        <optgroup label="Otros">
+                          <option value="auto">Auto (Original)</option>
+                        </optgroup>
                       </select>
                     </div>
                   </div>
@@ -470,28 +491,28 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
 
                 {/* Ejemplos de imágenes comunes */}
                 <div className="mb-3">
-                  <label className="form-label">Ejemplos de nombres e imágenes:</label>
+                  <label className="form-label">Ejemplos de títulos y nombres de archivo:</label>
                   <div className="row">
                     <div className="col-md-6">
                       <ul className="list-unstyled small text-muted">
-                        <li>• <strong>Logo de login</strong> - Archivo: logo-login.png</li>
-                        <li>• <strong>Fondo de registro</strong> - Archivo: bg-signup.jpg</li>
-                        <li>• <strong>Recuperar contraseña</strong> - Archivo: forgot-password.svg</li>
-                        <li>• <strong>Header de emails</strong> - Archivo: email-header.png</li>
+                        <li>• <strong>Título:</strong> "Logo de login" → <strong>Archivo:</strong> logo-login</li>
+                        <li>• <strong>Título:</strong> "Fondo de registro" → <strong>Archivo:</strong> bg-signup</li>
+                        <li>• <strong>Título:</strong> "Recuperar contraseña" → <strong>Archivo:</strong> forgot-password</li>
+                        <li>• <strong>Título:</strong> "Header de emails" → <strong>Archivo:</strong> email-header</li>
                       </ul>
                     </div>
                     <div className="col-md-6">
                       <ul className="list-unstyled small text-muted">
-                        <li>• <strong>Hero del dashboard</strong> - Archivo: dashboard-hero.jpg</li>
-                        <li>• <strong>Placeholder de perfil</strong> - Archivo: profile-placeholder.png</li>
-                        <li>• <strong>Página de mantenimiento</strong> - Archivo: maintenance.svg</li>
-                        <li>• <strong>Error 404</strong> - Archivo: 404-error.png</li>
+                        <li>• <strong>Título:</strong> "Hero del dashboard" → <strong>Archivo:</strong> dashboard-hero</li>
+                        <li>• <strong>Título:</strong> "Placeholder de perfil" → <strong>Archivo:</strong> profile-placeholder</li>
+                        <li>• <strong>Título:</strong> "Página de mantenimiento" → <strong>Archivo:</strong> maintenance</li>
+                        <li>• <strong>Título:</strong> "Error 404" → <strong>Archivo:</strong> 404-error</li>
                       </ul>
                     </div>
                   </div>
                   <small className="text-info">
                     <i className="mdi mdi-information me-1"></i>
-                    El archivo se guardará automáticamente en la carpeta /assets/resources/ con un nombre basado en el nombre de la imagen.
+                    El archivo se guardará automáticamente en /assets/resources/ con el formato: nombre-archivo.extensión
                   </small>
                 </div>
               </form>
@@ -509,7 +530,7 @@ const Gallery = ({ images: imagesJSON = [], isDevelopment = false, canEdit = fal
                 type="button" 
                 className="btn btn-primary"
                 onClick={handleSaveImageConfig}
-                disabled={isLoading || !newImageForm.name || (editingImage === null && !newImageForm.file)}
+                disabled={isLoading || !newImageForm.title || !newImageForm.filename || (editingImage === null && !newImageForm.file)}
               >
                 {isLoading ? (
                   <>
