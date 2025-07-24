@@ -220,10 +220,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/sales/{field}', [AdminSaleController::class, 'boolean']);
     Route::delete('/sales/{id}', [AdminSaleController::class, 'delete']);
 
-    //Route::get('/sale-statuses/by-sale/{id}', [AdminSaleStatusController::class, 'bySale']);
+    Route::get('/sale-statuses/by-sale/{id}', [AdminSaleStatusController::class, 'bySale']);
 
     Route::post('/web-details', [AdminWebDetailController::class, 'save']);
     Route::post('/gallery', [AdminGalleryController::class, 'save']);
+    Route::post('/gallery/config', [AdminGalleryController::class, 'saveConfig']);
 
     Route::post('/items', [AdminItemController::class, 'save']);
     Route::post('/items/paginate', [AdminItemController::class, 'paginate'])->withoutMiddleware('throttle');

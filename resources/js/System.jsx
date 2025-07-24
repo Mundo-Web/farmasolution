@@ -249,7 +249,7 @@ const System = ({
             const criticalComponents = ['Header', 'Footer', 'Product', 'Cart'];
             
             criticalComponents.forEach(component => {
-                import(`./Components/Tailwind/${component}`).catch(() => {
+                import(`./Components/Tailwind/${component}.jsx`).catch(() => {
                     // Silenciar errores de preload
                 });
             });
@@ -306,7 +306,7 @@ const System = ({
             case "collection":
                 return <Collection which={value} data={data} items={getItems(itemsId)} />
             case "slider":
-                return <Slider which={value} data={data} sliders={getItems(itemsId)} />
+                return <Slider which={value} data={data} sliders={getItems(itemsId)} generals={generals} />
             case "carrusel":
                 return <Carrusel which={value} data={data} items={getItems(itemsId)} />
             case "indicator":

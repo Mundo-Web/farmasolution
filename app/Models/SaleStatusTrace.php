@@ -17,5 +17,28 @@ class SaleStatusTrace extends Model
         'status_id',
         'user_id'
     ];
-    
+
+    /**
+     * Relación con el estado de venta
+     */
+    public function status()
+    {
+        return $this->belongsTo(SaleStatus::class, 'status_id');
+    }
+
+    /**
+     * Relación con el usuario que hizo el cambio
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relación con la venta
+     */
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class);
+    }
 }

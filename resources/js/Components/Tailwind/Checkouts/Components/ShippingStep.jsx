@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import Global from "../../../../Utils/Global";
 
 export default function ShippingStep({
+    data,
     cart,
     setSale,
     setCode,
@@ -1617,9 +1618,10 @@ export default function ShippingStep({
 
                     <ButtonPrimary 
                         onClick={handlePayment} 
-                        className="w-full mt-6"
+                     
                         disabled={paymentLoading}
                         loading={paymentLoading}
+                          className={`w-full mt-6 ${data?.class_button || 'text-white'}`}
                     >
                         {paymentLoading ? "Procesando..." : `Pagar S/ ${Number2Currency(roundToTwoDecimals(finalTotalWithCoupon))}`}
                     </ButtonPrimary>

@@ -48,6 +48,7 @@ const Footer = ({ data, which, items, pages, generals, contacts }) => {
                         socials={items}
                         pages={pages}
                         generals={generals}
+                        data={data}
                     />
                 );
                 case "FooterPaani":

@@ -7,6 +7,7 @@ const HeaderSearchContact = React.lazy(() =>
 const HeaderSearch = React.lazy(() => import("./Headers/HeaderSearch"));
 const HeaderSimple = React.lazy(() => import("./Headers/HeaderSimple"));
 const HeaderSearchB = React.lazy(() => import("./Headers/HeaderSearchB"));
+const HeaderSearchPaani = React.lazy(() => import("./Headers/HeaderSearchPaani"));
 const HeaderBananaLab = React.lazy(() => import("./Headers/HeaderBananaLab"));
 const HeaderSearchMenu = React.lazy(() => import("./Headers/HeaderSearchMenu"));
 const HeaderSearchMenuSF = React.lazy(() =>
@@ -64,6 +65,18 @@ const Header = ({
             case "HeaderSearchB":
                 return (
                     <HeaderSearchB
+                        data={data}
+                        items={items}
+                        cart={cart}
+                        setCart={setCart}
+                        pages={pages}
+                        isUser={isUser}
+                        generals={generals}
+                    />
+                );
+            case "HeaderSearchPaani":
+                return (
+                    <HeaderSearchPaani
                         data={data}
                         items={items}
                         cart={cart}

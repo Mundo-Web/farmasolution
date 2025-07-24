@@ -4,13 +4,13 @@ import AnimatedGiftBox from "./AnimatedGiftBox";
 const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
 
     const onDeleteClicked = () => {
-        setCart(old => old.filter(x => x.id !== item.id));
+        setCart(old => old.filter(x => x.id !== item?.id));
     }
 
     const onPlusClicked = () => {
         setCart(old =>
             old.map(x =>
-                x.id === item.id ? { ...x, quantity: (x.quantity || 1) + 1 } : x
+                x.id === item?.id ? { ...x, quantity: (x.quantity || 1) + 1 } : x
             )
         );
     }
@@ -18,10 +18,10 @@ const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
     const onMinusClicked = () => {
         setCart(old =>
             old.map(x => {
-                if (x.id === item.id) {
+                if (x.id === item?.id) {
                     const newQuantity = (x.quantity || 1) - 1;
                     if (newQuantity <= 0) {
-                        onDeleteClicked(item.id);
+                        onDeleteClicked(item?.id);
                         return null;
                     }
                     return { ...x, quantity: newQuantity };
@@ -32,13 +32,13 @@ const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
     }
 
     return (
-        <div key={item.id} className="w-full bg-white rounded-lg shadow p-4">
+        <div key={item?.id} className="w-full bg-white rounded-lg shadow p-4">
             <div className="flex flex-col md:flex-row md:items-center  justify-between gap-4 w-full">
                 <div className="flex items-center gap-4 flex-grow">
                     <div className="relative">
                         <img
-                            src={`/storage/images/item/${item.image}`}
-                            alt={item.name}
+                            src={`/storage/images/item/${item?.image}`}
+                            alt={item?.name}
                             className="w-20 h-20 object-cover rounded flex-shrink-0"
                             onError={(e) =>
                                 (e.target.src =
@@ -56,17 +56,17 @@ const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
                         )}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-lg mb-2 line-clamp-2">{item.name}</h3>
-                        <p className="text-sm customtext-neutral-light">Marca: <span className="customtext-neutral-dark">{item.brand?.name}</span></p>
-                        <p className="text-sm customtext-neutral-light">Disponibilidad: <span className="customtext-neutral-dark">{item.stock >= item.quantity ? "En stock" : "Agotado"} </span></p>
-                        <p className="text-sm customtext-neutral-light">SKU: <span className="customtext-neutral-dark">{item.sku}</span></p>
+                        <h3 className="font-medium text-lg mb-2 line-clamp-2">{item?.name}</h3>
+                        <p className="text-sm customtext-neutral-light">{item?.brand?.name ? `Marca: ` : `Categoría: `}<span className="customtext-neutral-dark">{item?.brand?.name} : {item?.category?.name}</span></p>
+                        <p className="text-sm customtext-neutral-light">Disponibilidad: <span className="customtext-neutral-dark">{item?.stock >= item?.quantity ? "En stock" : "Agotado"} </span></p>
+                        <p className="text-sm customtext-neutral-light">SKU: <span className="customtext-neutral-dark">{item?.sku}</span></p>
                     </div>
                 </div>
 
                 <div className="flex flex-row justify-between md:flex-col items-end md:items-end gap-4 mt-4 md:mt-0 flex-shrink-0">
                     <div className="text-right">
-                        <div className="text-xs text-gray-500 line-through">S/ {Number(item.price * item.quantity).toFixed(2)}</div>
-                        <div className="font-bold text-lg">S/ {Number(item.final_price * item.quantity).toFixed(2)}</div>
+                        <div className="text-xs text-gray-500 line-through">S/ {Number(item?.price * item?.quantity).toFixed(2)}</div>
+                        <div className="font-bold text-lg">S/ {Number(item?.final_price * item?.quantity).toFixed(2)}</div>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
                                 <Minus size={16} />
                             </button>
                             <div className="w-12 h-8 flex justify-center items-center bg-white">
-                                <span className="font-semibold text-sm">{item.quantity || 1}</span>
+                                <span className="font-semibold text-sm">{item?.quantity || 1}</span>
                             </div>
                             <button
                                 type="button"

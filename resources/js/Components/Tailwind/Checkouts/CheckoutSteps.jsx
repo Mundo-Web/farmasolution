@@ -9,7 +9,7 @@ import HtmlContent from "../../../Utils/HtmlContent";
 import { X } from "lucide-react";
 import useEcommerceTracking from "../../../Hooks/useEcommerceTracking";
 
-export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items, generals }) {
+export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items, generals,data }) {
     const [currentStep, setCurrentStep] = useState(1);
     const totalPrice = cart.reduce((acc, item) => acc + item.final_price * item.quantity, 0);
     
@@ -129,6 +129,7 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                 {/* Steps content */}
                 {currentStep === 1 && (
                     <CartStep
+                    data={data}
                         cart={cart}
                         setCart={setCart}
                         onContinue={() => handleStepChange(2)}
@@ -147,6 +148,7 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
 
                 {currentStep === 2 && (
                     <ShippingStep
+                    data={data}
                         items={items}
                         setCode={setCode}
                         setDelivery={setDelivery}
