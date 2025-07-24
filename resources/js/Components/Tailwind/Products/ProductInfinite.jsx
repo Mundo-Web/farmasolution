@@ -62,16 +62,18 @@ const ProductInfinite = ({ items, data, setCart, cart }) => {
     }, [swiperInstance]);
 
     return (
-        <section className="relative bg-sections-color py-4">
-            <div className="relative mx-auto px-[5%] py-[2.5%]">
-                {/* Header */}
-                <div className="md:flex justify-between items-center mb-8 pb-4 border-b customborder-neutral-light">
+      items && items?.length > 0 && (
+  <section className="relative bg-sections-color py-4">
+            <div className={`relative mx-auto px-[5%] py-[2.5%]`}>
+                <div className={`${data?.class_content || ''}`}>
+                    {/* Header */}
+                <div className={`md:flex justify-between items-center mb-8 pb-4 border-b customborder-neutral-light ${data?.class_header || ''}`}>
                     <h2 className="text-[28px] md:text-4xl font-bold font-font-secondary mb-4 md:mb-0 animate-fadeIn">
                         {data?.title}
                     </h2>
                     <a
                         href={data?.link_catalog}
-                        className="hidden md:flex bg-primary animate-bounce transition-all duration-300 text-white border-none  justify-center flex-row items-center gap-3 px-10 py-4 text-base rounded-xl tracking-wide font-bold cursor-pointer hover:opacity-90 hover:scale-105 animate-slideIn"
+                        className={`hidden md:flex bg-primary animate-bounce transition-all duration-300  border-none  justify-center flex-row items-center gap-3 px-10 py-4 text-base rounded-xl tracking-wide font-bold cursor-pointer hover:opacity-90 hover:scale-105 animate-slideIn ${data?.class_button || 'text-white'}`}
                     >
                         Ver todos
                         <Tag width="1rem" className="rotate-90" />
@@ -172,6 +174,7 @@ const ProductInfinite = ({ items, data, setCart, cart }) => {
                         </button>
                     </div>
                 </div>
+                </div>
             </div>
 
             <style jsx="true">{`
@@ -191,6 +194,7 @@ const ProductInfinite = ({ items, data, setCart, cart }) => {
                 }
             `}</style>
         </section>
+      )
     );
 };
 

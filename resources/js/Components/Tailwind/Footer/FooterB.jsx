@@ -9,7 +9,7 @@ import HtmlContent from "../../../Utils/HtmlContent";
 import { CircleCheckBig, X } from "lucide-react";
 import { toast } from "sonner";
 
-const FooterB = ({ pages, generals }) => {
+const FooterB = ({ pages, generals, data }) => {
     const subscriptionsRest = new SubscriptionsRest();
     const emailRef = useRef();
 
@@ -17,9 +17,9 @@ const FooterB = ({ pages, generals }) => {
     const [saving, setSaving] = useState();
 
     const policyItems = {
-         privacy_policy: "Políticas de privacidad",
+        privacy_policy: "Políticas de privacidad",
         terms_conditions: "Términos y condiciones",
-       
+
         // 'delivery_policy': 'Políticas de envío',
         saleback_policy: "Políticas de devolucion y cambio",
     };
@@ -56,13 +56,21 @@ const FooterB = ({ pages, generals }) => {
         emailRef.current.value = null;
     };
     return (
-        <footer className="bg-accent text-white py-12  text-sm font-font-secondary">
+        <footer className={` py-12  text-sm font-paragraph ${data?.class_footer || 'bg-accent text-white'
+
+            }`}>
             <div className="px-primary 2xl:px-0 2xl:max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-6  md:gap-12">
                 {/* Menu Columns */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:col-span-4 justify-between md:mr-6">
                     {/* Logo Column */}
                     <div>
-                        <div className=" -ml-8 md:ml-0 h-14 aspect-[13/4] ">
+                        <div className={` -ml-8 md:ml-0 h-14 aspect-[13/4] ${data?.logo_footer_content || ''}`}>
+                          {data?.logo_footer?
+                        
+                              <img src={`/assets/resources/logo-footer.png?v=${crypto.randomUUID()}`} alt={Global.APP_NAME} className="h-20 lg:h-24 object-contain" onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/assets/img/logo-bk.svg';
+                        }} />:
                             <div
                                 className="h-full w-full bg-primary"
                                 style={{
@@ -72,27 +80,28 @@ const FooterB = ({ pages, generals }) => {
                                     maskRepeat: "no-repeat",
                                 }}
                             />
+                        }
                         </div>
                     </div>
 
                     {/* Menu Column */}
                     <div>
-                        <h3 className="customtext-primary font-bold mb-6 text-base">
+                        <h3 className={`customtext-primary font-bold mb-6 text-base ${data?.class_menu || ''}`}>
                             Menú
                         </h3>
-                        <ul className="text-white flex lg:flex-col gap-2 items-center lg:items-start">
+                        <ul className={`text-white flex lg:flex-col gap-2 items-center lg:items-start ${data?.class_menu_list || ''}`}>
                             {pages.map((page, index) =>
                                 page.menuable && (
                                     <li key={index}>
                                         <a
                                             href={page.path}
-                                            className="hover:customtext-primary hover:font-semibold text-sm cursor-pointer transition-all duration-300"
+                                            className={`hover:customtext-primary hover:font-semibold text-sm cursor-pointer transition-all duration-300 ${data?.class_menu_item || ''}`}
                                         >
                                             {page.name}
                                         </a>
 
                                         {index !== pages.filter(p => p.menuable).length + 2 && (
-                                            <span className="text-white ml-2 lg:hidden">|</span>
+                                            <span className=" ml-2 lg:hidden">|</span>
                                         )}
                                     </li>
                                 )
@@ -102,14 +111,14 @@ const FooterB = ({ pages, generals }) => {
 
                     {/* Policies Column */}
                     <div>
-                        <h3 className="customtext-primary font-bold mb-6 text-base">
+                        <h3 className={`customtext-primary font-bold mb-6 text-base ${data?.class_menu || ''}`}>
                             Políticas
                         </h3>
-                        <ul className="space-y-3 text-white">
+                        <ul className={`space-y-3 text-white ${data?.class_menu_list || ''}`}>
                             <li>
                                 <a
                                     onClick={() => openModal(0)}
-                                    className="cursor-pointer hover:customtext-primary hover:font-bold transition-all duration-300"
+                                    className={`cursor-pointer hover:customtext-primary hover:font-bold transition-all duration-300 ${data?.class_menu_item || ''}`}
                                 >
                                     Políticas de privacidad
                                 </a>
@@ -119,32 +128,32 @@ const FooterB = ({ pages, generals }) => {
                                     type="button"
                                     href="#"
                                     onClick={() => openModal(1)}
-                                    className="cursor-pointer hover:customtext-primary hover:font-bold transition-all duration-300"
+                                    className={`cursor-pointer hover:customtext-primary hover:font-bold transition-all duration-300 ${data?.class_menu_item || ''}`}
                                 >
                                     Términos y Condiciones
                                 </a>
                             </li>
                             <li>
                                 <a
-                                 type="button"
+                                    type="button"
                                     href="#"
                                     onClick={() => openModal(2)}
-                                    className="cursor-pointer hover:customtext-primary hover:font-bold transition-all duration-300"
+                                    className={`cursor-pointer hover:customtext-primary hover:font-bold transition-all duration-300 ${data?.class_menu_item || ''}`}
                                 >
                                     Políticas de cambio
                                 </a>
                             </li>
                             <li>
                                 <a
-                        
-                                 
+
+
                                     href="/libro-reclamaciones"
                                     className="cursor-pointer flex flex-col gap-2 items-start  "
                                 >
-                                    <span className="hover:customtext-primary hover:font-bold transition-all duration-300">
+                                    <span className={`hover:customtext-primary hover:font-bold transition-all duration-300 ${data?.class_menu_item || ''}`}>
                                         Libro de reclamaciones
                                     </span>
-                                    <div className="fill-primary ">
+                                    <div className={`fill-primary ${data?.class_icon || ''}`}>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 512 512"
@@ -157,7 +166,7 @@ const FooterB = ({ pages, generals }) => {
                                             />
                                         </svg>
                                     </div>
-                                    <p className="text-[6px] text-white w-1/2 leading-3">
+                                    <p className={`text-[6px]  w-1/2 leading-3 ${data?.class_description || 'text-white'}`}>
                                         Conforme a lo establecido en el Código
                                         de Protección y Defensa del consumidor
                                         este sitio web cuenta con un Libro de
@@ -171,10 +180,10 @@ const FooterB = ({ pages, generals }) => {
 
                 {/* Newsletter Column */}
                 <div className="mt-4 lg:mt-0 col-span-1 md:col-span-2">
-                    <h3 className="customtext-primary font-bold mb-4 text-base ">
+                    <h3 className={`customtext-primary font-bold mb-4 text-base ${data?.class_menu || ''}`}>
                         Únete a nuestro blog
                     </h3>
-                    <p className="mb-6 text-white text-sm">
+                    <p className={`mb-6  text-sm ${data?.class_menu_item || 'text-white'}`}>
                         Suscríbete y recibe todas nuestras novedades
                     </p>
                     <form onSubmit={onEmailSubmit}>
@@ -188,7 +197,7 @@ const FooterB = ({ pages, generals }) => {
                             />
                             <button
                                 disabled={saving}
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 py-3 font-bold shadow-xl px-4 bg-primary text-white rounded-xl flex items-center justify-center min-w-[120px]"
+                                className={`absolute right-3 top-1/2 transform -translate-y-1/2 py-3 font-bold shadow-xl px-4 bg-primary text-white rounded-xl flex items-center justify-center min-w-[120px] ${data?.class_button || ''}`}
                                 aria-label="Suscribite"
                             >
                                 {saving ? (
@@ -218,8 +227,8 @@ const FooterB = ({ pages, generals }) => {
                         </div>
                     </form>
                 </div>
-                </div>
-                {Object.keys(policyItems).map((key, index) => {
+            </div>
+            {Object.keys(policyItems).map((key, index) => {
                 const title = policyItems[key];
                 const content =
                     generals.find((x) => x.correlative == key)?.description ??
@@ -246,14 +255,14 @@ const FooterB = ({ pages, generals }) => {
                                     <X size={24} strokeWidth={2} />
                                 </button>
                             </div>
-                            
+
                             {/* Content */}
                             <div className="flex-1 overflow-y-auto p-6">
                                 <div className="prose prose-gray max-w-none">
                                     <HtmlContent html={content} />
                                 </div>
                             </div>
-                            
+
                             {/* Footer */}
                             <div className="flex justify-end p-6 border-t border-gray-200">
                                 <button

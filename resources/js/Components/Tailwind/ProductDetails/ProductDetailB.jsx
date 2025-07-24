@@ -76,7 +76,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
 
     // Estados para modal de políticas de envío
     const [deliveryPolicyModalOpen, setDeliveryPolicyModalOpen] = useState(false);
-    
+
     // Estados para modal de tiendas
     const [storeListModalOpen, setStoreListModalOpen] = useState(false);
     const [stores, setStores] = useState([]);
@@ -107,7 +107,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
             // Modo arrastre: mover el zoom basado en el delta del mouse
             const deltaX = e.clientX - lastMousePosition.x;
             const deltaY = e.clientY - lastMousePosition.y;
-            
+
             setZoomPosition(prev => {
                 // Ajustar la sensibilidad para movimiento más suave
                 const sensitivity = 0.3; // Reducir para movimiento más suave
@@ -115,17 +115,17 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                 const newY = Math.max(0, Math.min(100, prev.y - deltaY * sensitivity));
                 return { x: newX, y: newY };
             });
-            
+
             setLastMousePosition({ x: e.clientX, y: e.clientY });
         } else {
             // Modo hover: seguir el cursor suavemente cuando no se arrastra
             const rect = imageRef.current.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;
-            
+
             const limitedX = Math.max(10, Math.min(90, x)); // Evitar bordes extremos
             const limitedY = Math.max(10, Math.min(90, y));
-            
+
             // Interpolación muy suave para el hover
             setZoomPosition(prev => ({
                 x: prev.x + (limitedX - prev.x) * 0.1,
@@ -353,7 +353,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
             if (isDragging && isZoomEnabled && imageRef.current) {
                 const deltaX = e.clientX - lastMousePosition.x;
                 const deltaY = e.clientY - lastMousePosition.y;
-                
+
                 setZoomPosition(prev => {
                     // Sensibilidad ajustada para movimiento más suave y controlado
                     const sensitivity = 0.25;
@@ -361,7 +361,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                     const newY = Math.max(5, Math.min(95, prev.y - deltaY * sensitivity));
                     return { x: newX, y: newY };
                 });
-                
+
                 setLastMousePosition({ x: e.clientX, y: e.clientY });
             }
         };
@@ -560,7 +560,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                 </div>
                             </div>
                         </button>
-                        
+
                         <button
                             onClick={handleStoreListModal}
                             className="w-full p-6 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-4"
@@ -575,41 +575,41 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                 </div>
                             </div>
                         </button>
-                                {/* Support - Mejorado */}
-                                <motion.div
+                        {/* Support - Mejorado */}
+                        <motion.div
 
-                                   className="w-full p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center  gap-4"
-                                >
-                                    <motion.div
-                                        className=" flex flex-row rounded-xl gap-3"
-                                      
+                            className="w-full p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center  gap-4"
+                        >
+                            <motion.div
+                                className=" flex flex-row rounded-xl gap-3"
+
+                            >
+
+                                <div className="bg-secondary min-w-12 max-w-12 min-h-12 max-h-12 flex items-center justify-center rounded-full flex-shrink-0">
+                                    <svg
+                                        className="w-8 h-8 customtext-primary"
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
                                     >
-
-                                        <div className="bg-secondary min-w-12 max-w-12 min-h-12 max-h-12 flex items-center justify-center rounded-full flex-shrink-0">
-                                            <svg
-                                                className="w-8 h-8 customtext-primary"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.531 3.488" />
-                                            </svg>
-                                        </div>
-                                        <div className="font-semibold text-sm customtext-neutral-dark cursor-pointer">
-                                            <p>
-                                                ¿Tienes dudas?
-                                                Haz{" "}
-                                                <a
-                                                    className="underline"
-                                                    onClick={handleClickWhatsApp}
-                                                >
-                                                    clic aquí
-                                                </a>{" "}
-                                                y chatea con nosotros
-                                            </p>
-                                        </div>
-                                    </motion.div>
-                                </motion.div>
-                            </div>
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.531 3.488" />
+                                    </svg>
+                                </div>
+                                <div className="font-semibold text-sm customtext-neutral-dark cursor-pointer">
+                                    <p>
+                                        ¿Tienes dudas?
+                                        Haz{" "}
+                                        <a
+                                            className="underline"
+                                            onClick={handleClickWhatsApp}
+                                        >
+                                            clic aquí
+                                        </a>{" "}
+                                        y chatea con nosotros
+                                    </p>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    </div>
                 </div>
 
                 {/* Bottom Navigation */}
@@ -636,10 +636,15 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                         <div className="space-y-6">
                             <div className="mb-6 md:hidden">
                                 <p className="customtext-neutral-light text-sm">
-                                    Marca:{" "}
+                                 {item?.brand?.name?(
+                                    <>
+                                       Marca:{" "}
                                     <span className="customtext-neutral-dark">
-                                        {item?.brand.name}
-                                    </span>
+                                        {item?.brand?.name}
+                                    </span></>
+                                 ):
+                                 item?.category?.name
+                                 }
                                 </p>
                                 <h1 className="customtext-neutral-dark text-[28px] md:text-[40px] font-bold mt-2">
                                     {item?.name}
@@ -706,24 +711,22 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                     {/* Zoom Icon */}
                                     <button
                                         onClick={handleZoomClick}
-                                        className={`absolute top-3 right-3 z-10 p-2 rounded-full shadow-lg transition-all duration-200 ${
-                                            isZoomEnabled 
-                                                ? 'bg-primary text-white opacity-100' 
+                                        className={`absolute top-3 right-3 z-10 p-2 rounded-full shadow-lg transition-all duration-200 ${isZoomEnabled
+                                                ? 'bg-primary text-white opacity-100'
                                                 : 'bg-white/90 hover:bg-white text-gray-700 hover:text-primary group-hover:opacity-100 opacity-60'
-                                        }`}
+                                            }`}
                                         title={isZoomEnabled ? "Desactivar zoom" : "Activar zoom"}
                                     >
                                         <ZoomIn className="w-5 h-5" />
                                     </button>
 
                                     <div
-                                        className={`relative overflow-hidden rounded-lg select-none ${
-                                            isZoomEnabled 
-                                                ? isDragging 
-                                                    ? 'cursor-grabbing' 
+                                        className={`relative overflow-hidden rounded-lg select-none ${isZoomEnabled
+                                                ? isDragging
+                                                    ? 'cursor-grabbing'
                                                     : 'cursor-grab'
                                                 : 'cursor-pointer'
-                                        }`}
+                                            }`}
                                         onMouseMove={handleMouseMove}
                                         onMouseDown={handleMouseDown}
                                         onMouseUp={handleMouseUp}
@@ -750,31 +753,31 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                             style={{
                                                 ...(isZoomEnabled
                                                     ? {
-                                                          transform: `scale(2.5)`,
-                                                          transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                                                          transition: isDragging 
-                                                              ? 'none' 
-                                                              : 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform-origin 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                      }
+                                                        transform: `scale(2.5)`,
+                                                        transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                                                        transition: isDragging
+                                                            ? 'none'
+                                                            : 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform-origin 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    }
                                                     : {
-                                                          transform: 'scale(1)',
-                                                          transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-                                                      }),
+                                                        transform: 'scale(1)',
+                                                        transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                                                    }),
                                                 userSelect: 'none',
                                                 pointerEvents: 'auto'
                                             }}
                                             draggable={false}
                                         />
-                                        
+
                                         {/* Overlay visual para indicar que se puede hacer zoom */}
                                         {!isZoomEnabled && (
                                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300 rounded-lg flex items-center justify-center">
                                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/75 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                                                     Click para activar zoom
+                                                    Click para activar zoom
                                                 </div>
                                             </div>
                                         )}
-                                        
+
                                         {/* Indicador cuando el zoom está activo */}
                                         {isZoomEnabled && (
                                             <div className="absolute bottom-3 left-3 bg-primary text-white px-3 py-2 rounded-lg text-xs font-medium shadow-lg border border-white/20">
@@ -793,7 +796,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                 <div className="flex flex-col items-center gap-2">
                                                     {/* Mini mapa */}
                                                     <div className="relative w-12 h-12 bg-white/20 border border-white/40 rounded">
-                                                        <div 
+                                                        <div
                                                             className="absolute w-3 h-3 bg-primary border border-white rounded-sm shadow-sm transition-all duration-200"
                                                             style={{
                                                                 left: `${(zoomPosition.x / 100) * (48 - 12)}px`,
@@ -801,7 +804,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                             }}
                                                         />
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         )}
@@ -888,7 +891,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                             onAddClicked(item);
                                             setModalOpen(!modalOpen);
                                         }}
-                                        className="w-full bg-primary text-white py-3 font-bold shadow-lg rounded-xl hover:opacity-90 transition-all duration-300 mt-4"
+                                        className={`w-full bg-primary  py-3 font-bold shadow-lg rounded-xl hover:opacity-90 transition-all duration-300 mt-4 ${data.class_button || 'text-white'}`}
                                     >
                                         Agregar al carrito
                                     </button>
@@ -1011,7 +1014,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                     </p>
                                     <button
                                         onClick={() => addAssociatedItems()}
-                                        className="bg-primary text-xs font-semibold text-white w-max py-3 px-6 rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-md"
+                                        className={`bg-primary text-xs font-semibold  w-max py-3 px-6 rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-md ${data.class_button || 'text-white'}`}
                                     >
                                         Agregar al carrito
                                     </button>
@@ -1053,11 +1056,11 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                 {/* Support - Mejorado */}
                                 <motion.div
 
-                                   className="w-full p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center  gap-4"
+                                    className="w-full p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center  gap-4"
                                 >
                                     <motion.div
                                         className=" flex flex-row rounded-xl gap-3"
-                                      
+
                                     >
 
                                         <div className="bg-secondary min-w-10 max-w-10 min-h-10 max-h-10 flex items-center justify-center rounded-full flex-shrink-0">
@@ -1079,7 +1082,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                 >
                                                     clic aquí
                                                 </a>{" "}
-                                             
+
                                             </p>
                                         </div>
                                     </motion.div>
@@ -1094,10 +1097,15 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                             {/* Brand and Title */}
                             <div className="mb-6">
                                 <p className="customtext-neutral-light text-sm">
-                                    Marca:{" "}
-                                    <span className="customtext-neutral-dark">
-                                        {item?.brand.name}
-                                    </span>
+                                    {item?.brand?.name ? (
+
+                                        <>Marca:{" "}
+                                            <span className="customtext-neutral-dark">
+                                                {item?.brand?.name}
+                                            </span></>
+                                    ) :
+                                        item?.category?.name
+                                    }
                                 </p>
                                 <h1 className="customtext-neutral-dark text-[40px] font-bold mt-2">
                                     {item?.name}
@@ -1231,7 +1239,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                             onAddClicked(item);
                                             setModalOpen(!modalOpen);
                                         }}
-                                        className="w-full bg-primary text-white py-3 font-bold shadow-lg rounded-xl hover:opacity-90 transition-all duration-300 mt-4"
+                                        className={`w-full bg-primary py-3 font-bold shadow-lg rounded-xl hover:opacity-90 transition-all duration-300 mt-4 ${data.class_button || 'text-white'}`}
                                     >
                                         Agregar al carrito
                                     </button>
@@ -1288,7 +1296,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                 onClick={() =>
                                                     addAssociatedItems()
                                                 }
-                                                className="bg-primary text-xs font-semibold text-white w-full py-3 rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-md"
+                                                className={`bg-primary text-xs font-semibold w-full py-3 rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-md ${data.class_button || 'text-white'}`}
                                             >
                                                 Agregar al carrito
                                             </button>
@@ -1420,7 +1428,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
             </div>
             {relationsItems.length > 0 && (
                 <ProductInfinite
-                    data={{ title: "Productos relacionados" }}
+                    data={{ ...data, title: "Productos relacionados" }}
                     items={relationsItems}
                     cart={cart}
                     setCart={setCart}
@@ -1428,48 +1436,48 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
 
             {/* Modal de Políticas de Envío */}
             {deliveryPolicyModalOpen && (
-                   <ReactModal
-                        
-                        isOpen={deliveryPolicyModalOpen}
-                          onRequestClose={() => setDeliveryPolicyModalOpen(false)}
-                        contentLabel={"Políticas de Envío"}
-                        className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center p-4 z-50"
-                        overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-[999]"
-                        ariaHideApp={false}
-                    >
-                        <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
-                            {/* Header */}
-                            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                                <h2 className="text-2xl font-bold text-gray-900 pr-4">Políticas de Envío</h2>
-                                <button
-                                    onClick={() => setDeliveryPolicyModalOpen(false)}
-                                    className="flex-shrink-0 text-gray-400 hover:text-red-500 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full"
-                                    aria-label="Cerrar modal"
-                                >
-                                    <X size={24} strokeWidth={2} />
-                                </button>
-                            </div>
-                            
-                            {/* Content */}
-                            <div className="flex-1 overflow-y-auto p-6">
-                                <div className="prose prose-gray max-w-none">
-                                    <HtmlContent html={generals?.find(g => g.correlative === 'delivery_policy')?.description} />
-                                </div>
-                            </div>
-                            
-                            {/* Footer */}
-                            <div className="flex justify-end p-6 border-t border-gray-200">
-                                <button
-                                    onClick={() => setDeliveryPolicyModalOpen(false)}
-                                    className="px-6 py-2 bg-primary text-white rounded-lg  transition-colors duration-200 font-medium"
-                                >
-                                    Cerrar
-                                </button>
+                <ReactModal
+
+                    isOpen={deliveryPolicyModalOpen}
+                    onRequestClose={() => setDeliveryPolicyModalOpen(false)}
+                    contentLabel={"Políticas de Envío"}
+                    className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center p-4 z-50"
+                    overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-[999]"
+                    ariaHideApp={false}
+                >
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                            <h2 className="text-2xl font-bold text-gray-900 pr-4">Políticas de Envío</h2>
+                            <button
+                                onClick={() => setDeliveryPolicyModalOpen(false)}
+                                className="flex-shrink-0 text-gray-400 hover:text-red-500 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full"
+                                aria-label="Cerrar modal"
+                            >
+                                <X size={24} strokeWidth={2} />
+                            </button>
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 overflow-y-auto p-6">
+                            <div className="prose prose-gray max-w-none">
+                                <HtmlContent html={generals?.find(g => g.correlative === 'delivery_policy')?.description} />
                             </div>
                         </div>
-                    </ReactModal>
 
-          
+                        {/* Footer */}
+                        <div className="flex justify-end p-6 border-t border-gray-200">
+                            <button
+                                onClick={() => setDeliveryPolicyModalOpen(false)}
+                                className="px-6 py-2 bg-primary text-white rounded-lg  transition-colors duration-200 font-medium"
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </ReactModal>
+
+
             )}
 
             {/* Modal de Listado de Tiendas */}
@@ -1497,7 +1505,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                 <X size={24} strokeWidth={2} />
                             </button>
                         </div>
-                        
+
                         {/* Content */}
                         <div className="flex-1 overflow-y-auto p-6">
                             {loadingStores ? (
@@ -1522,7 +1530,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                             {/* Store Image */}
                                             <div className="mb-4">
                                                 {store.image ? (
-                                                    <img 
+                                                    <img
                                                         src={`/storage/images/stores/${store.image}`}
                                                         alt={store.name}
                                                         className="w-full h-32 object-cover rounded-lg"
@@ -1542,22 +1550,21 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                 <div className="flex items-center gap-2 mb-2">
                                                     <h3 className="font-bold text-lg text-gray-900 flex-1">{store.name}</h3>
                                                     {/* Badge del tipo de establecimiento */}
-                                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                        store.type === 'tienda' ? 'bg-green-100 text-green-800' :
-                                                        store.type === 'oficina' ? 'bg-blue-100 text-blue-800' :
-                                                        store.type === 'almacen' ? 'bg-yellow-100 text-yellow-800' :
-                                                        store.type === 'showroom' ? 'bg-purple-100 text-purple-800' :
-                                                        'bg-gray-100 text-gray-800'
-                                                    }`}>
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${store.type === 'tienda' ? 'bg-green-100 text-green-800' :
+                                                            store.type === 'oficina' ? 'bg-blue-100 text-blue-800' :
+                                                                store.type === 'almacen' ? 'bg-yellow-100 text-yellow-800' :
+                                                                    store.type === 'showroom' ? 'bg-purple-100 text-purple-800' :
+                                                                        'bg-gray-100 text-gray-800'
+                                                        }`}>
                                                         {store.type === 'tienda' ? 'Tienda' :
-                                                         store.type === 'oficina' ? 'Oficina' :
-                                                         store.type === 'almacen' ? 'Almacén' :
-                                                         store.type === 'showroom' ? 'Showroom' :
-                                                         store.type || 'Otro'}
+                                                            store.type === 'oficina' ? 'Oficina' :
+                                                                store.type === 'almacen' ? 'Almacén' :
+                                                                    store.type === 'showroom' ? 'Showroom' :
+                                                                        store.type || 'Otro'}
                                                     </span>
                                                 </div>
-                                                
-                                              
+
+
                                             </div>
 
                                             {/* Store Details */}
@@ -1591,10 +1598,10 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                         <div className="text-xs text-gray-600">
                                                             {(() => {
                                                                 try {
-                                                                    const hours = typeof store.business_hours === 'string' 
-                                                                        ? JSON.parse(store.business_hours) 
+                                                                    const hours = typeof store.business_hours === 'string'
+                                                                        ? JSON.parse(store.business_hours)
                                                                         : store.business_hours;
-                                                                    
+
                                                                     const today = new Date().toLocaleDateString('es-PE', { weekday: 'long' });
                                                                     const todayMap = {
                                                                         'lunes': 'Lunes',
@@ -1605,17 +1612,17 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                                         'sábado': 'Sábado',
                                                                         'domingo': 'Domingo'
                                                                     };
-                                                                    
+
                                                                     const todaySpanish = todayMap[today.toLowerCase()] || today;
-                                                                    const todaySchedule = hours.find(h => 
+                                                                    const todaySchedule = hours.find(h =>
                                                                         h.day.toLowerCase() === todaySpanish.toLowerCase()
                                                                     );
-                                                                    
+
                                                                     if (todaySchedule) {
-                                                                        const status = todaySchedule.closed 
-                                                                            ? `Hoy: Cerrado` 
+                                                                        const status = todaySchedule.closed
+                                                                            ? `Hoy: Cerrado`
                                                                             : `Hoy: ${todaySchedule.open} - ${todaySchedule.close}`;
-                                                                        
+
                                                                         const isOpen = !todaySchedule.closed && (() => {
                                                                             const now = new Date();
                                                                             const currentTime = now.getHours() * 60 + now.getMinutes();
@@ -1629,11 +1636,10 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                                         return (
                                                                             <div className="flex items-center justify-between">
                                                                                 <span>{status}</span>
-                                                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                                                    isOpen 
-                                                                                        ? 'bg-green-100 text-green-800' 
+                                                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${isOpen
+                                                                                        ? 'bg-green-100 text-green-800'
                                                                                         : 'bg-red-100 text-red-800'
-                                                                                }`}>
+                                                                                    }`}>
                                                                                     {isOpen ? 'Abierto' : 'Cerrado'}
                                                                                 </span>
                                                                             </div>
@@ -1660,7 +1666,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                 </div>
                             )}
                         </div>
-                        
+
                         {/* Footer */}
                         <div className="flex justify-between items-center p-6 border-t border-gray-200 bg-gray-50">
                             <p className="text-sm text-gray-600">

@@ -9,7 +9,8 @@ import "tippy.js/dist/tippy.css";
 const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" }) => {
 
     const itemsRest = new ItemsRest();
-    const [variationsItems, setVariationsItems] = useState([]);
+    const [variationsItems, setVariationsItems] = useState(product.variants);
+    console.log(product , 'productos variaciones');
 
     const onAddClicked = (product) => {
         const newCart = structuredClone(cart)
@@ -40,6 +41,7 @@ const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" 
             const response = await itemsRest.getVariations(request);
 
             if (!response) {
+                setVariationsItems([]);
                 return;
             }
 
@@ -48,6 +50,7 @@ const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" 
             setVariationsItems(variations.variants);
 
         } catch (error) {
+            setVariationsItems([]);
             return;
         }
     };
@@ -90,7 +93,7 @@ const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" 
                 </a>
                 {/* Información del producto */}
                 <div className='py-4'>
-                    <p className={`text-sm sm:text-base font-semibold mb-1 ${textcolor}`}>
+                    <p className={`text-sm sm:text-base font-medium mb-1 ${textcolor?.trim() ? textcolor : 'customtext-neutral-light'}`}>
                         {product.category.name}
                     </p>
 
@@ -98,12 +101,11 @@ const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" 
                         <h3 className="text-base sm:text-lg lg:text-xl font-semibold mb-1 line-clamp-2 !leading-normal">
                             {product.name} 
                         </h3>
-                        
-                        {variationsItems.length > 1 && (
-                            < >
+
+
+                       {variationsItems?.length > 1 && (
                             <div className="hidden md:flex gap-2 sm:gap-3 items-center justify-start w-full flex-wrap py-2">
-                                
-                                {variationsItems.length > 1 && variationsItems.slice(0, 4).map((variant) => (
+                                {variationsItems?.slice(0, 4).map((variant) => (
                                     <Tippy content={variant.color} key={variant.slug}>
                                         <a
                                             href={`/item/${variant.slug}`}
@@ -122,12 +124,12 @@ const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" 
                                     </Tippy>
                                 ))}
 
-                                {variationsItems.length > 4 && (
+                                {variationsItems?.length > 4 && (
                                     <Tippy content={`+${variationsItems.length - 4} colores más`}>
                                         <a
                                             key={product.slug}
                                             href={`/item/${product.slug}`}
-                                            className="variant-option rounded-full border shadow-gray-500 object-fit-cover bg-[#310619] text-white text-xs font-extrabold"
+                                            className="variant-option rounded-full border shadow-gray-500 object-fit-cover bg-primary text-white text-xs font-extrabold"
                                         >
                                             <div className="color-box rounded-full h-7 w-7 sm:h-9 sm:w-9 flex flex-col justify-center items-center">
                                                 +{variationsItems.length - 4}
@@ -136,10 +138,12 @@ const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" 
                                     </Tippy>
                                 )}
                             </div>
-
+                        )} 
+                        
+                        {variationsItems?.length > 1 && (
                             <div className="flex md:hidden gap-2 sm:gap-3 items-center justify-start w-full flex-wrap py-2">
 
-                                {variationsItems.slice(0, 3).map((variant) => (
+                                {variationsItems?.slice(0, 3).map((variant) => (
                                     <Tippy content={variant.color} key={variant.slug}>
                                         <a
                                             href={`/item/${variant.slug}`}
@@ -158,12 +162,12 @@ const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" 
                                     </Tippy>
                                 ))}
 
-                                {variationsItems.length > 3 && (
+                                {variationsItems?.length > 3 && (
                                     <Tippy content={`+${variationsItems.length - 3} colores más`}>
                                         <a
                                             key={product.slug}
                                             href={`/item/${product.slug}`}
-                                            className="variant-option rounded-full border shadow-gray-500 object-fit-cover bg-[#310619] text-white text-xs font-extrabold"
+                                            className="variant-option rounded-full border shadow-gray-500 object-fit-cover bg-primary text-white text-xs font-extrabold"
                                         >
                                             <div className="color-box rounded-full h-7 w-7 sm:h-9 sm:w-9 flex flex-col justify-center items-center">
                                                 +{variationsItems.length - 3}
@@ -172,7 +176,6 @@ const ProductCardColors = ({ product, setCart, cart, textcolor = "", fondo = "" 
                                     </Tippy>
                                 )}
                             </div>
-                            </>    
                         )}
 
                         {/* Precio */}

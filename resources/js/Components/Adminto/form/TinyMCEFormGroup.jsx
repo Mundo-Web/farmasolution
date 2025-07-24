@@ -5,11 +5,10 @@ const TinyMCEFormGroup = ({ label, value, onChange, height = 400, variables = []
     <div className="mb-2">
         <label className="form-label">{label}</label>
         <Editor
-            apiKey="0ivxwwh4ikqrvmr5gbv61vf2xxpax8guf0jn0had0m9n443d"
+            apiKey="xiambljzyxjms4y2148wtxxl05f7bcpyt5o949l0c78tfe7c"
             value={value}
             init={{
                 height,
-                menubar: true,
                 plugins: [
                     'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
                     'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',

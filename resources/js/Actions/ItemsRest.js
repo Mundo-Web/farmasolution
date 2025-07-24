@@ -82,10 +82,51 @@ class ItemsRest extends BasicRest {
             return [];
         }
     };
+
     getVariations = async (request) => {
         try {
             const { status, result } = await Fetch(
                 `/api/${this.path}/variations-items`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(request),
+                }
+            );
+            if (!status)
+                throw new Error(
+                    result?.message ??
+                        "Ocurrió un error al consultar los productos"
+                );
+            return result.data ?? [];
+        } catch (error) {
+            return [];
+        }
+    };
+
+    getColors = async (request) => {
+        try {
+            const { status, result } = await Fetch(
+                `/api/${this.path}/colors-items`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(request),
+                }
+            );
+            if (!status)
+                throw new Error(
+                    result?.message ??
+                        "Ocurrió un error al consultar los productos"
+                );
+            return result.data ?? [];
+        } catch (error) {
+            return [];
+        }
+    };
+
+    getSizes = async (request) => {
+        try {
+            const { status, result } = await Fetch(
+                `/api/${this.path}/sizes-items`,
                 {
                     method: "POST",
                     body: JSON.stringify(request),
