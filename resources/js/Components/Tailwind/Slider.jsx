@@ -19,7 +19,7 @@ const SliderTwoColumnSwiper = React.lazy(() =>
     import("./Sliders/SliderTwoColumnSwiper")
 );
 
-const Slider = ({ which, data, sliders }) => {
+const Slider = ({ which, data, sliders ,generals=[]}) => {
     const getSlider = () => {
         switch (which) {
             case "SliderSimple":
@@ -29,7 +29,7 @@ const Slider = ({ which, data, sliders }) => {
             case "SliderBoxed":
                 return <SliderBoxed data={data} sliders={sliders} />;
             case "SliderInteractive":
-                return <SliderInteractive data={data} items={sliders} />;
+                return <SliderInteractive data={data} items={sliders} generals={generals} />;
             case "SliderBananaLab":
                 return <SliderBananaLab data={data} items={sliders} />;
             case "SliderImagen":

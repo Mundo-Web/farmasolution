@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight, Tag } from "lucide-react";
+import { ChevronLeft, ChevronRight, Tag, MessageCircle } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { adjustTextColor } from "../../../Functions/adjustTextColor";
 import Global from "../../../Utils/Global";
 
-const SliderInteractive = ({ items, data }) => {
+const SliderInteractive = ({ items, data, generals = [] }) => {
     //TODO: Validación y conversión de infiniteLoop
     const parseInfiniteLoop = (value) => {
         const validTrueValues = ["true", "si"];
@@ -17,6 +17,17 @@ const SliderInteractive = ({ items, data }) => {
     };
 
     const infiniteLoop = parseInfiniteLoop(data?.infiniteLoop);
+
+    // Obtener datos de WhatsApp de generals
+    const phoneWhatsappObj = generals?.find(
+        (item) => item.correlative === "phone_whatsapp"
+    );
+    const messageWhatsappObj = generals?.find(
+        (item) => item.correlative === "message_whatsapp"
+    );
+    
+    const phoneWhatsapp = phoneWhatsappObj?.description ?? null;
+    const messageWhatsapp = messageWhatsappObj?.description ?? null;
 
     const [currentIndex, setCurrentIndex] = useState(1);
     const sliderRef = useRef(null);
@@ -300,6 +311,28 @@ const SliderInteractive = ({ items, data }) => {
                                             className="transform rotate-90"
                                           />
                                         </a>
+
+
+                                        {/* Botón de WhatsApp */}
+                                        {data?.whatsapp_info && phoneWhatsapp && (
+                                          <a
+                                            href={`https://wa.me/${phoneWhatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(messageWhatsapp || '¡Hola! Me interesa obtener más información sobre sus productos.')}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-white border-2 border-neutral-dark backdrop-blur-sm text-gray-800 flex flex-row items-center gap-3 px-6 lg:px-8 py-3 lg:py-4 text-sm lg:text-base rounded-xl tracking-wide font-bold hover:bg-white hover:shadow-lg transition-all duration-300"
+                                            onClick={e => {
+                                              e.stopPropagation();
+                                            }}
+                                            onMouseDown={e => e.stopPropagation()}
+                                            onTouchStart={e => e.stopPropagation()}
+                                          >
+                                            <MessageCircle
+                                              width={"1.25rem"}
+                                              className="customtext-neutral-dark"
+                                            />
+                                            Hablar con un asesor
+                                          </a>
+                                        )}
                                       </div>
                                     )}
                                   

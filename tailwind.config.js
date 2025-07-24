@@ -14,27 +14,7 @@ export default {
                 "font-secondary": ["Open Sans", "serif"],
                 "playfair": ["Playfair", "serif"],
             },
-            colors: {
-                primary: {
-                    DEFAULT: "#0f62fe", // Color azul moderno
-                    50: "#eff6ff",
-                    100: "#dbeafe", 
-                    200: "#bfdbfe",
-                    300: "#93c5fd",
-                    400: "#60a5fa",
-                    500: "#3b82f6",
-                    600: "#0f62fe", // Primary
-                    700: "#1d4ed8",
-                    800: "#1e40af",
-                    900: "#1e3a8a",
-                },
-                
-                neutral: {
-                    dark: "#1f2937",
-                    light: "#f9fafb"
-                },
-                
-            },
+
             margin: {
                 primary: "5%",
             },
@@ -48,6 +28,11 @@ export default {
             fontStyle: {
                 'oblique-light': 'oblique 5deg',
             },
+
+            backgroundImage: {
+                // Here's your custom gradient
+                'primary-gradient': 'linear-gradient(37deg, #F9A519 -0.01%, #ECC774 37.09%, #ECBB0D 68.49%, #C3922E 99.99%)',
+            }
         },
     },
     plugins: [
@@ -56,11 +41,12 @@ export default {
         require('@tailwindcss/forms')({
             strategy: 'class',
         }),
+
         // require('tailwind-scrollbar')({
         //     nocompatible: true,
         //     preferredStrategy: 'pseudoelements',
         // }),
         // Otros plugins si los tienes
     ],
-    
+
 };
