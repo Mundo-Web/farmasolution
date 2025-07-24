@@ -76,16 +76,18 @@ const Sales = ({ statuses = [] }) => {
         });
         setStatusLoading(false)
         if (!result) return;
+        
         const newSale = await salesRest.get(sale.id);
         setSaleLoaded(newSale.data);
-        // Validar que tracking existe y es un array antes de hacer sort
-        const tracking = newSale.data.tracking;
-        if (tracking && Array.isArray(tracking)) {
-            setSaleStatuses(tracking.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        
+        // Cargar el historial de estados usando la nueva API
+        const statusHistory = await saleStatusesRest.bySale(sale.id);
+        if (statusHistory) {
+            setSaleStatuses(statusHistory);
         } else {
-            console.warn("Tracking data is missing or invalid:", tracking);
             setSaleStatuses([]);
         }
+        
         $(gridRef.current).dxDataGrid("instance").refresh();
     };
 
@@ -112,14 +114,15 @@ const Sales = ({ statuses = [] }) => {
         console.log("Status reversible:", newSale.data.status?.reversible); // Debug: ver reversible
         console.log("All statuses:", statuses); // Debug: ver todos los estados disponibles
         setSaleLoaded(newSale.data);
-        // Validar que tracking existe y es un array antes de hacer sort
-        const tracking = newSale.data.tracking;
-        if (tracking && Array.isArray(tracking)) {
-            setSaleStatuses(tracking.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+        
+        // Cargar el historial de estados usando la nueva API
+        const statusHistory = await saleStatusesRest.bySale(saleId);
+        if (statusHistory) {
+            setSaleStatuses(statusHistory);
         } else {
-            console.warn("Tracking data is missing or invalid:", tracking);
             setSaleStatuses([]);
         }
+        
         $(modalRef.current).modal("show");
     };
 
@@ -514,11 +517,11 @@ const Sales = ({ statuses = [] }) => {
     };
 
     useEffect(() => {
-        // if (!saleLoaded) return
-        // saleStatusesRest.bySale(saleLoaded.id).then((data) => {
-        //   if (data) setSaleStatuses(data)
-        //   else setSaleStatuses([])
-        // })
+        if (!saleLoaded) return
+        saleStatusesRest.bySale(saleLoaded.id).then((data) => {
+          if (data) setSaleStatuses(data)
+          else setSaleStatuses([])
+        })
     }, [saleLoaded]);
 
     const statusTemplate = (e) => {
@@ -551,14 +554,12 @@ const Sales = ({ statuses = [] }) => {
         return element;
     }
 
-    const totalAmount =
-        Number(saleLoaded?.amount) +
-        Number(saleLoaded?.delivery || 0) -
-        Number(saleLoaded?.bundle_discount || 0) -
-        Number(saleLoaded?.renewal_discount || 0) -
-        Number(saleLoaded?.coupon_discount || 0) -
-        Number(saleLoaded?.promotion_discount || 0) // Incluir descuentos automáticos
-        ;
+    const subtotalReal = saleLoaded?.details?.reduce((sum, detail) => sum + (detail.price * detail.quantity), 0) || 0;
+    const totalAmount = subtotalReal + Number(saleLoaded?.delivery || 0) - 
+        Number(saleLoaded?.promotion_discount || 0) - 
+        Number(saleLoaded?.coupon_discount || 0) - 
+        Number(saleLoaded?.bundle_discount || 0) - 
+        Number(saleLoaded?.renewal_discount || 0);
 
     return (
         <>
@@ -1016,7 +1017,7 @@ const Sales = ({ statuses = [] }) => {
                                     <span>
                                         S/{" "}
                                         {Number2Currency(
-                                            saleLoaded?.amount * 1
+                                            saleLoaded?.details?.reduce((sum, detail) => sum + (detail.price * detail.quantity), 0) || 0
                                         )}
                                     </span>
                                 </div>
@@ -1083,7 +1084,7 @@ const Sales = ({ statuses = [] }) => {
                                 {/* Mostrar desglose de cómo se calculó el total */}
                                 <small className="text-muted mt-2 d-block">
                                     <strong>Cálculo:</strong> 
-                                    {Number2Currency(saleLoaded?.amount)} 
+                                    {Number2Currency(subtotalReal)} (subtotal)
                                     + {Number2Currency(saleLoaded?.delivery)} (envío)
                                     {saleLoaded?.promotion_discount > 0 && ` - ${Number2Currency(saleLoaded?.promotion_discount)} (promociones)`}
                                     {saleLoaded?.coupon_discount > 0 && ` - ${Number2Currency(saleLoaded?.coupon_discount)} (cupón)`}
