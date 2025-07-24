@@ -12,25 +12,82 @@ import Number2Currency from "../Utils/Number2Currency";
 import Modal from "../Components/Adminto/Modal";
 import Tippy from "@tippyjs/react";
 import SaleStatusesRest from "../Actions/Admin/SaleStatusesRest";
+import SaleExportRest from "../Actions/Admin/SaleExportRest";
+import * as XLSX from 'xlsx';
+import SelectFormGroup from "../Components/Adminto/form/SelectFormGroup";
+import { renderToString } from "react-dom/server";
 
 const salesRest = new SalesRest();
 const saleStatusesRest = new SaleStatusesRest();
+const saleExportRest = new SaleExportRest();
 
 const Sales = ({ statuses = [] }) => {
     const gridRef = useRef();
+    const notifyClientRef = useRef()
     const modalRef = useRef();
 
     const [saleLoaded, setSaleLoaded] = useState(null);
     const [saleStatuses, setSaleStatuses] = useState([]);
+    const [statusLoading, setStatusLoading] = useState(false);
 
-    const onStatusChange = async (e) => {
+    // Agregar estilos personalizados para el select
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+            .select2-container--default .select2-results__option {
+                padding: 4px !important;
+                background: white !important;
+            }
+            .select2-container--default .select2-results__option--highlighted[aria-selected] {
+                background-color: #f8f9fa !important;
+            }
+            .select2-container--default .select2-results__option:hover {
+                background-color: #f8f9fa !important;
+            }
+            .select2-container--default .select2-selection--single {
+                border: 1px solid #e3ebf0 !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, []);
+
+    const onStatusChange = async (e, sale) => {
+        console.log({sale, saleLoaded})
+        const status = statuses.find((s) => s.id == e.target.value)
+        if (status.reversible == 0) {
+            const { isConfirmed } = await Swal.fire({
+                title: "Cambiar estado",
+                text: `¿Estas seguro de cambiar el estado a ${status.name}?\nEsta acción no se puede revertir`,
+                icon: "warning",
+                showCancelButton: true,
+            })
+            if (!isConfirmed) return;
+        }
+
+        setStatusLoading(true)
         const result = await salesRest.save({
-            id: saleLoaded.id,
-            status_id: e.target.value,
+            id: sale.id,
+            status_id: status.id,
+            notify_client: notifyClientRef.current.checked
         });
-        console.log("onStatusChange", result);
+        setStatusLoading(false)
         if (!result) return;
-        setSaleLoaded(result);
+        
+        const newSale = await salesRest.get(sale.id);
+        setSaleLoaded(newSale.data);
+        
+        // Cargar el historial de estados usando la nueva API
+        const statusHistory = await saleStatusesRest.bySale(sale.id);
+        if (statusHistory) {
+            setSaleStatuses(statusHistory);
+        } else {
+            setSaleStatuses([]);
+        }
+        
         $(gridRef.current).dxDataGrid("instance").refresh();
     };
 
@@ -50,37 +107,480 @@ const Sales = ({ statuses = [] }) => {
     };
 
     const onModalOpen = async (saleId) => {
+        notifyClientRef.current.checked = true
         const newSale = await salesRest.get(saleId);
         console.log("Sale data loaded:", newSale.data); // Debug: ver todos los datos que llegan
+        console.log("Status data:", newSale.data.status); // Debug: ver estado específico
+        console.log("Status reversible:", newSale.data.status?.reversible); // Debug: ver reversible
+        console.log("All statuses:", statuses); // Debug: ver todos los estados disponibles
         setSaleLoaded(newSale.data);
+        
+        // Cargar el historial de estados usando la nueva API
+        const statusHistory = await saleStatusesRest.bySale(saleId);
+        if (statusHistory) {
+            setSaleStatuses(statusHistory);
+        } else {
+            setSaleStatuses([]);
+        }
+        
         $(modalRef.current).modal("show");
     };
 
+    const [exportFilters, setExportFilters] = useState({
+        startDate: '',
+        endDate: '',
+        status: ''
+    });
+
+    const showExportModal = () => {
+        Swal.fire({
+            title: '<div style="display: flex; align-items: center; justify-content: center; gap: 12px; color: #2c3e50;"><i class="fas fa-file-excel" style="color: #1e7e34; font-size: 28px;"></i><span style="font-weight: 600;">Exportar Ventas a Excel</span></div>',
+            html: `
+                <div style="padding: 25px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
+                    
+                   
+                    
+                    <!-- Formulario de Fechas -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px;">
+                        
+                        <!-- Fecha Inicio -->
+                        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-left: 4px solid #28a745;">
+                            <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057; font-size: 14px;">
+                                <i class="fas fa-play-circle" style="color: #28a745; margin-right: 8px;"></i>
+                                Fecha de Inicio
+                            </label>
+                            <input 
+                                type="date" 
+                                id="startDate" 
+                                style="
+                                    width: 100%; 
+                                    padding: 12px 16px; 
+                                    border: 2px solid #e9ecef; 
+                                    border-radius: 8px; 
+                                    font-size: 14px; 
+                                    transition: all 0.3s ease;
+                                    background: #ffffff;
+                                    color: #495057;
+                                    font-family: inherit;
+                                " 
+                                onFocus="this.style.borderColor='#28a745'; this.style.boxShadow='0 0 0 3px rgba(40, 167, 69, 0.15)'; this.style.transform='translateY(-1px)'"
+                                onBlur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'; this.style.transform='translateY(0)'"
+                            >
+                        </div>
+                        
+                        <!-- Fecha Fin -->
+                        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-left: 4px solid #dc3545;">
+                            <label style="display: block; margin-bottom: 12px; font-weight: 600; color: #495057; font-size: 14px;">
+                                <i class="fas fa-stop-circle" style="color: #dc3545; margin-right: 8px;"></i>
+                                Fecha de Fin
+                            </label>
+                            <input 
+                                type="date" 
+                                id="endDate" 
+                                style="
+                                    width: 100%; 
+                                    padding: 12px 16px; 
+                                    border: 2px solid #e9ecef; 
+                                    border-radius: 8px; 
+                                    font-size: 14px; 
+                                    transition: all 0.3s ease;
+                                    background: #ffffff;
+                                    color: #495057;
+                                    font-family: inherit;
+                                " 
+                                onFocus="this.style.borderColor='#dc3545'; this.style.boxShadow='0 0 0 3px rgba(220, 53, 69, 0.15)'; this.style.transform='translateY(-1px)'"
+                                onBlur="this.style.borderColor='#e9ecef'; this.style.boxShadow='none'; this.style.transform='translateY(0)'"
+                            >
+                        </div>
+                    </div>
+                    
+                  
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-file-excel"></i> Exportar Excel',
+            cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            width: '650px',
+            preConfirm: () => {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+
+                // Validación básica
+                if (startDate && endDate && startDate > endDate) {
+                    Swal.showValidationMessage('La fecha de inicio no puede ser mayor a la fecha fin');
+                    return false;
+                }
+
+                return {
+                    startDate,
+                    endDate,
+                    status: '' // Siempre vacío ya que no hay filtro de estado
+                };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const filters = result.value;
+                exportToExcel(filters);
+            }
+        });
+    };
+
+    const exportToExcel = async (filters = {}) => {
+        try {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Exportando datos...',
+                text: 'Por favor espere mientras se preparan los datos para exportación',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Preparar parámetros para la consulta
+            const params = new URLSearchParams();
+            if (filters.startDate) params.append('start_date', filters.startDate);
+            if (filters.endDate) params.append('end_date', filters.endDate);
+            if (filters.status) params.append('status', filters.status);
+
+            // Obtener datos completos desde el controlador especializado
+            const url = `/api/admin/sales/export-data${params.toString() ? '?' + params.toString() : ''}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.message || 'Error al obtener los datos');
+            }
+
+            const salesData = data.data;
+
+            if (salesData.length === 0) {
+                Swal.fire({
+                    title: "Sin datos",
+                    text: `No hay ventas para exportar con los filtros seleccionados.
+                           ${filters.startDate ? `\nFecha inicio: ${filters.startDate}` : ''}
+                           ${filters.endDate ? `\nFecha fin: ${filters.endDate}` : ''}
+                           ${filters.status ? `\nEstado filtrado: ${saleStatuses.find(s => s.id == filters.status)?.name || 'Desconocido'}` : ''}`,
+                    icon: "info"
+                });
+                return;
+            }
+
+            // Formatear datos para Excel
+            const excelData = salesData.map(sale => ({
+                'ID_PEDIDO': sale.correlative_code,
+                'FECHA': sale.created_at,
+                'ESTADO': sale.status_name,
+                'CLIENTE_NOMBRES': sale.fullname,
+                'CLIENTE_EMAIL': sale.email,
+                'CLIENTE_TELEFONO': sale.phone,
+                'TIPO_DOCUMENTO': sale.document_type,
+                'NUMERO_DOCUMENTO': sale.document,
+                'RAZON_SOCIAL': sale.business_name,
+                'TIPO_COMPROBANTE': sale.invoice_type,
+                'METODO_PAGO': sale.payment_method,
+                'ID_TRANSACCION': sale.culqi_charge_id,
+                'ESTADO_PAGO': sale.payment_status,
+                'TIPO_ENTREGA': sale.delivery_type,
+                'DIRECCION_ENTREGA': sale.full_address,
+                'TIENDA_RETIRO': sale.store_name,
+                'DIRECCION_TIENDA': sale.store_address,
+                'TELEFONO_TIENDA': sale.store_phone,
+                'HORARIO_TIENDA': sale.store_schedule,
+                'REFERENCIA': sale.reference,
+                'COMENTARIO': sale.comment,
+                'UBIGEO': sale.ubigeo,
+                'PRODUCTOS': sale.products_formatted,
+                'CANTIDAD_PRODUCTOS': sale.products_count,
+                'CANTIDAD_TOTAL': sale.products_total_quantity,
+                'SUBTOTAL': sale.subtotal,
+                'COSTO_ENVIO': sale.delivery_cost,
+                'DESCUENTO_PAQUETE': sale.bundle_discount,
+                'DESCUENTO_RENOVACION': sale.renewal_discount,
+                'DESCUENTO_CUPON': sale.coupon_discount,
+                'CODIGO_CUPON': sale.coupon_code,
+                'DESCUENTO_PROMOCION': sale.promotion_discount,
+                'PROMOCIONES_APLICADAS': sale.applied_promotions,
+                'TOTAL_FINAL': sale.total_amount
+            }));
+
+            // Crear libro de Excel
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+            // Configurar ancho de columnas optimizado
+            const columnWidths = [
+                { wch: 15 }, // ID_PEDIDO
+                { wch: 18 }, // FECHA
+                { wch: 12 }, // ESTADO
+                { wch: 25 }, // CLIENTE_NOMBRES
+                { wch: 30 }, // CLIENTE_EMAIL
+                { wch: 15 }, // CLIENTE_TELEFONO
+                { wch: 15 }, // TIPO_DOCUMENTO
+                { wch: 15 }, // NUMERO_DOCUMENTO
+                { wch: 30 }, // RAZON_SOCIAL
+                { wch: 15 }, // TIPO_COMPROBANTE
+                { wch: 15 }, // METODO_PAGO
+                { wch: 20 }, // ID_TRANSACCION
+                { wch: 15 }, // ESTADO_PAGO
+                { wch: 15 }, // TIPO_ENTREGA
+                { wch: 50 }, // DIRECCION_ENTREGA
+                { wch: 25 }, // TIENDA_RETIRO
+                { wch: 30 }, // DIRECCION_TIENDA
+                { wch: 15 }, // TELEFONO_TIENDA
+                { wch: 20 }, // HORARIO_TIENDA
+                { wch: 20 }, // REFERENCIA
+                { wch: 30 }, // COMENTARIO
+                { wch: 10 }, // UBIGEO
+                { wch: 60 }, // PRODUCTOS
+                { wch: 10 }, // CANTIDAD_PRODUCTOS
+                { wch: 10 }, // CANTIDAD_TOTAL
+                { wch: 12 }, // SUBTOTAL
+                { wch: 12 }, // COSTO_ENVIO
+                { wch: 15 }, // DESCUENTO_PAQUETE
+                { wch: 18 }, // DESCUENTO_RENOVACION
+                { wch: 15 }, // DESCUENTO_CUPON
+                { wch: 15 }, // CODIGO_CUPON
+                { wch: 18 }, // DESCUENTO_PROMOCION
+                { wch: 40 }, // PROMOCIONES_APLICADAS
+                { wch: 12 }  // TOTAL_FINAL
+            ];
+
+            worksheet['!cols'] = columnWidths;
+            
+            // Agregar hoja al libro
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Ventas_Facturacion');
+
+            // Generar nombre del archivo con información de filtros
+            let filename = 'ventas_facturacion';
+            if (filters.startDate || filters.endDate) {
+                filename += '_' + (filters.startDate || 'inicio') + '_al_' + (filters.endDate || 'fin');
+            }
+            if (filters.status) {
+                const statusName = saleStatuses.find(s => s.id == filters.status)?.name || 'estado';
+                filename += '_' + statusName.toLowerCase().replace(/\s+/g, '_');
+            }
+            filename += '_' + moment().format('YYYY-MM-DD_HH-mm') + '.xlsx';
+
+            // Descargar archivo
+            XLSX.writeFile(workbook, filename);
+
+            // Mostrar mensaje de éxito con estadísticas detalladas
+            let filterInfo = '';
+            if (filters.startDate) filterInfo += `\n📅 Desde: ${filters.startDate}`;
+            if (filters.endDate) filterInfo += `\n📅 Hasta: ${filters.endDate}`;
+            if (filters.status) {
+                const statusName = saleStatuses.find(s => s.id == filters.status)?.name;
+                filterInfo += `\n📊 Estado: ${statusName}`;
+            }
+
+            Swal.fire({
+                title: '<div style="display: flex; align-items: center; justify-content: center; gap: 12px; color: #155724;"><i class="fas fa-check-circle" style="color: #28a745; font-size: 28px;"></i><span style="font-weight: 600;">¡Exportación Exitosa!</span></div>',
+                html: `
+                    <div style="
+                        background: linear-gradient(135deg, #d4edda 0%, #f8f9fa 100%);
+                        border-radius: 16px;
+                        padding: 25px;
+                        margin: 20px 0;
+                        border-left: 5px solid #28a745;
+                        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.15);
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    ">
+                        <!-- Estadísticas principales -->
+                        <div style="
+                            display: grid; 
+                            grid-template-columns: 1fr 1fr; 
+                            gap: 20px; 
+                            margin-bottom: 20px;
+                        ">
+                            <!-- Total exportado -->
+                            <div style="
+                                background: white;
+                                padding: 18px;
+                                border-radius: 12px;
+                                text-align: center;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                                border-top: 3px solid #17a2b8;
+                            ">
+                                <div style="color: #17a2b8; font-size: 24px; margin-bottom: 8px;">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div style="font-size: 28px; font-weight: bold; color: #2c3e50; margin-bottom: 4px;">
+                                    ${salesData.length}
+                                </div>
+                                <div style="font-size: 13px; color: #6c757d; font-weight: 500;">
+                                    Ventas Exportadas
+                                </div>
+                            </div>
+                            
+                            <!-- Archivo generado -->
+                            <div style="
+                                background: white;
+                                padding: 18px;
+                                border-radius: 12px;
+                                text-align: center;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                                border-top: 3px solid #28a745;
+                            ">
+                                <div style="color: #28a745; font-size: 24px; margin-bottom: 8px;">
+                                    <i class="fas fa-file-excel"></i>
+                                </div>
+                                <div style="font-size: 12px; font-weight: bold; color: #2c3e50; margin-bottom: 4px; word-break: break-all;">
+                                    ${filename}
+                                </div>
+                                <div style="font-size: 13px; color: #6c757d; font-weight: 500;">
+                                    Archivo Excel
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${filterInfo ? `
+                        <!-- Información de filtros -->
+                        <div style="
+                            background: white;
+                            padding: 18px;
+                            border-radius: 12px;
+                            border-left: 4px solid #ffc107;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                        ">
+                            <div style="
+                                display: flex; 
+                                align-items: center; 
+                                margin-bottom: 12px;
+                                color: #856404;
+                                font-weight: 600;
+                                font-size: 15px;
+                            ">
+                                <i class="fas fa-filter" style="margin-right: 10px; color: #ffc107;"></i>
+                                Filtros Aplicados
+                            </div>
+                            <div style="
+                                font-size: 14px; 
+                                color: #495057; 
+                                line-height: 1.6;
+                                background: #fff8e1;
+                                padding: 12px;
+                                border-radius: 8px;
+                                border: 1px solid #ffeaa7;
+                            ">
+                                ${filterInfo.replace(/\n/g, '<br/>')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- Mensaje de confirmación -->
+                        <div style="
+                            text-align: center;
+                            margin-top: 20px;
+                            padding: 15px;
+                            background: rgba(40, 167, 69, 0.1);
+                            border-radius: 10px;
+                            border: 1px solid rgba(40, 167, 69, 0.2);
+                        ">
+                            <div style="color: #155724; font-size: 15px; font-weight: 500;">
+                                <i class="fas fa-download" style="margin-right: 8px;"></i>
+                                El archivo se ha descargado exitosamente
+                            </div>
+                        </div>
+                    </div>
+                `,
+                icon: "success",
+                confirmButtonText: '<i class="fas fa-thumbs-up"></i> ¡Perfecto!',
+                confirmButtonColor: '#28a745',
+                timer: 8000,
+                timerProgressBar: true,
+                width: '700px'
+            });
+
+        } catch (error) {
+            console.error('Error al exportar:', error);
+            Swal.fire({
+                title: "Error en la exportación",
+                text: error.message || "No se pudo exportar los datos. Intente nuevamente.",
+                icon: "error"
+            });
+        }
+    };
+
     useEffect(() => {
-        // if (!saleLoaded) return
-        // saleStatusesRest.bySale(saleLoaded.id).then((data) => {
-        //   if (data) setSaleStatuses(data)
-        //   else setSaleStatuses([])
-        // })
+        if (!saleLoaded) return
+        saleStatusesRest.bySale(saleLoaded.id).then((data) => {
+          if (data) setSaleStatuses(data)
+          else setSaleStatuses([])
+        })
     }, [saleLoaded]);
 
-    const totalAmount =
-        Number(saleLoaded?.amount) +
-        Number(saleLoaded?.delivery || 0) -
-        Number(saleLoaded?.bundle_discount || 0) -
-        Number(saleLoaded?.renewal_discount || 0) -
-        Number(saleLoaded?.coupon_discount || 0) 
-     // -Number(saleLoaded?.promotion_discount || 0)
-        ;
+    const statusTemplate = (e) => {
+        const data = $(e.element).data('status')
+        if (!e.id) return
+        
+        const baseColor = data?.color || "#333";
+        const element = $(renderToString(
+            <span 
+                title={data?.description || ''}
+                className="d-flex align-items-center"
+                style={{
+                    color: baseColor,
+                    padding: "4px 8px",
+                    fontSize: "14px",
+                    fontWeight: "500"
+                }}
+            >
+                <i 
+                    className={`${data?.icon || 'mdi mdi-circle'} me-2`}
+                    style={{ 
+                        color: baseColor,
+                        fontSize: "12px"
+                    }}
+                ></i>
+                {e.text}
+            </span>
+        ));
+        
+        return element;
+    }
+
+    const subtotalReal = saleLoaded?.details?.reduce((sum, detail) => sum + (detail.price * detail.quantity), 0) || 0;
+    const totalAmount = subtotalReal + Number(saleLoaded?.delivery || 0) - 
+        Number(saleLoaded?.promotion_discount || 0) - 
+        Number(saleLoaded?.coupon_discount || 0) - 
+        Number(saleLoaded?.bundle_discount || 0) - 
+        Number(saleLoaded?.renewal_discount || 0);
 
     return (
-        <>  
-           
+        <>
+
             <Table
                 gridRef={gridRef}
                 title="Pedidos"
                 rest={salesRest}
                 toolBar={(container) => {
+                    container.unshift({
+                        widget: "dxButton",
+                        location: "after",
+                        options: {
+                            icon: "exportxlsx",
+                            text: "Exportar para Facturación",
+                            hint: "Exportar datos completos para facturador",
+                            onClick: showExportModal,
+                            type: "normal",
+                            stylingMode: "outlined"
+                        },
+                    });
                     container.unshift({
                         widget: "dxButton",
                         location: "after",
@@ -138,16 +638,13 @@ const Sales = ({ statuses = [] }) => {
                         sortOrder: "desc",
                         cellTemplate: (container, { data }) => {
                             // container.text(moment(data.created_at).fromNow())
-                            container.text(
-                                moment(data.created_at).format("LLL")
-                            );
+                            container.text(moment(data.created_at).subtract(5, 'hours').format("LLL"));
                         },
                     },
                     {
                         dataField: "status.name",
                         caption: "Estado",
                         cellTemplate: (container, { data }) => {
-                            console.log(data);
                             ReactAppend(
                                 container,
                                 <span
@@ -164,28 +661,14 @@ const Sales = ({ statuses = [] }) => {
                             );
                         },
                     },
+              
                     {
                         dataField: "amount",
                         caption: "Total",
                         dataType: "number",
                         cellTemplate: (container, { data }) => {
-                            const amount = Number(data.amount) || 0;
-                            const delivery = Number(data.delivery) || 0;
-                            const bundle_discount =
-                                Number(data.bundle_discount) || 0;
-                            const renewal_discount =
-                                Number(data.renewal_discount) || 0;
-                            const coupon_discount =
-                                Number(data.coupon_discount) || 0;
-                            container.text(
-                                `S/. ${Number2Currency(
-                                    amount +
-                                        delivery -
-                                        bundle_discount -
-                                        renewal_discount -
-                                        coupon_discount
-                                )}`
-                            );
+                           
+                            container.text(`S/. ${Number2Currency(data?.amount)}`);
                         },
                     },
                     {
@@ -366,12 +849,58 @@ const Sales = ({ statuses = [] }) => {
                                             </tr>
                                         )}
 
-                                   
+                                        {/* Mostrar descuentos automáticos si existen */}
+                                        {(saleLoaded?.applied_promotions || saleLoaded?.promotion_discount > 0) && (
+                                            <tr>
+                                                <th>Promociones automáticas:</th>
+                                                <td>
+                                                    {saleLoaded?.applied_promotions && (() => {
+                                                        try {
+                                                            const promotions = typeof saleLoaded.applied_promotions === 'string' 
+                                                                ? JSON.parse(saleLoaded.applied_promotions) 
+                                                                : saleLoaded.applied_promotions;
+                                                            
+                                                            if (Array.isArray(promotions) && promotions.length > 0) {
+                                                                return promotions.map((promo, index) => (
+                                                                    <div key={index} className="mb-2">
+                                                                        <span className="badge bg-primary me-2">
+                                                                            {promo.rule_name || promo.name || 'Promoción automática'}
+                                                                        </span>
+                                                                        <small className="text-primary d-block">
+                                                                            {promo.description || 'Descuento por promoción especial'}
+                                                                        </small>
+                                                                        <small className="text-success d-block">
+                                                                            Descuento: S/ {Number2Currency(promo.discount_amount || promo.amount || 0)}
+                                                                        </small>
+                                                                        {promo.free_items && promo.free_items.length > 0 && (
+                                                                            <small className="text-info d-block">
+                                                                                Productos gratis: {promo.free_items.map(item => item.name || item.item_name).join(', ')}
+                                                                            </small>
+                                                                        )}
+                                                                    </div>
+                                                                ));
+                                                            }
+                                                        } catch (e) {
+                                                            console.error('Error parsing applied_promotions:', e);
+                                                            return null;
+                                                        }
+                                                    })()}
+                                                    
+                                                    {saleLoaded?.promotion_discount > 0 && (
+                                                        <div className="mt-2 pt-2 border-top">
+                                                            <strong className="text-primary">
+                                                                Total descuentos automáticos: S/ {Number2Currency(saleLoaded?.promotion_discount || 0)}
+                                                            </strong>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        )}
 
                                         {saleLoaded?.invoiceType && (
                                             <tr>
                                                 <th>{saleLoaded?.invoiceType}:</th>
-                                                <td>{saleLoaded?.documentType} - {saleLoaded?.document} <br></br> {saleLoaded?.document && ( saleLoaded?.businessName )}</td>
+                                                <td>{saleLoaded?.documentType} - {saleLoaded?.document} <br></br> {saleLoaded?.document && (saleLoaded?.businessName)}</td>
                                             </tr>
                                         )}
 
@@ -440,8 +969,8 @@ const Sales = ({ statuses = [] }) => {
                                                                     src={`/storage/images/item/${detail.image}`}
                                                                     alt={detail.name}
                                                                     style={{
-                                                                        height: '5rem',       
-                                                                        width: '5rem',       
+                                                                        height: '5rem',
+                                                                        width: '5rem',
                                                                         objectFit: 'scale-down',
                                                                     }}
                                                                 />
@@ -488,7 +1017,7 @@ const Sales = ({ statuses = [] }) => {
                                     <span>
                                         S/{" "}
                                         {Number2Currency(
-                                            saleLoaded?.amount * 1
+                                            saleLoaded?.details?.reduce((sum, detail) => sum + (detail.price * detail.quantity), 0) || 0
                                         )}
                                     </span>
                                 </div>
@@ -500,58 +1029,48 @@ const Sales = ({ statuses = [] }) => {
                                     </span>
                                 </div>
                                 
-                                {/* Mostrar descuentos solo como información debajo de Envío */}
-                                {saleLoaded?.bundle_discount > 0 && (
-                                    <div className="d-flex justify-content-between text-success">
-                                        <span>Descuento por paquete:</span>
+                                {/* Mostrar descuentos automáticos en el resumen */}
+                                {saleLoaded?.promotion_discount > 0 && (
+                                    <div className="d-flex justify-content-between text-primary">
+                                        <b>Descuentos automáticos:</b>
                                         <span>
-                                            -S/ {Number2Currency(saleLoaded?.bundle_discount)}
+                                            - S/{" "}
+                                            {Number2Currency(saleLoaded?.promotion_discount)}
                                         </span>
                                     </div>
                                 )}
-                                {saleLoaded?.renewal_discount > 0 && (
-                                    <div className="d-flex justify-content-between text-success">
-                                        <span>Descuento por renovación:</span>
-                                        <span>
-                                            -S/ {Number2Currency(saleLoaded?.renewal_discount)}
-                                        </span>
-                                    </div>
-                                )}
+                                
                                 {saleLoaded?.coupon_discount > 0 && (
                                     <div className="d-flex justify-content-between text-success">
+                                        <b>Descuento por cupón:</b>
                                         <span>
-                                            Descuento con cupón
-                                            {saleLoaded?.coupon_code && (
-                                                <small className="text-muted d-block">
-                                                    Código: {saleLoaded?.coupon_code}
-                                                </small>
-                                            )}
-                                        </span>
-                                        <span>
-                                            -S/ {Number2Currency(saleLoaded?.coupon_discount)}
+                                            - S/{" "}
+                                            {Number2Currency(saleLoaded?.coupon_discount)}
                                         </span>
                                     </div>
                                 )}
-                                {saleLoaded?.promotion_discount > 0 && (
+                                
+                                {/* Mostrar otros descuentos si existen */}
+                                {saleLoaded?.bundle_discount > 0 && (
                                     <div className="d-flex justify-content-between text-info">
+                                        <b>Descuento por paquete:</b>
                                         <span>
-                                            {console.log(saleLoaded?.promotion_discount)    }
-                                            Descuentos por promociones
-                                            {saleLoaded?.applied_promotions && (
-                                                <small className="text-muted d-block">
-                                                    {JSON.parse(saleLoaded.applied_promotions).map((promo, index) => (
-                                                        <div key={index}>
-                                                            • {promo.name}: {promo.description}
-                                                        </div>
-                                                    ))}
-                                                </small>
-                                            )}
-                                        </span>
-                                        <span>
-                                            -S/ {Number2Currency(saleLoaded?.promotion_discount)}
+                                            - S/{" "}
+                                            {Number2Currency(saleLoaded?.bundle_discount)}
                                         </span>
                                     </div>
                                 )}
+                                
+                                {saleLoaded?.renewal_discount > 0 && (
+                                    <div className="d-flex justify-content-between text-warning">
+                                        <b>Descuento por renovación:</b>
+                                        <span>
+                                            - S/{" "}
+                                            {Number2Currency(saleLoaded?.renewal_discount)}
+                                        </span>
+                                    </div>
+                                )}
+                                
                                 <hr className="my-2" />
                                 <div className="d-flex justify-content-between">
                                     <b>Total:</b>
@@ -561,6 +1080,18 @@ const Sales = ({ statuses = [] }) => {
                                         </strong>
                                     </span>
                                 </div>
+                                
+                                {/* Mostrar desglose de cómo se calculó el total */}
+                                <small className="text-muted mt-2 d-block">
+                                    <strong>Cálculo:</strong> 
+                                    {Number2Currency(subtotalReal)} (subtotal)
+                                    + {Number2Currency(saleLoaded?.delivery)} (envío)
+                                    {saleLoaded?.promotion_discount > 0 && ` - ${Number2Currency(saleLoaded?.promotion_discount)} (promociones)`}
+                                    {saleLoaded?.coupon_discount > 0 && ` - ${Number2Currency(saleLoaded?.coupon_discount)} (cupón)`}
+                                    {saleLoaded?.bundle_discount > 0 && ` - ${Number2Currency(saleLoaded?.bundle_discount)} (paquete)`}
+                                    {saleLoaded?.renewal_discount > 0 && ` - ${Number2Currency(saleLoaded?.renewal_discount)} (renovación)`}
+                                    = S/ {Number2Currency(totalAmount)}
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -570,8 +1101,32 @@ const Sales = ({ statuses = [] }) => {
                             <div className="card-header p-2">
                                 <h5 className="card-title mb-0">Estado</h5>
                             </div>
-                            <div className="card-body p-2">
-                                <div className="">
+                            <div className="card-body p-2 position-relative" id="statusSelectContainer">
+                                {statusLoading && (
+                                    <div className="position-absolute d-flex align-items-center justify-content-center" style={{
+                                        top: 0, left: 0, right: 0, bottom: 0,
+                                        zIndex: 1,
+                                        backgroundColor: 'rgba(255, 255, 255, 0.125)',
+                                        backdropFilter: 'blur(2px)',
+                                        cursor: 'not-allowed'
+                                    }}>
+                                        <div className="spinner-border spinner-border-sm" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
+                                <div>
+                                <SelectFormGroup label='Estado actual' dropdownParent='#statusSelectContainer' minimumResultsForSearch={-1} templateResult={statusTemplate} templateSelection={statusTemplate} onChange={(e) => onStatusChange(e, saleLoaded)} value={saleLoaded?.status_id} changeWith={[saleLoaded]} disabled={statusLoading || saleLoaded?.status?.reversible == 0}>
+                                    {statuses.map((status, index) => {
+                                        return (
+                                            <option key={index} value={status.id} data-status={JSON.stringify(status)}>
+                                                {status.name}
+                                            </option>
+                                        );
+                                    })}
+                                </SelectFormGroup>
+                                </div>
+                                {/* <div className="mb-2">
                                     <label
                                         htmlFor="statusSelect"
                                         className="form-label"
@@ -583,7 +1138,7 @@ const Sales = ({ statuses = [] }) => {
                                         id="statusSelect"
                                         value={saleLoaded?.status_id}
                                         onChange={onStatusChange}
-                                        //  disabled={!saleLoaded?.status?.reversible}
+                                        disabled={saleLoaded?.status?.reversible == 0}
                                     >
                                         {statuses.map((status, index) => {
                                             return (
@@ -593,11 +1148,31 @@ const Sales = ({ statuses = [] }) => {
                                             );
                                         })}
                                     </select>
+                                </div> */}
+                                <div className="form-check" style={{
+                                    cursor: saleLoaded?.status?.reversible == 0 ? 'not-allowed' : 'pointer'
+                                }}>
+                                    <input
+                                        ref={notifyClientRef}
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        id="notifyClient"
+                                        defaultChecked
+                                        disabled={saleLoaded?.status?.reversible == 0}
+                                        style={{
+                                            cursor: saleLoaded?.status?.reversible == 0 ? 'not-allowed' : 'pointer'
+                                        }}
+                                    />
+                                    <label className="form-check-label" htmlFor="notifyClient" style={{
+                                        cursor: saleLoaded?.status?.reversible == 0 ? 'not-allowed' : 'pointer'
+                                    }}>
+                                        Notificar al cliente
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="card" hidden>
+                        <div className="card">
                             <div className="card-header p-2">
                                 <h5 className="card-title mb-0">
                                     Cambios de Estado
@@ -605,25 +1180,27 @@ const Sales = ({ statuses = [] }) => {
                             </div>
                             <div className="card-body p-2 d-flex flex-column gap-1">
                                 {saleStatuses?.map((ss, index) => {
+                                    // Buscar el color del estado desde la lista de estados disponibles
+                                    const statusData = statuses.find(s => s.id === ss.status_id || s.name === ss.name);
+                                    const statusColor = statusData?.color || ss.color || "#333";
+                                    
                                     return (
                                         <article
                                             key={index}
-                                            class="border py-1 px-2 ms-3"
+                                            className="border py-1 px-2 ms-3"
                                             style={{
                                                 position: "relative",
                                                 borderRadius:
                                                     "16px 4px 4px 16px",
-                                                backgroundColor: ss.status.color
-                                                    ? `${ss.status.color}2e`
+                                                backgroundColor: statusColor
+                                                    ? `${statusColor}2e`
                                                     : "#3333332e",
                                             }}
                                         >
                                             <i
-                                                className="mdi mdi-circle left-2"
+                                                className={`${ss.icon || statusData?.icon || 'mdi mdi-circle'} left-2`}
                                                 style={{
-                                                    color:
-                                                        ss.status.color ||
-                                                        "#333",
+                                                    color: statusColor,
                                                     position: "absolute",
                                                     left: "-25px",
                                                     top: "50%",
@@ -633,16 +1210,14 @@ const Sales = ({ statuses = [] }) => {
                                             ></i>
                                             <b
                                                 style={{
-                                                    color:
-                                                        ss.status.color ||
-                                                        "#333",
+                                                    color: statusColor,
                                                 }}
                                             >
-                                                {ss?.status?.name}
+                                                {ss?.name}
                                             </b>
                                             <small className="d-block text-truncate">
-                                                {ss?.user?.name}{" "}
-                                                {ss?.user?.lastname}
+                                                {ss?.user_name}{" "}
+                                                {ss?.user_lastname}
                                             </small>
                                             <small className="d-block text-muted">
                                                 {moment(ss.created_at).format(

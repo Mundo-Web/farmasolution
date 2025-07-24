@@ -9,6 +9,7 @@ import PromotionSuggestion from "./PromotionSuggestion";
 import PromotionModal from "./PromotionModal";
 
 export default function CartStep({ 
+    data,
     cart, 
     setCart, 
     onContinue, 
@@ -325,8 +326,9 @@ export default function CartStep({
                     <div className="space-y-2 pt-3 md:pt-4">
                         <ButtonPrimary 
                             onClick={onContinue} 
-                            className="w-full"
+                          
                             disabled={isCartEmpty}
+                            className={`w-full ${data?.class_button || 'text-white'}`}
                         >
                             {isCartEmpty ? 'Carrito Vacío' : 'Continuar Compra'}
                         </ButtonPrimary>

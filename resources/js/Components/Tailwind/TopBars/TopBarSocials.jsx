@@ -11,9 +11,7 @@ const TopBarSocials = ({ items, data }) => {
   const lastScroll = useRef(0);
 
   useEffect(() => {
-    if (sectionRef.current) {
-      adjustTextColor(sectionRef.current); // Llama a la función
-    }
+    
     const handleScroll = () => {
       const current = window.scrollY;
       if (current > lastScroll.current && current > 60) {
@@ -26,11 +24,11 @@ const TopBarSocials = ({ items, data }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  console.log(items);
+ 
   return (
     <section
       ref={sectionRef}
-      className={`${data?.background_color ? data?.background_color : "bg-primary"} text-white font-paragraph font-bold transition-all duration-300 w-full z-50 ${data?.border_color ? `border-t-2 ${data?.border_color}`:""}`}
+      className={`${data?.background_color ? data?.background_color : "bg-primary"}  font-paragraph font-bold transition-all duration-300 w-full z-50  ${data?.border_color ? `border-t-2 ${data?.border_color}`:""} text-white`}
     >
       <div className="px-primary  mx-auto py-1.5 flex flex-wrap justify-center md:justify-between items-center gap-2 2xl:max-w-7xl 2xl:px-0">
         <p className="hidden md:block text-xs">{data.isCopyright ? 

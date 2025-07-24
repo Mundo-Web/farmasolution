@@ -410,7 +410,7 @@ const HeaderSearchB = ({
                                         e.stopPropagation();
                                         setTimeout(() => onSelect(suggestion), 0);
                                     }}
-                                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-200 flex items-center gap-3 ${index === selectedIndex ? 'bg-primary/10 border-l-4 border-primary' : ''}`}
+                                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-200 flex items-center gap-3 ${index === selectedIndex ? 'bg-primary border-l-4 border-primary' : ''}`}
                                     type="button"
                                 >
                                     <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
@@ -688,7 +688,7 @@ const HeaderSearchB = ({
                                         fetchSearchSuggestions(search);
                                     }
                                 }}
-                                className="w-full pr-14 py-4 pl-4 border rounded-full font-normal focus:ring-0 customtext-neutral-dark placeholder:customtext-neutral-dark focus:outline-none bg-[#DFF4FF]"
+                                className="w-full pr-14 py-4 pl-4 border rounded-full font-normal focus:ring-0 customtext-neutral-dark placeholder:customtext-neutral-dark focus:outline-none bg-white"
                                 enterKeyHint="search"
                                 inputMode="search"
                                 autoComplete="on"
@@ -697,7 +697,7 @@ const HeaderSearchB = ({
                             />
                             <button
                                 type="submit"
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                                className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-2 ${data?.backgroundColor ? data?.backgroundColor : "bg-primary"} text-white rounded-lg hover:bg-primary hover:scale-105  transition-all duration-300`}
                                 aria-label="Buscar"
                             >
                                 <Search />
@@ -942,7 +942,7 @@ const HeaderSearchB = ({
                                                 </button>
                                                 <button
                                                     type="submit"
-                                                    className="p-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                                                    className={`p-2 ${data?.backgroundColor ? "bg-primary-gradient" : data?.backgroundColor} text-white rounded-lg hover:bg-primary transition-colors`}
                                                     aria-label="Buscar"
                                                 >
                                                     <Search size={16} />

@@ -4,7 +4,8 @@ import Global from "../../../Utils/Global";
 
 const BannerPublicitario = ({ data }) => {
     return (
-        <AnimatePresence>
+    <div className={`${data?.class_content || ''}`}>
+             <AnimatePresence>
             <motion.div 
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -27,7 +28,7 @@ const BannerPublicitario = ({ data }) => {
                     <div className="flex flex-col md:flex-row items-center justify-between h-full gap-8">
                         {/* Left side - Image */}
                         <motion.div 
-                            className="order-1 md:order-none w-full md:w-7/12 relative z-10 flex items-center justify-center h-full"
+                            className={`order-1 md:order-none w-full md:w-7/12 relative z-10 flex items-center justify-center h-full ${data?.class_image || ''}`}
                         >
                             <motion.img
                                 whileHover={{ 
@@ -48,14 +49,14 @@ const BannerPublicitario = ({ data }) => {
                             initial={{ x: 200, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 1, delay: 0.7 }}
-                            className="md:order-1 md:w-5/12 text-white z-10"
+                            className={`md:order-1 md:w-5/12  z-10 ${data?.class_right || 'text-white'}`}
                         >
-                            <div className="max-w-sm">
+                            <div className={`max-w-sm ${data?.class_content_right || ''}`}>
                                 <motion.h1 
                                     initial={{ y: 50, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ duration: 0.8, delay: 1 }}
-                                    className="text-[40px] leading-tight md:text-6xl font-bold mb-4 font-font-primary"
+                                    className="text-[40px] leading-tight md:text-6xl font-bold mb-4 font-title"
                                 >
                                     {data?.name}
                                 </motion.h1>
@@ -77,7 +78,7 @@ const BannerPublicitario = ({ data }) => {
                                     }}
                                     whileTap={{ scale: 0.9 }}
                                     href={data?.button_link || Global.APP_DOMAIN}
-                                    className="bg-white cursor-pointer text-sm w-max font-bold customtext-neutral-dark px-10 py-4 rounded-xl hover:opacity-90 transition-all duration-300 flex items-center gap-2"
+                                    className={` cursor-pointer text-sm w-max font-bold customtext-neutral-dark px-10 py-4 rounded-xl hover:opacity-90 transition-all duration-300 flex items-center gap-2 ${data?.class_button || 'bg-white'}`}
                                 >
                                     {data?.button_text}
                                     <motion.div
@@ -100,6 +101,7 @@ const BannerPublicitario = ({ data }) => {
                 </motion.div>
             </motion.div>
         </AnimatePresence>
+    </div>
     );
 };
 

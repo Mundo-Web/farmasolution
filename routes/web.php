@@ -34,14 +34,17 @@ use App\Http\Controllers\Admin\DeliveryPriceController as AdminDeliveryPriceCont
 use App\Http\Controllers\Admin\DeliveryZoneController as AdminDeliveryZoneController;
 use App\Http\Controllers\Admin\StoreController as AdminStoreController;
 use App\Http\Controllers\Admin\SaleController as AdminSaleController;
+use App\Http\Controllers\Admin\SaleExportController as AdminSaleExportController;
 use App\Http\Controllers\Admin\SubCategoryController as AdminSubCategoryController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\DiscountRulesController as AdminDiscountRulesController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\RepositoryController as AdminRepositoryController;
+use App\Http\Controllers\Admin\SaleStatusController as AdminSaleStatusController;
 // Public 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RepositoryController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SystemController;
 use SoDe\Extend\File;
 
@@ -83,18 +86,17 @@ foreach ($pages as $page) {
 
 Route::get('/base-template', [SystemController::class, 'reactView'])->name('System.jsx');
 Route::get('/login', [AuthController::class, 'loginView'])->name('Login.jsx');
-Route::middleware('auth')->group(
-    function () {
-        Route::get('/profile', [AdminProfileController::class, 'reactView'])->name('Admin/Profile.jsx');
-        Route::get('/account', [AdminAccountController::class, 'reactView'])->name('Admin/Account.jsx');
-    }
-);
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [AdminProfileController::class, 'reactView'])->name('Admin/Profile.jsx');
+    Route::get('/account', [AdminAccountController::class, 'reactView'])->name('Admin/Account.jsx');
+});
 
 // Admin routes
 Route::middleware(['can:Admin', 'auth'])->prefix('admin')->group(function () {
     Route::get('/', fn() => redirect()->route('Admin/Home.jsx'));
     Route::get('/home', [AdminHomeController::class, 'reactView'])->name('Admin/Home.jsx');
     Route::get('/sales', [AdminSaleController::class, 'reactView'])->name('Admin/Sales.jsx');
+    Route::get('/sales/export-data', [AdminSaleExportController::class, 'exportData'])->name('admin.sales.export');
     Route::get('/items', [AdminItemController::class, 'reactView'])->name('Admin/Items.jsx');
     Route::get('/coupons', [AdminCouponController::class, 'reactView'])->name('Admin/Coupons.jsx');
     Route::get('/discount-rules', [AdminDiscountRulesController::class, 'reactView'])->name('Admin/DiscountRules.jsx');
@@ -120,6 +122,7 @@ Route::middleware(['can:Admin', 'auth'])->prefix('admin')->group(function () {
     Route::get('/banners', [AdminBannerController::class, 'reactView'])->name('Admin/Banners.jsx');
     Route::get('/testimonies', [AdminTestimonyController::class, 'reactView'])->name('Admin/Testimonies.jsx');
     Route::get('/socials', [AdminSocialController::class, 'reactView'])->name('Admin/Socials.jsx');
+    Route::get('/statuses', [AdminSaleStatusController::class, 'reactView'])->name('Admin/Statuses.jsx');
     Route::get('/strengths', [AdminStrengthController::class, 'reactView'])->name('Admin/Strengths.jsx');
     Route::get('/certifications', [AdminCertificationController::class, 'reactView'])->name('Admin/Certifications.jsx');
     Route::get('/partners', [AdminPartnerController::class, 'reactView'])->name('Admin/Partners.jsx');

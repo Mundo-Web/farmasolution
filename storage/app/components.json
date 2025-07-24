@@ -104,6 +104,21 @@
                         "subcategories"
                     ]
                 }
+            },
+            {
+                "id": "MenuExpertFarma",
+                "name": "Menu - Expert Farma",
+                "image": "top-bar-simple.png",
+                "data": [
+                    "showCategories",
+                    "backgroundColor"
+                ],
+                "using": {
+                    "model": "Category",
+                    "with": [
+                        "subcategories"
+                    ]
+                }
             }
         ]
     },
@@ -129,7 +144,8 @@
                     "class",
                     "link_cart",
                     "showLoginCart",
-                    "mobileSearch"
+                    "mobileSearch",
+                    "backgroundColor"
                 ],
                 "using": {
                     "model": "Category",
@@ -178,7 +194,8 @@
                         "category",
                         "subcategory",
                         "brand",
-                        "collection"
+                        "collection",
+                        "variants"
                     ]
                 },
                 "generals": [
@@ -284,6 +301,19 @@
             {
                 "id": "CarruselBenefitsInifinite",
                 "name": "Beneficios",
+                "data": [
+                    "background"
+                ],
+                "using": {
+                    "model": "Indicator"
+                }
+            },
+            {
+                "id": "CarruselBenefitsInifinite2dn1",
+                "name": "CarruselBenefitsInifinite2dn1",
+                "data": [
+                    "background"
+                ],
                 "using": {
                     "model": "Indicator"
                 }
@@ -407,7 +437,8 @@
                     "paginationAlignment",
                     "showNavigation",
                     "imageBgPosition",
-                    "overlayMobile"
+                    "overlayMobile",
+                    "whatsapp_info"
                 ],
                 "using": {
                     "model": "Slider",
@@ -418,7 +449,12 @@
                         "button_text",
                         "button_link"
                     ]
-                }
+                },
+                 "generals": [
+                    "phone_whatsapp",
+                    "message_whatsapp"
+                   
+                ]
             },
             {
                 "id": "SliderFeaturedMakita",
@@ -533,7 +569,8 @@
                     "path",
                     "title",
                     "description",
-                    "link_cart"
+                    "link_cart",
+                    "class_button"
                 ],
                 "options": [
                     {
@@ -569,7 +606,9 @@
                             "with": [
                                 "category",
                                 "subcategory",
-                                "brand"
+                                "brand",
+                                "collection",
+                                "variants"
                             ],
                             "relations": [
                                 "category",
@@ -633,11 +672,81 @@
                             "with": [
                                 "category",
                                 "subcategory",
+                                "brand",
+                                "collection"
+                            ],
+                            "relations": [
+                                "category",
+                                "tags",
+                                "collection"
+                            ],
+                            "fields": [
+                                "id",
+                                "name",
+                                "slug",
+                                "price",
+                                "final_price",
+                                "image",
+                                "color"
+                            ],
+                            "group_by_name": true
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "CatalagoFiltrosPaani",
+                "name": "Producto Catalogo Filtro - Paani",
+                "image": "products-list.png",
+                "data": [
+                    "path",
+                    "title",
+                    "description",
+                    "link_cart",
+                    "background",
+                    "backgroundboton"
+                ],
+                "options": [
+                    {
+                        "id": "default",
+                        "name": "Lista estándar",
+                        "using": {
+                            "model": "Item",
+                            "with": [
+                                "category",
+                                "subcategory",
                                 "brand"
                             ],
                             "relations": [
                                 "category",
                                 "tags"
+                            ],
+                            "fields": [
+                                "id",
+                                "name",
+                                "slug",
+                                "price",
+                                "final_price",
+                                "image",
+                                "color"
+                            ]
+                        }
+                    },
+                    {
+                        "id": "with_variants",
+                        "name": "Lista con variantes",
+                        "using": {
+                            "model": "Item",
+                            "with": [
+                                "category",
+                                "subcategory",
+                                "brand",
+                                "collection"
+                            ],
+                            "relations": [
+                                "category",
+                                "tags",
+                                "collection"
                             ],
                             "fields": [
                                 "id",
@@ -970,7 +1079,8 @@
                 "image": "categories-simple.png",
                 "data": [
                     "title",
-                    "path"
+                    "path",
+                    "backgroundColor"
                 ],
                 "using": {
                     "model": "Category",
@@ -1091,6 +1201,7 @@
                 "image": "categories-simple.png",
                 "data": [
                     "title",
+                    "centrado",
                     "path"
                 ],
                 "using": {
@@ -1203,7 +1314,10 @@
                     "path",
                     "description",
                     "link_catalog",
-                    "link_cart"
+                    "link_cart",
+                    "class_header",
+                    "class_content",
+                    "class_button"
                 ],
                 "using": {
                     "model": "Item",
@@ -1298,11 +1412,7 @@
                         "is_new",
                         "views"
                     ],
-                    "with": [
-                        "category",
-                        "subcategory",
-                        "brand"
-                    ],
+                    "with": ["category", "subcategory", "brand", "variants"],
                     "limit": 20
                 }
             },
@@ -1456,6 +1566,10 @@
                 "name": "Simple"
             },
             {
+                "id": "BannerSimpleD2",
+                "name": "Simple D2en1"
+            },
+            {
                 "id": "BannerAd",
                 "name": "Anuncio",
                 "data": [
@@ -1467,7 +1581,12 @@
                 "name": "BannerPublicitario",
                 "data": [
                     "title",
-                    "image_position"
+                    "image_position",
+                    "class_content",
+                    "class_image",
+                    "class_right",
+                    "class_button",
+                    "class_content_right"
                 ]
             },
             {
@@ -1629,7 +1748,10 @@
                 "id": "ProductDetailB",
                 "name": "ProductDetailB",
                 "data": [
-                    "link_cart"
+                    "link_cart",
+                    "class_button",
+                    "class_header",
+                    "class_content"
                 ],
                 "using": {
                     "model": "Item",
@@ -1800,14 +1922,16 @@
                 "id": "CheckoutSteps",
                 "name": "Steps",
                 "data": [
-                    "title"
+                    "title",
+                    "class_button"
                 ]
             },
             {
                 "id": "CheckoutStepsSF",
                 "name": "StepsSF",
                 "data": [
-                    "title"
+                    "title",
+                     "class_button"
                 ],
                 "json": {
                     "prefixes": "./prefijocelular.json"
@@ -1911,7 +2035,8 @@
                     "description",
                     "second_title",
                     "second_description",
-                    "bool:show_seen"
+                    "bool:show_seen",
+                    "class_title"
                 ]
             },
             {
@@ -2023,6 +2148,16 @@
         ]
     },
     {
+        "id": "track",
+        "name": "Tracking",
+        "options": [
+            {
+                "id": "TrackSimple",
+                "name": "Simple"
+            }
+        ]
+    },
+    {
         "id": "post-detail",
         "name": "Post Detalle",
         "options": [
@@ -2110,6 +2245,10 @@
                 "name": "SimpleSF"
             },
             {
+                "id": "LoginSimpleD2",
+                "name": "SimpleD2"
+            },
+            {
                 "id": "LoginBananaLab",
                 "name": "LoginBananaLab"
             }
@@ -2126,6 +2265,10 @@
             {
                 "id": "SignUpSimpleSF",
                 "name": "SimpleSF"
+            },
+            {
+                "id": "SignUpSimpleD2",
+                "name": "SimpleD2"
             }
         ]
     },
@@ -2161,6 +2304,18 @@
                 "id": "FooterB",
                 "name": "FooterB",
                 "image": "footer-simple.png",
+                "data": [
+                    "class_footer",
+                    "logo_footer_content",
+                    "logo_footer",
+                    "class_menu",
+                    "class_menu_list",
+                    "class_menu_item",
+                    "class_icon",
+                    "class_description",
+                    "class_button"
+
+                ],
                 "using": {
                     "model": "Social",
                     "limit": 10
@@ -2382,7 +2537,10 @@
             },
             {
                 "id": "AgradecimientoAko",
-                "name": "AgradecimientoAko"
+                "name": "AgradecimientoAko",
+                "using": {
+                    "model": "Social"
+                }
             }
         ]
     },

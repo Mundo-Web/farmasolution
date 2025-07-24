@@ -41,25 +41,34 @@ class ItemController extends BasicController
         try {
 
             $limite = $request->limit ?? 0;
+            
             // Obtener el producto principal por slug
             $product = Item::with(['category', 'brand', 'images', 'specifications'])
                 ->where('slug', $request->slug)
                 ->firstOrFail();
 
-            if ($limite > 0) {
-                $product->load(['variants' => function ($query) use ($limite) {
-                    $query->limit($limite);
-                }]);
-            }else{
-                $product->load(['variants']);
-            }
-            // Obtener las variantes (productos con el mismo nombre pero diferente ID)
-            // $variants = Item::where('name', $product->name)
-            //     ->where('id', '!=', $product->id)
-            //     ->get(['id', 'slug', 'color', 'texture', 'image', 'final_price']);
+            $product->load(['variants']);
 
-            // Agregar las variantes al producto principal
-            // $product->variants = $variants;
+            $uniqueVariants = $product->variants
+                ->groupBy('color')
+                ->map(function ($group) {
+                    return $group->first(); 
+                })
+                ->values(); 
+
+            $product->setRelation('variants', $uniqueVariants);
+
+
+            // if ($limite > 0) {
+            //     $product->load(['variants' => function ($query) use ($limite) {
+            //         $query->limit($limite);
+            //     }]);
+            // }else{
+            //     $product->load(['variants']);
+            // }
+
+
+
             $response->status = 200;
             $response->message = 'Producto obtenido correctamente';
             $response->data = $product;
@@ -72,6 +81,78 @@ class ItemController extends BasicController
         return response($response->toArray(), $response->status);
     }
 
+    public function getColorsItems(Request $request)
+    {
+        $response = new Response();
+
+        try {
+            $limite = $request->limit ?? 0;
+            
+            // Obtener el producto principal por slug
+            $product = Item::with(['category', 'brand', 'images', 'specifications'])
+                ->where('slug', $request->slug)
+                ->firstOrFail();
+
+            // Obtener todas las variantes incluyendo el producto actual
+            $allVariants = Item::where('name', $product->name)
+                ->select(['id', 'slug', 'name', 'color', 'texture', 'image', 'final_price'])
+                ->get();
+
+            // Agrupar por color y quedarse con la primera de cada grupo
+            $uniqueVariants = $allVariants
+                ->groupBy('color')
+                ->map(function ($group) {
+                    return $group->first(); 
+                })
+                ->values(); 
+
+            $product->setRelation('variants', $uniqueVariants);
+
+            $response->status = 200;
+            $response->message = 'Producto obtenido correctamente';
+            $response->data = $product;
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+            $response->status = 404;
+            $response->message = 'Producto no encontrado';
+        }
+
+        return response($response->toArray(), $response->status);
+    }
+
+    public function getSizesItems(Request $request)
+    {
+        $response = new Response();
+
+        try {
+          
+            // Obtener el producto principal por slug
+            $product = Item::with(['category', 'brand', 'images', 'specifications'])
+            ->where('slug', $request->slug)
+            ->firstOrFail();
+
+            // Obtener las variantes (productos con el mismo nombre pero diferente ID)
+            $sizes = Item::where('name', $product->name)
+                ->where('color', $product->color)
+                ->where('visible', true)
+                ->where('status', true)
+                ->whereNotNull('size')
+                ->orderBy('size')
+                ->get();
+
+            // Agregar las variantes al producto principal
+            // $product->sizes = $sizes;
+
+            $response->status = 200;
+            $response->message = 'Tamaños obtenidos correctamente';
+            $response->data = $sizes;
+        } catch (\Throwable $th) {
+            $response->status = 404;
+            $response->message = 'Producto no encontrado';
+        }
+
+        return response($response->toArray(), $response->status);
+    }
 
     public function setReactViewProperties(Request $request)
     {
@@ -1152,14 +1233,43 @@ class ItemController extends BasicController
                 ->where('tags.visible', true)
                 ->where('items.status', true)
                 ->where('items.visible', true)
-                ->select('tags.id', 'tags.name', 'tags.description',"tags.icon","tags.background_color","tags.text_color","tags.image", DB::raw('COUNT(items.id) as items_count'))
-                ->groupBy('tags.id', 'tags.name', 'tags.description',"tags.icon","tags.background_color","tags.text_color","tags.image")
+                // Solo tags activos: permanentes (sin fechas) o promocionales activos
+                ->where(function($query) {
+                    $query->where('tags.promotional_status', 'permanent')
+                          ->orWhere('tags.promotional_status', 'active');
+                })
+                ->select(
+                    'tags.id', 
+                    'tags.name', 
+                    'tags.description',
+                    'tags.icon',
+                    'tags.background_color',
+                    'tags.text_color',
+                    'tags.image',
+                    'tags.promotional_status',
+                    'tags.start_date',
+                    'tags.end_date',
+                    DB::raw('COUNT(items.id) as items_count')
+                )
+                ->groupBy(
+                    'tags.id', 
+                    'tags.name', 
+                    'tags.description',
+                    'tags.icon',
+                    'tags.background_color',
+                    'tags.text_color',
+                    'tags.image',
+                    'tags.promotional_status',
+                    'tags.start_date',
+                    'tags.end_date'
+                )
                 ->having('items_count', '>', 0)
+                ->orderBy('tags.promotional_status', 'desc') // Promocionales primero (active viene antes que permanent alfabéticamente)
                 ->orderBy('tags.name')
                 ->get();
 
             $response->status = 200;
-            $response->message = 'Tags obtenidos correctamente';
+            $response->message = 'Tags activos obtenidos correctamente';
             $response->data = $tags;
 
         } catch (\Throwable $th) {

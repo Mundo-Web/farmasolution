@@ -156,7 +156,7 @@ const CardHoverBtn = ({
                         >
                             <motion.a
                                 href={`/product/${product.slug}`}
-                                className="flex-1 inline-flex items-center justify-center font-bold text-sm bg-primary text-white py-0 rounded-xl shadow-lg transition-all duration-300 hover:opacity-90"
+                                className={`flex-1 inline-flex items-center justify-center font-bold text-sm bg-primary  py-0 rounded-xl shadow-lg transition-all duration-300 hover:opacity-90 ${data?.class_button || 'text-white'}`}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
