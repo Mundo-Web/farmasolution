@@ -29,6 +29,23 @@
                     "cintillo"
                 ]
             },
+              {
+                "id": "TopBarPages",
+                "name": "Con páginas",
+                "image": "top-bar-socials.png",
+                "data": [
+                    "background_color",
+                    "color",
+                    "isCopyright",
+                    "border_color"
+                ],
+                "using": {
+                    "model": "Social"
+                },
+                "generals": [
+                    "cintillo"
+                ]
+            },
             {
                 "id": "TopBarCart",
                 "name": "Con Carrito",
@@ -87,6 +104,17 @@
                 "data": [
                     "showCategories"
                 ],
+                "using": {
+                    "model": "Category",
+                    "with": [
+                        "subcategories"
+                    ]
+                }
+            },{
+                "id": "MenuCategories",
+                "name": "Menu - Categorías",
+                "image": "top-bar-simple.png",
+              
                 "using": {
                     "model": "Category",
                     "with": [
@@ -329,7 +357,9 @@
                 "id": "CarruselBenefitsSimple",
                 "name": "Beneficios Simple",
                 "data": [
-                    "background"
+                    "background",
+                    "class_title",
+                    "class_content"
                 ],
                 "using": {
                     "model": "Indicator"
@@ -438,7 +468,9 @@
                     "showNavigation",
                     "imageBgPosition",
                     "overlayMobile",
-                    "whatsapp_info"
+                    "whatsapp_info",
+                    "class_button_primary",
+                    "class_icon_primary"
                 ],
                 "using": {
                     "model": "Slider",
@@ -495,7 +527,12 @@
                 "name": "Imagen",
                 "image": "slider-simple.png",
                 "data": [
-                    "title"
+                    "title",
+                    "class_section",
+                    "class_content",
+                    "class_button",
+                    "class_image"
+                    
                 ],
                 "using": {
                     "model": "Brand",
@@ -1062,7 +1099,9 @@
                 "image": "categories-pretty-grid.png",
                 "data": [
                     "path",
-                    "borderRadius"
+                    "borderRadius",
+                    "title",
+                    "class_section"
                 ],
                 "using": {
                     "model": "Category",
@@ -1516,7 +1555,12 @@
                     "description",
                     "text_button",
                     "link_catalog",
-                    "link_cart"
+                    "link_cart",
+                    "class_button_primary",
+                    "class_button",
+                    "is_use_category",
+                    "visible_variations",
+                    "class_section"
                 ],
                 "using": {
                     "model": "Item",
@@ -2109,6 +2153,23 @@
                         "category"
                     ]
                 }
+            },
+                {
+                "id": "BlogSectionDental",
+                "name": "BlogSectionDental",
+                "data": [
+                    "title",
+                    "description",
+                    "button_text",
+                    "link_blog"
+                ],
+                "using": {
+                    "model": "Post",
+                    "limit": 2,
+                    "with": [
+                        "category"
+                    ]
+                }
             }
         ]
     },
@@ -2328,6 +2389,37 @@
                     "address",
                     "support_phone",
                     "support_email"
+                ]
+            },
+               {
+                "id": "FooterDental",
+                "name": "FooterDental",
+                "image": "footer-simple.png",
+                "data": [
+                    "class_footer",
+                    "logo_footer_content",
+                    "logo_footer",
+                    "class_menu",
+                    "class_menu_list",
+                    "class_menu_item",
+                    "class_icon",
+                    "class_description",
+                    "class_button"
+
+                ],
+                "using": {
+                    "model": "Social",
+                    "limit": 10
+                },
+                "generals": [
+                    "terms_conditions",
+                    "privacy_policy",
+                    "delivery_policy",
+                    "saleback_policy",
+                    "address",
+                    "support_phone",
+                    "support_email",
+                    "opening_hours"
                 ]
             },
             {

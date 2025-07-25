@@ -298,7 +298,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
                                         <a
                                           href={item.button_link}
                                           ref={(el) => (buttonsRef.current[index] = el)}
-                                          className="bg-primary border-none flex flex-row items-center gap-3 px-10 py-4 text-base rounded-xl tracking-wide font-bold hover:opacity-90 transition-all duration-300"
+                                          className={`bg-primary border-none flex flex-row items-center gap-3 px-10 py-4 text-base rounded-xl tracking-wide font-bold hover:opacity-90 transition-all duration-300 ${data?.class_button_primary || ""}`}
                                           onClick={e => {
                                             e.stopPropagation();
                                           }}
@@ -308,7 +308,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
                                           {item.button_text}
                                           <Tag
                                             width={"1.25rem"}
-                                            className="transform rotate-90"
+                                            className={`transform rotate-90 ${data?.class_icon_primary || ""}`}
                                           />
                                         </a>
 
