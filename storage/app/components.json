@@ -29,6 +29,23 @@
                     "cintillo"
                 ]
             },
+              {
+                "id": "TopBarPages",
+                "name": "Con páginas",
+                "image": "top-bar-socials.png",
+                "data": [
+                    "background_color",
+                    "color",
+                    "isCopyright",
+                    "border_color"
+                ],
+                "using": {
+                    "model": "Social"
+                },
+                "generals": [
+                    "cintillo"
+                ]
+            },
             {
                 "id": "TopBarCart",
                 "name": "Con Carrito",
@@ -85,6 +102,17 @@
                 "data": [
                     "showCategories"
                 ],
+                "using": {
+                    "model": "Category",
+                    "with": [
+                        "subcategories"
+                    ]
+                }
+            },{
+                "id": "MenuCategories",
+                "name": "Menu - Categorías",
+                "image": "top-bar-simple.png",
+              
                 "using": {
                     "model": "Category",
                     "with": [
