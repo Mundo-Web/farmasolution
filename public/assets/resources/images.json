@@ -43,5 +43,14 @@
         "src": "payments.png",
         "fit": "cover",
         "aspect": "3\/5"
+    },
+    {
+        "name": "Imagen  Subscribete",
+        "title": "Imagen  Subscribete",
+        "filename": "subscribe",
+        "description": "Imagen Formulario Subscribete",
+        "src": "subscribe.png",
+        "fit": "cover",
+        "aspect": "2\/3"
     }
 ]

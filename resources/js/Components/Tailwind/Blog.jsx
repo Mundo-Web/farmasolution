@@ -5,7 +5,7 @@ const BlogCarousel = React.lazy(() => import("./Blogs/BlogCarousel"));
 const BlogCarruselBananaLab = React.lazy(() => import("./Blogs/BlogCarruselBananaLab"));
 const BlogSectionMakita = React.lazy(() => import("./Blogs/BlogSectionMakita"));
 const BlogSectionAko = React.lazy(() => import("./Blogs/BlogSectionAko"));
-
+const BlogSectionDental = React.lazy(() => import("./Blogs/BlogSectionDental"));
 const Blog = ({
     data,
     items,
@@ -26,7 +26,9 @@ const Blog = ({
                 return <BlogSectionAko data={data} items={items} />
             case "BlogSectionMakita":
                     return <BlogSectionMakita data={data} items={items} />
-            default:
+            case "BlogSectionDental":
+                return <BlogSectionDental data={data} items={items} />
+                    default:
             return <div>No hay componente {which}</div>;
         }
     };

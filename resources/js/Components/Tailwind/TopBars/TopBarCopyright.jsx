@@ -11,7 +11,7 @@ const TopBarCopyright = ({ data }) => {
     }
   });
 
-  return <div className={`${data?.background || "bg-white"}  text-sm font-medium py-3 customtext-neutral-light text-center px-primary flex justify-center items-center font-title`}>
+  return <div className={`${data?.background || "bg-white customtext-neutral-light"}  text-sm font-medium py-3  text-center px-primary flex justify-center items-center font-title`}>
     <p>{content}</p>
   </div>
 }

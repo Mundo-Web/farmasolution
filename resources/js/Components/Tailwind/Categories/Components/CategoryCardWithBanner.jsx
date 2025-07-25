@@ -38,7 +38,7 @@ const CategoryCardWithBanner = ({
                         </p>
                     }
                 </div>
-                <a href={href} className={`${buttonBackground || 'bg-primary'} ${buttonColor || 'text-white'} rounded-full px-4 py-1`}>Ver más productos</a>
+                <a href={href} className={`${buttonBackground || 'bg-primary'} ${buttonColor || 'text-white'} rounded-full px-6 py-3`}>Ver más productos</a>
             </div>
             {
                 !mainContainer &&
