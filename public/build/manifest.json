@@ -1171,7 +1171,7 @@
     "isEntry": true
   },
   "resources/js/About.jsx": {
-    "file": "assets/About-CyoYW0OF.js",
+    "file": "assets/About-BS0D0HSi.js",
     "name": "About",
     "src": "resources/js/About.jsx",
     "isEntry": true,
@@ -2790,7 +2790,7 @@
     ]
   },
   "resources/js/Blog.jsx": {
-    "file": "assets/Blog-kxFX_bi1.js",
+    "file": "assets/Blog-yU_qBipS.js",
     "name": "Blog",
     "src": "resources/js/Blog.jsx",
     "isEntry": true,
@@ -2833,7 +2833,7 @@
     ]
   },
   "resources/js/BlogArticle.jsx": {
-    "file": "assets/BlogArticle-CAx-ROw0.js",
+    "file": "assets/BlogArticle-C9fwZhph.js",
     "name": "BlogArticle",
     "src": "resources/js/BlogArticle.jsx",
     "isEntry": true,
@@ -4371,7 +4371,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Base.jsx": {
-    "file": "assets/Base-DBcn49rf.js",
+    "file": "assets/Base-e4U5GNNp.js",
     "name": "Base",
     "src": "resources/js/Components/Tailwind/Base.jsx",
     "isDynamicEntry": true,
@@ -4387,7 +4387,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Blog.jsx": {
-    "file": "assets/Blog-CiLnLUEx.js",
+    "file": "assets/Blog-BaUIEsx6.js",
     "name": "Blog",
     "src": "resources/js/Components/Tailwind/Blog.jsx",
     "isDynamicEntry": true,
@@ -6418,7 +6418,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Footer.jsx": {
-    "file": "assets/Footer-jkaD4Vt4.js",
+    "file": "assets/Footer-vqI-TxT8.js",
     "name": "Footer",
     "src": "resources/js/Components/Tailwind/Footer.jsx",
     "isEntry": true,
@@ -6439,7 +6439,8 @@
       "resources/js/Components/Tailwind/Footer/FooterSalaFabulosa.jsx",
       "resources/js/Components/Tailwind/Footer/FooterBananaLab.jsx",
       "resources/js/Components/Tailwind/Footer/FooterPideloPe.jsx",
-      "resources/js/Components/Tailwind/Footer/FooterMakita.jsx"
+      "resources/js/Components/Tailwind/Footer/FooterMakita.jsx",
+      "resources/js/Components/Tailwind/Footer/FooterDental.jsx"
     ]
   },
   "resources/js/Components/Tailwind/Footer/FooterB.jsx": {
@@ -6512,6 +6513,26 @@
       "_main-DKOTUah5.js",
       "____vite-browser-external_commonjs-proxy-DDYoOVPM.js",
       "_index-DRg3WPTA.js"
+    ]
+  },
+  "resources/js/Components/Tailwind/Footer/FooterDental.jsx": {
+    "file": "assets/FooterDental-AtRjZdQB.js",
+    "name": "FooterDental",
+    "src": "resources/js/Components/Tailwind/Footer/FooterDental.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BOnQTV8N.js",
+      "resources/js/Components/Tailwind/Checkouts/Components/PolicyModal.jsx",
+      "resources/js/Components/Tailwind/Components/ProductCard.jsx",
+      "_main-DKOTUah5.js",
+      "_index-DRg3WPTA.js",
+      "_index-yBjzXJbu.js",
+      "__commonjsHelpers-D6-XlEtG.js",
+      "_index-fNjTmf9T.js",
+      "_index-Chjiymov.js",
+      "____vite-browser-external_commonjs-proxy-DDYoOVPM.js",
+      "_index-C0Swrixi.js"
     ]
   },
   "resources/js/Components/Tailwind/Footer/FooterMakita.jsx": {
@@ -9125,7 +9146,7 @@
     ]
   },
   "resources/js/Contact.jsx": {
-    "file": "assets/Contact-CCmc-UfV.js",
+    "file": "assets/Contact-BTZLVjmn.js",
     "name": "Contact",
     "src": "resources/js/Contact.jsx",
     "isEntry": true,
@@ -9166,7 +9187,7 @@
     ]
   },
   "resources/js/CourseDetails.jsx": {
-    "file": "assets/CourseDetails-CKxibWJF.js",
+    "file": "assets/CourseDetails-GY0YhL-y.js",
     "name": "CourseDetails",
     "src": "resources/js/CourseDetails.jsx",
     "isEntry": true,
@@ -9200,7 +9221,7 @@
     ]
   },
   "resources/js/Courses.jsx": {
-    "file": "assets/Courses-CPpZTYPz.js",
+    "file": "assets/Courses-6b705-5t.js",
     "name": "Courses",
     "src": "resources/js/Courses.jsx",
     "isEntry": true,
@@ -9291,7 +9312,7 @@
     "isEntry": true
   },
   "resources/js/Home.jsx": {
-    "file": "assets/Home-BM37T29l.js",
+    "file": "assets/Home-BtF2oHua.js",
     "name": "Home",
     "src": "resources/js/Home.jsx",
     "isEntry": true,
@@ -9488,7 +9509,7 @@
     ]
   },
   "resources/js/System.jsx": {
-    "file": "assets/System-9_BtsmXp.js",
+    "file": "assets/System-SnLvNfyA.js",
     "name": "System",
     "src": "resources/js/System.jsx",
     "isEntry": true,

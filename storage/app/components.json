@@ -2391,6 +2391,37 @@
                     "support_email"
                 ]
             },
+               {
+                "id": "FooterDental",
+                "name": "FooterDental",
+                "image": "footer-simple.png",
+                "data": [
+                    "class_footer",
+                    "logo_footer_content",
+                    "logo_footer",
+                    "class_menu",
+                    "class_menu_list",
+                    "class_menu_item",
+                    "class_icon",
+                    "class_description",
+                    "class_button"
+
+                ],
+                "using": {
+                    "model": "Social",
+                    "limit": 10
+                },
+                "generals": [
+                    "terms_conditions",
+                    "privacy_policy",
+                    "delivery_policy",
+                    "saleback_policy",
+                    "address",
+                    "support_phone",
+                    "support_email",
+                    "opening_hours"
+                ]
+            },
             {
                 "id": "FooterMakita",
                 "name": "FooterMakita",

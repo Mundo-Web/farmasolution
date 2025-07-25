@@ -9,6 +9,8 @@ import BlogCarrusel from "./Components/BlogCarrusel";
 import SubscriptionsRest from "../../../Actions/SubscriptionsRest";
 import Swal from "sweetalert2";
 import Global from "../../../Utils/Global";
+import { CircleCheckBig } from "lucide-react";
+import { toast } from "sonner";
 
 const BlogSectionDental = ({ data, items }) => {
     // Animaciones
@@ -66,11 +68,11 @@ const BlogSectionDental = ({ data, items }) => {
 
         if (!result) return;
 
-        Swal.fire({
-            title: "¡Éxito!",
-            text: `Te has suscrito correctamente al blog de ${Global.APP_NAME}.`,
-            icon: "success",
-            confirmButtonText: "Ok",
+        toast.success("¡Suscrito!", {
+            description: `Te has suscrito correctamente al blog de ${Global.APP_NAME}.`,
+            icon: <CircleCheckBig className="h-5 w-5 text-green-500" />,
+            duration: 3000,
+            position: "top-center",
         });
 
         emailRef.current.value = null;
