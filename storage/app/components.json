@@ -2502,6 +2502,24 @@
                 ]
             },
             {
+                "id": "Footer2Den1",
+                "name": "Footer2Den1",
+                "image": "footer-simple.png",
+                "using": {
+                    "model": "Social",
+                    "limit": 10
+                },
+                "generals": [
+                    "terms_conditions",
+                    "privacy_policy",
+                    "delivery_policy",
+                    "saleback_policy",
+                    "address",
+                    "support_phone",
+                    "support_email"
+                ]
+            },
+            {
                 "id": "FooterCallToAction",
                 "name": "Llamada a la acción",
                 "image": "footer-call-to-action.png",
