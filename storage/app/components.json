@@ -357,7 +357,9 @@
                 "id": "CarruselBenefitsSimple",
                 "name": "Beneficios Simple",
                 "data": [
-                    "background"
+                    "background",
+                    "class_title",
+                    "class_content"
                 ],
                 "using": {
                     "model": "Indicator"
@@ -466,7 +468,9 @@
                     "showNavigation",
                     "imageBgPosition",
                     "overlayMobile",
-                    "whatsapp_info"
+                    "whatsapp_info",
+                    "class_button_primary",
+                    "class_icon_primary"
                 ],
                 "using": {
                     "model": "Slider",
@@ -523,7 +527,12 @@
                 "name": "Imagen",
                 "image": "slider-simple.png",
                 "data": [
-                    "title"
+                    "title",
+                    "class_section",
+                    "class_content",
+                    "class_button",
+                    "class_image"
+                    
                 ],
                 "using": {
                     "model": "Brand",
@@ -1090,7 +1099,9 @@
                 "image": "categories-pretty-grid.png",
                 "data": [
                     "path",
-                    "borderRadius"
+                    "borderRadius",
+                    "title",
+                    "class_section"
                 ],
                 "using": {
                     "model": "Category",
@@ -1544,7 +1555,12 @@
                     "description",
                     "text_button",
                     "link_catalog",
-                    "link_cart"
+                    "link_cart",
+                    "class_button_primary",
+                    "class_button",
+                    "is_use_category",
+                    "visible_variations",
+                    "class_section"
                 ],
                 "using": {
                     "model": "Item",
@@ -2133,6 +2149,23 @@
                 "using": {
                     "model": "Post",
                     "limit": 4,
+                    "with": [
+                        "category"
+                    ]
+                }
+            },
+                {
+                "id": "BlogSectionDental",
+                "name": "BlogSectionDental",
+                "data": [
+                    "title",
+                    "description",
+                    "button_text",
+                    "link_blog"
+                ],
+                "using": {
+                    "model": "Post",
+                    "limit": 2,
                     "with": [
                         "category"
                     ]

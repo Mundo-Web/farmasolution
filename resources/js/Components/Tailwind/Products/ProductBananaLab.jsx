@@ -37,7 +37,7 @@ const ProductBananaLab = ({ items, data, setCart, cart ,setFavorites,favorites})
     };
 
     return (
-        <section className=" pt-6 pb-0 font-paragraph lg:py-4 2xl:py-8">
+        <section className={` pt-6 pb-0 font-paragraph lg:py-4 2xl:py-8 ${data?.class_section || ""}`}>
             <div className=" mx-auto px-primary 2xl:px-0 2xl:max-w-7xl ">
                 {/* Header */}
                 <div className="md:flex justify-between items-center    customborder-neutral-dark">
@@ -46,7 +46,7 @@ const ProductBananaLab = ({ items, data, setCart, cart ,setFavorites,favorites})
                     </h2>
                     <a
                         href={data?.link_catalog}
-                        className="hidden lg:flex bg-white customtext-primary border border-primary transition-all duration-300    justify-center flex-row items-center gap-3   px-10  py-3 text-base rounded-full  tracking-wide font-bold cursor-pointer hover:opacity-90 lg:bg-primary "
+                        className={`hidden lg:flex bg-white customtext-primary border border-primary transition-all duration-300    justify-center flex-row items-center gap-3   px-10  py-3 text-base rounded-full  tracking-wide font-bold cursor-pointer hover:opacity-90 lg:bg-primary ${data?.class_button_primary || ""}`}
                     >
                             {data?.text_button || 'Ver más recomendaciones'} 
                     </a>
