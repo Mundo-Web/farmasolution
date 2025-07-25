@@ -379,8 +379,6 @@ export default function ShippingStepSF({
         setErrors(prev => ({ ...prev, ubigeo: "" }));
         const { data } = selected;
 
-        console.log("data", data);
-
         setFormData(prev => ({
             ...prev,
             department: data.departamento,
