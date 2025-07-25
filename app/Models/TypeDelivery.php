@@ -23,29 +23,28 @@ class TypeDelivery extends Model
     {
         return $this->hasMany(DeliveryPrice::class, 'type_id');
     }
-    protected $guarded = ['slug'];
+
+    //protected $guarded = ['slug'];
     protected $casts = [
         'characteristics' => 'array',
-
     ];
 
-    protected static function booted()
-    {
-        static::saving(function ($producto) {
-            // Evitar la actualización del slug
-            if ($producto->isDirty('name')) {
-                $producto->slug = $producto->getOriginal('slug');
-            }
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::saving(function ($producto) {
+    //         // Evitar la actualización del slug
+    //         if ($producto->isDirty('name')) {
+    //             $producto->slug = $producto->getOriginal('slug');
+    //         }
+    //     });
+    // }
 
-    public function setSlugAttribute($value)
-    {
-        // Si el slug ya está establecido, no lo cambies
-        if ($this->exists && $this->slug) {
-            return;
-        }
-
+    // public function setSlugAttribute($value)
+    // {
+    //     // Si el slug ya está establecido, no lo cambies
+    //     if ($this->exists && $this->slug) {
+    //         return;
+    //     }
        
-    }
+    // }
 }
