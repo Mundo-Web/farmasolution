@@ -665,6 +665,73 @@
                     }
                 ]
             },
+                   {
+                "id": "CatalogoFiltrosDental",
+                "name": "Producto Catalogo Filtro Dental",
+                "image": "products-list.png",
+                "data": [
+                    "path",
+                    "title",
+                    "description",
+                    "link_cart",
+                    "class_button"
+                ],
+                "options": [
+                    {
+                        "id": "default",
+                        "name": "Lista estándar",
+                        "using": {
+                            "model": "Item",
+                            "with": [
+                                "category",
+                                "subcategory",
+                                "brand"
+                            ],
+                            "relations": [
+                                "category",
+                                "tags"
+                            ],
+                            "fields": [
+                                "id",
+                                "name",
+                                "slug",
+                                "price",
+                                "final_price",
+                                "image",
+                                "color"
+                            ]
+                        }
+                    },
+                    {
+                        "id": "with_variants",
+                        "name": "Lista con variantes",
+                        "using": {
+                            "model": "Item",
+                            "with": [
+                                "category",
+                                "subcategory",
+                                "brand",
+                                "collection",
+                                "variants"
+                            ],
+                            "relations": [
+                                "category",
+                                "tags"
+                            ],
+                            "fields": [
+                                "id",
+                                "name",
+                                "slug",
+                                "price",
+                                "final_price",
+                                "image",
+                                "color"
+                            ],
+                            "group_by_name": true
+                        }
+                    }
+                ]
+            },
             {
                 "id": "CatalagoFiltrosAko",
                 "name": "Producto Catalogo Filtro - Ako",
@@ -1810,6 +1877,23 @@
             {
                 "id": "ProductDetailPaani",
                 "name": "ProductDetailPaani",
+                "data": [
+                    "link_cart",
+                    "background",
+                    "backgroundboton"
+                ],
+                "using": {
+                    "model": "Item",
+                    "flied": "slug"
+                },
+                "generals": [
+                    "phone_whatsapp",
+                    "message_whatsapp"
+                ]
+            },
+            {
+                "id": "ProductDetailDental",
+                "name": "ProductDetailDental",
                 "data": [
                     "link_cart",
                     "background",

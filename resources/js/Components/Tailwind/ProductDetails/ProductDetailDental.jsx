@@ -31,7 +31,7 @@ import ProductNavigationSwiperPaani from "../Products/ProductNavigationSwiperPaa
 
 
 
-const ProductDetailPaani = ({ item, data, setCart, cart, generals, favorites, setFavorites }) => {
+const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, setFavorites }) => {
 
     const itemsRest = new ItemsRest();
     const [modalOpen, setModalOpen] = useState(false);
@@ -788,4 +788,4 @@ const ProductDetailPaani = ({ item, data, setCart, cart, generals, favorites, se
         </>
     );
 }
-export default ProductDetailPaani;
+export default ProductDetailDental;
