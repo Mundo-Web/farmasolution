@@ -10,7 +10,9 @@ const FilterCategoryImage = React.lazy(() => import('./Filters/FilterCategoryIma
 const CatalagoFiltrosAko = React.lazy(() => import('./Filters/CatalagoFiltrosAko'))
 const CatalagoFiltrosPaani = React.lazy(() => import('./Filters/CatalagoFiltrosPaani'))
 //const Filter = ({ which, items, data, category, brands, subcategory, cart, setCart, prices }) => {
-const Filter = ({ which, items, data, cart, setCart, filteredData }) => {
+const CatalogoFiltrosDental = React.lazy(() => import('./Filters/CatalogoFiltrosDental'))
+
+  const Filter = ({ which, items, data, cart, setCart, filteredData,setFavorites,favorites }) => {
   const getFilter = () => {
     switch (which) {
       case 'FilterSimple':
@@ -26,14 +28,17 @@ const Filter = ({ which, items, data, cart, setCart, filteredData }) => {
         // return <CatalagoFiltros data={data} items={items} prices={prices} categories={category} brands={brands} cart={cart} setCart={setCart} />
         return <FilterSalaFabulosa data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} />
       case 'FilterCategoryImage':
-          // return <CatalagoFiltros data={data} items={items} prices={prices} categories={category} brands={brands} cart={cart} setCart={setCart} />
-          return <FilterCategoryImage data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} />
+        // return <CatalagoFiltros data={data} items={items} prices={prices} categories={category} brands={brands} cart={cart} setCart={setCart} />
+        return <FilterCategoryImage data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} />
       case 'FilterBananaLab':
-          return <FilterBananaLab data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} />
+        return <FilterBananaLab data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} />
       case 'CatalagoFiltrosAko':
-          return <CatalagoFiltrosAko data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} />
+        return <CatalagoFiltrosAko data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} />
       case 'CatalagoFiltrosPaani':
         return <CatalagoFiltrosPaani data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} />
+      case 'CatalogoFiltrosDental':
+        return <CatalogoFiltrosDental data={data} items={items} cart={cart} setCart={setCart} filteredData={filteredData} setFavorites={setFavorites} favorites={favorites} />
+
       default:
         return <div className="w-full px-[5%] replace-max-w-here p-4 mx-auto">- No Hay componente <b>{which}</b> -</div>
     }

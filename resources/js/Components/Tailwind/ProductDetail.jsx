@@ -10,7 +10,7 @@ const ProductDetailBananaLab = React.lazy(() => import('./ProductDetails/Product
 const ProductDetailKuchara = React.lazy(() => import('./ProductDetails/ProductDetailKuchara'))
 const ProductDetailPaani = React.lazy(() => import('./ProductDetails/ProductDetailPaani'))
 const ProductDetailAko = React.lazy(() => import('./ProductDetails/ProductDetailAko'))
-
+const ProductDetailDental = React.lazy(() => import('./ProductDetails/ProductDetailDental'))
 const ProductDetail = ({ which, item, cart, setCart,data, generals = [],favorites,setFavorites, textstatic, contacts }) => {
   
   const getProductDetail = () => {
@@ -31,6 +31,8 @@ const ProductDetail = ({ which, item, cart, setCart,data, generals = [],favorite
           return <ProductDetailPaani item={item} cart={cart} setCart={setCart} generals={generals} favorites={favorites} setFavorites={setFavorites} />
       case 'ProductDetailAko':
           return <ProductDetailAko item={item} cart={cart} setCart={setCart} textstatic={textstatic} contacts={contacts} />
+      case 'ProductDetailDental':
+          return <ProductDetailDental item={item} cart={cart} setCart={setCart} generals={generals} favorites={favorites} setFavorites={setFavorites} />
       default:
         return <div className="w-full px-[5%] replace-max-w-here p-4 mx-auto">- No Hay componente <b>{which}</b> -</div>
     }
