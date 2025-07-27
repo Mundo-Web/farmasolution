@@ -28,6 +28,7 @@ import "swiper/css/navigation";
 import "swiper/css/grid";
 import { Swiper, SwiperSlide } from "swiper/react";
 import ProductNavigationSwiperPaani from "../Products/ProductNavigationSwiperPaani";
+import ProductBananaLab from "../Products/ProductBananaLab";
 
 
 
@@ -264,35 +265,11 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                         </div>
                     </div>
 
-                
+
 
                     {/* Acordeones */}
                     <div className="space-y-2">
-                        {/* Especificaciones */}
-                        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                            <div className="border-b">
-                                <button
-                                    onClick={() => setExpanded(!expandedSpecificationMain)}
-                                    className="w-full p-4 flex justify-between items-center"
-                                >
-                                    <span className="font-medium">Especificaciones técnicas</span>
-                                    <ChevronDown
-                                        className={`transform transition-transform ${expandedSpecificationMain ? "rotate-180" : ""
-                                            }`}
-                                    />
-                                </button>
-                            </div>
-                            {expandedSpecificationMain && (
-                                <div className="p-4">
-                                    {item?.specifications.map((spec, i) => (
-                                        <div key={i} className="flex items-start gap-3 text-sm mb-2">
-                                            <CheckCircle2 className="min-w-4 min-h-4 max-w-4 max-h-4 mt-0.5 customtext-primary" />
-                                            <span>{spec.description}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                     
 
                         {/* Descripción */}
                         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
@@ -319,6 +296,31 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                 </div>
                             )}
                         </div>
+                           {/* Especificaciones */}
+                        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                            <div className="border-b">
+                                <button
+                                    onClick={() => setExpanded(!expandedSpecificationMain)}
+                                    className="w-full p-4 flex justify-between items-center"
+                                >
+                                    <span className="font-medium">Características</span>
+                                    <ChevronDown
+                                        className={`transform transition-transform ${expandedSpecificationMain ? "rotate-180" : ""
+                                            }`}
+                                    />
+                                </button>
+                            </div>
+                            {expandedSpecificationMain && (
+                                <div className="p-4">
+                                    {item?.features.map((spec, i) => (
+                                        <div key={i} className="flex items-start gap-3 text-sm mb-2">
+                                            <CheckCircle2 className="min-w-4 min-h-4 max-w-4 max-h-4 mt-0.5 customtext-primary" />
+                                            <span>{spec.feature}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
 
@@ -328,16 +330,16 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                 <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-[99]">
                     <div className="p-4 flex gap-4">
                         <button onClick={() => { handleClickWhatsAppCotizar(); }} className="flex-1 bg-primary text-white py-3 rounded-full font-medium active:scale-95 transition-transform">
-                           Quiero Cotizar
+                            Quiero Cotizar
                         </button>
-                       
+
                     </div>
                 </div>
             </div>
 
             {/* Desktop View */}
-            <div className="px-primary mx-auto py-12  hidden md:block font-paragraph">
-                <div className="bg-white rounded-xl p-4 md:p-8">
+            <div className="px-primary 2xl:max-w-7xl 2xl:px-0 mx-auto py-12  hidden md:block font-paragraph">
+                <div className="bg-white rounded-xl  ">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Left Column - Images and Delivery Options */}
                         <div className="space-y-6">
@@ -420,7 +422,7 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                             <div className="flex lg:hidden gap-8 border-b-2 pb-8">
                                 {/* Price Section */}
                                 <div className=" w-full ">
-                                    <p className="text-sm customtext-neutral-light mb-1">
+                                    <p className="text-sm customtext-primary mb-1">
                                         Precio:{" "}
                                         <span className="line-through line-clamp-1">
                                             S/ {item?.price}
@@ -442,7 +444,7 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                     {/* Quantity */}
                                     <div className="mt-4">
                                         <div className="flex items-center gap-4 mb-2">
-                                            <div className="flex items-center space-x-4 customtext-neutral-light text-sm">
+                                            <div className="flex items-center space-x-4 customtext-primary text-sm">
                                                 <span className="">
                                                     Cantidad
                                                 </span>
@@ -483,7 +485,7 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                         Especificaciones principales
                                     </h3>
                                     <ul
-                                        className={`space-y-2  customtext-neutral-light mb-4 transition-all duration-300 ${expandedSpecificationMain
+                                        className={`space-y-2  customtext-primary mb-4 transition-all duration-300 ${expandedSpecificationMain
                                             ? "max-h-full"
                                             : "max-h-24 overflow-hidden"
                                             }`}
@@ -534,15 +536,10 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                             <div className="mb-6">
 
                                 {/* SKU and Availability */}
-                                <div className="font-paragraph flex customtext-neutral-light items-center gap-8 text-sm mb-6">
-                                    <span className="customtext-neutral-light text-sm">
-                                        Marca:{" "}
-                                        <span className="customtext-neutral-dark font-medium">
-                                            {item?.brand?.name}
-                                        </span>
-                                    </span>
+                                <div className="font-paragraph flex customtext-primary items-center gap-8 text-sm mb-6">
 
-                                    <span className="customtext-neutral-light text-sm">
+
+                                    <span className="customtext-primary text-sm">
                                         SKU:{" "}
                                         <span className="customtext-neutral-dark font-medium">
                                             {item?.sku}
@@ -558,7 +555,7 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                     </span>
                                 </div>
 
-                                <h1 className="customtext-neutral-dark text-[40px] font-title font-bold mt-2">
+                                <h1 className="customtext-neutral-dark text-[60px] font-title font-bold mt-2">
                                     {item?.name}
                                 </h1>
                             </div>
@@ -569,7 +566,7 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                 <div className=" w-full ">
                                     <div className="flex gap-8">
                                         <div>
-                                            <p className="text-sm customtext-neutral-light mb-1 font-bold">
+                                            <p className="text-sm customtext-primary mb-1 font-bold">
                                                 Precio:{" "}
                                                 <span className="line-through">
                                                     S/ {item?.price}
@@ -595,31 +592,47 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
 
 
 
-                                    {/* Add to Cart */}
-                                    <button
-                                        onClick={() => {
-
-                                            handleClickWhatsAppCotizar();
-                                        }}
-                                        className="w-full bg-primary text-white py-3 font-bold shadow-lg rounded-full hover:opacity-90 transition-all duration-300 mt-4"
-                                    >
-                                        Quiero Cotizar
-                                    </button>
                                 </div>
+                                {/* */}
+                                <div>
+                                    <p className="customtext-primary text-sm">
+                                        Categoría:{" "}
+                                        <span className="customtext-neutral-dark font-medium">
+                                            {item?.category?.name}
+                                        </span>
+                                    </p>
+
+                                    <p className="customtext-primary text-sm">
+                                        Marca:{" "}
+                                        <span className="customtext-neutral-dark font-medium">
+                                            {item?.brand?.name}
+                                        </span>
+                                    </p>
+
+                                </div>
+                                <h3 className="text-xl font-semibold customtext-neutral-dark mb-4">
+                                    Descripción
+                                </h3>
+                                <div
+                                    className="customtext-neutral-dark"
+                                    dangerouslySetInnerHTML={{
+                                        __html: item?.description,
+                                    }}
+                                ></div>
                                 {/* Specifications */}
                                 <div className="flex-1 w-full ">
                                     <div className="bg-secondary rounded-lg p-6">
                                         <h3 className="font-bold text-lg mb-4 customtext-neutral-dark">
-                                            Especificaciones principales
+                                            Características
                                         </h3>
                                         <ul
-                                            className={`space-y-2  customtext-neutral-light mb-4 transition-all duration-300 ${expandedSpecificationMain
+                                            className={`space-y-2  customtext-primary mb-4 transition-all duration-300 ${expandedSpecificationMain
                                                 ? "max-h-full"
-                                                : "max-h-24 overflow-hidden"
+                                                : "max-h-full overflow-hidden"
                                                 }`}
                                             style={{ listStyleType: "disc" }}
                                         >
-                                            {item?.specifications.map(
+                                            {item?.features.map(
                                                 (spec, index) =>
                                                     spec.type ===
                                                     "principal" && (
@@ -628,31 +641,25 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                                             className="flex items-center gap-2"
                                                         >
                                                             <CircleCheckIcon className="customtext-primary min-h-4 min-w-4 max-h-4 max-w-4" />
-                                                            {spec.description}
+                                                            {spec.feature}
                                                         </li>
                                                     )
                                             )}
                                         </ul>
-                                        <button
-                                            className="customtext-primary text-sm font-semibold hover:underline flex items-center gap-1 transition-all duration-300"
-                                            onClick={() =>
-                                                setExpanded(
-                                                    !expandedSpecificationMain
-                                                )
-                                            }
-                                        >
-                                            {expandedSpecificationMain
-                                                ? "Ver menos"
-                                                : "Ver más especificaciones"}
-                                            {expandedSpecificationMain ? (
-                                                <ChevronUp className="w-4 h-4" />
-                                            ) : (
-                                                <ChevronDown className="w-4 h-4" />
-                                            )}
-                                        </button>
+                                      
                                     </div>
                                 </div>
 
+                                {/* Add to Cart */}
+                                <button
+                                    onClick={() => {
+
+                                        handleClickWhatsAppCotizar();
+                                    }}
+                                    className="w-full bg-primary text-white py-3 font-bold shadow-lg rounded-full hover:opacity-90 transition-all duration-300 mt-4"
+                                >
+                                    Cotizar este producto
+                                </button>
 
                             </div>
                             {/* Whatsapp */}
@@ -692,85 +699,11 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                         </div>
                     </div>
                 </div>
-                <div className=" grid gap-20 md:grid-cols-2 bg-white rounded-xl p-8 mt-12">
-                    {/* Specifications Section */}
-                    <div>
-                        <h2 className="text-2xl font-bold customtext-neutral-dark mb-4 pb-4">
-                            Especificaciones
-                        </h2>
-                        <div className="space-y-1">
-                            {item?.specifications.map(
-                                (spec, index) =>
-                                    spec.type === "general" && (
-                                        <div
-                                            key={index}
-                                            className={`grid grid-cols-2 gap-4 p-4 ${index % 2 === 0
-                                                ? "bg-secondary"
-                                                : "bg-white"
-                                                }`}
-                                        >
-                                            <div className="customtext-neutral-light">
-                                                {spec.title}
-                                            </div>
-                                            <div className="customtext-neutral-dark">
-                                                {spec.description}
-                                            </div>
-                                        </div>
-                                    )
-                            )}
-                        </div>
-                    </div>
 
-                    {/* Additional Information Section */}
-                    <div>
-                        <h2 className="text-2xl font-bold customtext-neutral-dark mb-4  pb-4">
-                            Información adicional
-                        </h2>
-                        <div
-                            className={`space-y-2 ${!isExpanded
-                                ? "max-h-[400px] overflow-hidden"
-                                : ""
-                                }`}
-                        >
-                            <h3 className="text-xl font-semibold customtext-neutral-dark mb-4">
-                                Acerca de este artículo
-                            </h3>
-                            <div
-                                className="customtext-neutral-dark"
-                                dangerouslySetInnerHTML={{
-                                    __html: item?.description,
-                                }}
-                            ></div>
-                            <div className={`pl-10`}>
-                                <ul className="list-disc pl-5 space-y-2">
-                                    {item?.features.map((feature, index) => (
-                                        <li
-                                            key={index}
-                                            className="customtext-neutral-dark"
-                                        >
-                                            {feature.feature}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                        <button
-                            variant="ghost"
-                            className="border-2 border-primary  w-max px-5 py-3  my-8  rounded-xl flex items-center gap-2 customtext-primary font-semibold cursor-pointer"
-                            onClick={() => setIsExpanded(!isExpanded)}
-                        >
-                            Ver más
-                            <ChevronDown
-                                className={`transform transition-transform ${isExpanded ? "rotate-180" : ""
-                                    }`}
-                            />
-                        </button>
-                    </div>
-                </div>
             </div>
             {relationsItems.length > 0 && (
-                <ProductNavigationSwiperPaani
-                    data={{ title: "Te puede interesar",style_offer: "circle", background: "", backgroundboton: "bg-[linear-gradient(90deg,_#003D52_0%,_#0075A7_118.41%)]" }}
+                <ProductBananaLab
+                    data={{ title: "Te puede interesar", style_offer: "circle", background: "", class_button_primary: "lg:bg-primary", class_button: "bg-accent customtext-netrual-dark !font-semibold" ,class_section: "bg-secondary",text_button:"Ir a catalogo",link_catalog:"/catalogo" }}
                     items={relationsItems}
                     cart={cart}
                     setCart={setCart}
