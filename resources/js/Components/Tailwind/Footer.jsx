@@ -11,11 +11,12 @@ const FooterPaani = React.lazy(() => import("./Footer/FooterPaani"));
 const FooterB = React.lazy(() => import("./Footer/FooterB"));
 const FooterTermsCTASocials = React.lazy(() => import("./Footer/FooterTermsCTASocials"));
 const FooterSalaFabulosa = React.lazy(() => import("./Footer/FooterSalaFabulosa"));
+const Footer2Den1 = React.lazy(() => import("./Footer/Footer2Den1"));
 const FooterBananaLab = React.lazy(() => import("./Footer/FooterBananaLab"));
 const FooterPideloPe = React.lazy(() => import("./Footer/FooterPideloPe"));
 const FooterMakita = React.lazy(() => import("./Footer/FooterMakita"));
 const FooterDental = React.lazy(() => import("./Footer/FooterDental"));
-const Footer = ({ data, which, items, pages, generals, contacts }) => {
+const Footer = ({ data, which, items, pages, generals, contacts, stores }) => {
     const getFooter = () => {
         switch (which) {
             case "FooterSimpleCallToAction":
@@ -76,6 +77,16 @@ const Footer = ({ data, which, items, pages, generals, contacts }) => {
                         pages={pages}
                         generals={generals}
                         contacts={contacts}
+                    />
+                );
+            case "Footer2Den1":
+                return (
+                    <Footer2Den1
+                        socials={items}
+                        pages={pages}
+                        generals={generals}
+                        contacts={contacts}
+                        stores={stores}
                     />
                 );
             case "FooterPideloPe":

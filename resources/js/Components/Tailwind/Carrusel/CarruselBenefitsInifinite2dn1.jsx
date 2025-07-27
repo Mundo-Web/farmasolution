@@ -8,7 +8,7 @@ import "swiper/css";
 
 const CarruselBenefitsInifinite2dn1 = ({ items, data }) => {
   const benefitsRef = useRef(null);
-
+  
   useEffect(() => {
     adjustTextColor(benefitsRef.current);
   });
@@ -23,8 +23,6 @@ const CarruselBenefitsInifinite2dn1 = ({ items, data }) => {
           breakpoints={{
             0: {
               slidesPerView: 1,
-              loop: false,
-              allowTouchMove: false,
             },
           }}
         >

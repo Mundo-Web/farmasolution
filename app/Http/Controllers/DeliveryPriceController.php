@@ -12,6 +12,7 @@ use App\Models\Person;
 use App\Models\PreUser;
 use App\Models\SpecialtiesByUser;
 use App\Models\Specialty;
+use App\Models\General;
 use App\Models\TypeDelivery;
 use App\Providers\RouteServiceProvider;
 use Exception;
@@ -38,7 +39,8 @@ class DeliveryPriceController extends BasicController
 
 
     public function getDeliveryPrice(Request $request): HttpResponse|ResponseFactory|RedirectResponse
-    {
+    {   
+        
         $response = Response::simpleTryCatch(function (Response $response) use ($request) {
 
 
@@ -49,7 +51,6 @@ class DeliveryPriceController extends BasicController
 
             $ubigeo = $validated['ubigeo'];
             $cartTotal = $validated['cart_total'] ?? 0;
-
 
 
             if (!$ubigeo) {
@@ -63,7 +64,7 @@ class DeliveryPriceController extends BasicController
             $deliveryPrice = DeliveryPrice::with(['type'])
                 ->where('ubigeo', $ubigeo)
                 ->firstOrFail();
-
+            
             // 2. Valida Cobertura
             if (!$deliveryPrice) {
                 $response->status = 400;
@@ -74,7 +75,7 @@ class DeliveryPriceController extends BasicController
           //  dump($deliveryPrice);
             
             // Obtener el mínimo para envío gratuito desde generals
-            $freeShippingThreshold = \App\Models\General::where('correlative', 'shipping_free')->first();
+            $freeShippingThreshold = General::where('correlative', 'shipping_free')->first();
             $minFreeShipping = $freeShippingThreshold ? floatval($freeShippingThreshold->description) : 0;
             
             // Debug logs
@@ -88,7 +89,7 @@ class DeliveryPriceController extends BasicController
             
             // Verificar si aplica envío gratuito por monto del carrito
             $qualifiesForFreeShipping = $minFreeShipping > 0 && $cartTotal >= $minFreeShipping;
-            
+           
             // Debug logs adicionales
             Log::info('Free Shipping Validation:', [
                 'min_free_shipping' => $minFreeShipping,
@@ -107,11 +108,13 @@ class DeliveryPriceController extends BasicController
                 'standard' => [
                     'price' => $deliveryPrice->price, // Siempre usar el precio base inicialmente
                     'description' => $deliveryPrice->type->description ?? 'Entrega estándar',
-                    'type' => $deliveryPrice->type->name,
-                    'characteristics' => $deliveryPrice->type->characteristics,
+                    'type' => $deliveryPrice->type->name ?? 'Entrega Estándar',
+                    'characteristics' => $deliveryPrice->type->characteristics ?? 'Sin caracteristicas',
                 ]
             ];
 
+            
+            
             // 4. Para ubicaciones con is_free=true, lógica condicional
             if ($deliveryPrice->is_free) {
                 $expressType = TypeDelivery::where('slug', 'delivery-express')->first();

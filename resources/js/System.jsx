@@ -201,6 +201,7 @@ const System = ({
     contacts,
     faqs,
     headerPosts,
+    stores,
     postsLatest,
     textstatic,
     hasRole = () => { }
@@ -268,6 +269,7 @@ const System = ({
             pages,
             isUser: session,
             generals,
+            stores,
             headerPosts,
             contacts
         };
@@ -352,7 +354,7 @@ const System = ({
             case "frame":
                 return <Frame which={value} data={data} />
             case "footer":
-                return <Footer {...componentProps} contacts={contacts} generals={generals} data={data} />
+                return <Footer {...componentProps} contacts={contacts} generals={generals} data={data} stores={stores} />
             case "complaints":
                 return <Complaint which={value} data={data} generals={generals} />
             case "floating":
