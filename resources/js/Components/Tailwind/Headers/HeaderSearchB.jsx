@@ -942,7 +942,7 @@ const HeaderSearchB = ({
                                                 </button>
                                                 <button
                                                     type="submit"
-                                                    className={`p-2 ${data?.backgroundColor ? "bg-primary-gradient" : data?.backgroundColor} text-white rounded-lg hover:bg-primary transition-colors`}
+                                                    className={`p-2 ${data?.backgroundColor || "bg-primary" } text-white rounded-lg hover:bg-primary transition-colors`}
                                                     aria-label="Buscar"
                                                 >
                                                     <Search size={16} />
