@@ -6,6 +6,7 @@ use App\Models\Faq;
 use App\Models\General;
 use App\Models\Post;
 use App\Models\Aboutus;
+use App\Models\Store;
 use App\Models\Setting;
 use App\Models\System;
 use App\Models\SystemColor;
@@ -180,6 +181,7 @@ class SystemController extends BasicController
         $props['filteredData'] = [];
         $props['generals'] = General::whereIn('correlative', $generals)->get();
         $props['contacts'] = General::where('status', true)->get();
+        $props['stores'] = Store::where('status', true)->get();
         $props['faqs'] = Faq::where('status', true)->get();
         // Procesar el campo 'using'
         foreach ($page['using'] as $key => $using) {
