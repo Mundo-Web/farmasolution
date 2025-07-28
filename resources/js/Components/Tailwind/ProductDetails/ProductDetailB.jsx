@@ -891,7 +891,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                             onAddClicked(item);
                                             setModalOpen(!modalOpen);
                                         }}
-                                        className={`w-full bg-primary  py-3 font-bold shadow-lg rounded-xl hover:opacity-90 transition-all duration-300 mt-4 ${data.class_button || 'text-white'}`}
+                                        className={`w-full bg-primary  py-3 font-bold shadow-lg rounded-xl hover:opacity-90 transition-all duration-300 mt-4 ${data?.class_button || 'text-white'}`}
                                     >
                                         Agregar al carrito
                                     </button>
@@ -1014,7 +1014,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                     </p>
                                     <button
                                         onClick={() => addAssociatedItems()}
-                                        className={`bg-primary text-xs font-semibold  w-max py-3 px-6 rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-md ${data.class_button || 'text-white'}`}
+                                        className={`bg-primary text-xs font-semibold  w-max py-3 px-6 rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-md ${data?.class_button || 'text-white'}`}
                                     >
                                         Agregar al carrito
                                     </button>
@@ -1239,7 +1239,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                             onAddClicked(item);
                                             setModalOpen(!modalOpen);
                                         }}
-                                        className={`w-full bg-primary py-3 font-bold shadow-lg rounded-xl hover:opacity-90 transition-all duration-300 mt-4 ${data.class_button || 'text-white'}`}
+                                        className={`w-full bg-primary py-3 font-bold shadow-lg rounded-xl hover:opacity-90 transition-all duration-300 mt-4 ${data?.class_button || 'text-white'}`}
                                     >
                                         Agregar al carrito
                                     </button>
@@ -1296,7 +1296,7 @@ const ProductDetail = ({ item, data, setCart, cart, generals }) => {
                                                 onClick={() =>
                                                     addAssociatedItems()
                                                 }
-                                                className={`bg-primary text-xs font-semibold w-full py-3 rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-md ${data.class_button || 'text-white'}`}
+                                                className={`bg-primary text-xs font-semibold w-full py-3 rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-md ${data?.class_button || 'text-white'}`}
                                             >
                                                 Agregar al carrito
                                             </button>
