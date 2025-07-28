@@ -5767,7 +5767,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Contact.jsx": {
-    "file": "assets/Contact-BXEfuYiR.js",
+    "file": "assets/Contact-C98Az_HQ.js",
     "name": "Contact",
     "src": "resources/js/Components/Tailwind/Contact.jsx",
     "isDynamicEntry": true,
@@ -5781,7 +5781,8 @@
     "dynamicImports": [
       "resources/js/Components/Tailwind/Contact/ContactSimple.jsx",
       "resources/js/Components/Tailwind/Contact/ContactGrid.jsx",
-      "resources/js/Components/Tailwind/Contact/ContactAko.jsx"
+      "resources/js/Components/Tailwind/Contact/ContactAko.jsx",
+      "resources/js/Components/Tailwind/Contact/ThankContact.jsx"
     ]
   },
   "resources/js/Components/Tailwind/Contact/ContactAko.jsx": {
@@ -5813,7 +5814,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Contact/ContactGrid.jsx": {
-    "file": "assets/ContactGrid-Pmlh9Xov.js",
+    "file": "assets/ContactGrid-Do89EVi1.js",
     "name": "ContactGrid",
     "src": "resources/js/Components/Tailwind/Contact/ContactGrid.jsx",
     "isDynamicEntry": true,
@@ -5859,6 +5860,18 @@
       "_index-fNjTmf9T.js"
     ]
   },
+  "resources/js/Components/Tailwind/Contact/ThankContact.jsx": {
+    "file": "assets/ThankContact--pJTheE3.js",
+    "name": "ThankContact",
+    "src": "resources/js/Components/Tailwind/Contact/ThankContact.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BOnQTV8N.js",
+      "_index-yBjzXJbu.js",
+      "__commonjsHelpers-D6-XlEtG.js"
+    ]
+  },
   "resources/js/Components/Tailwind/DeliveryZone.jsx": {
     "file": "assets/DeliveryZone-2rdAUHBJ.js",
     "name": "DeliveryZone",
@@ -5892,7 +5905,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Faq.jsx": {
-    "file": "assets/Faq-BEdaHrsS.js",
+    "file": "assets/Faq-Bp5ZKFS-.js",
     "name": "Faq",
     "src": "resources/js/Components/Tailwind/Faq.jsx",
     "isDynamicEntry": true,
@@ -8986,7 +8999,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Thank.jsx": {
-    "file": "assets/Thank-Bm2PgXat.js",
+    "file": "assets/Thank-2orG0LHq.js",
     "name": "Thank",
     "src": "resources/js/Components/Tailwind/Thank.jsx",
     "isDynamicEntry": true,
@@ -9647,7 +9660,7 @@
     ]
   },
   "resources/js/System.jsx": {
-    "file": "assets/System-D70pGIwd.js",
+    "file": "assets/System-Ce9ctJ6Q.js",
     "name": "System",
     "src": "resources/js/System.jsx",
     "isEntry": true,
