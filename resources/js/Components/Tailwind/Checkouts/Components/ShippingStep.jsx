@@ -760,6 +760,29 @@ export default function ShippingStep({
         setPaymentLoading(true);
 
         try {
+            // ✅ Verificar que Culqi esté habilitado antes de procesar el pago
+            if (!Global.CULQI_ENABLED) {
+                toast.error("Método de pago no disponible", {
+                    description: "El procesamiento de pagos con tarjeta está temporalmente deshabilitado",
+                    icon: <XCircle className="h-5 w-5 text-red-500" />,
+                    duration: 4000,
+                    position: "top-center",
+                });
+                setPaymentLoading(false);
+                return;
+            }
+
+            if (!Global.CULQI_PUBLIC_KEY) {
+                toast.error("Error de configuración", {
+                    description: "El sistema de pagos no está configurado correctamente",
+                    icon: <XCircle className="h-5 w-5 text-red-500" />,
+                    duration: 4000,
+                    position: "top-center",
+                });
+                setPaymentLoading(false);
+                return;
+            }
+
             const request = {
                 user_id: user.id,
                 ...formData,
@@ -1616,14 +1639,35 @@ export default function ShippingStep({
                         </div>
                     </div>
 
+                    {!Global.CULQI_ENABLED && (
+                        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <div className="flex items-center">
+                                <InfoIcon className="h-5 w-5 text-yellow-600 mr-2" />
+                                <span className="text-sm text-yellow-800">
+                                    El procesamiento de pagos con tarjeta está temporalmente deshabilitado
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
+                    {Global.CULQI_ENABLED && !Global.CULQI_PUBLIC_KEY && (
+                        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-center">
+                                <XCircle className="h-5 w-5 text-red-600 mr-2" />
+                                <span className="text-sm text-red-800">
+                                    Error de configuración: Sistema de pagos no configurado
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
                     <ButtonPrimary 
                         onClick={handlePayment} 
-                     
-                        disabled={paymentLoading}
+                        disabled={paymentLoading || !Global.CULQI_ENABLED || !Global.CULQI_PUBLIC_KEY}
                         loading={paymentLoading}
-                          className={`w-full mt-6 ${data?.class_button || 'text-white'}`}
+                        className={`w-full mt-6 ${data?.class_button || 'text-white'} ${(!Global.CULQI_ENABLED || !Global.CULQI_PUBLIC_KEY) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        {paymentLoading ? "Procesando..." : `Pagar S/ ${Number2Currency(roundToTwoDecimals(finalTotalWithCoupon))}`}
+                        {paymentLoading ? "Procesando..." : !Global.CULQI_ENABLED ? "Pago no disponible" : !Global.CULQI_PUBLIC_KEY ? "Configuración pendiente" : `Pagar S/ ${Number2Currency(roundToTwoDecimals(finalTotalWithCoupon))}`}
                     </ButtonPrimary>
 
                     <ButtonSecondary 

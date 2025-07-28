@@ -7,6 +7,7 @@ import { GET } from "sode-extend-react";
 import AuthClientRest from "../../../Actions/AuthClientRest";
 import InputForm from "../Checkouts/Components/InputForm";
 import { toast } from "sonner";
+import GoogleSignInButton from "../../Google/GoogleSignInButton";
 
 export default function LoginSimple() {
     const jsEncrypt = new JSEncrypt();
@@ -205,6 +206,14 @@ export default function LoginSimple() {
                                     >
                                         {loading ? "Ingresando..." : "Ingresar"}
                                     </button>
+
+                                  
+
+                                    {/* Botón de Google */}
+                                    <GoogleSignInButton 
+                                        onSuccess={() => window.location.href = "/"} 
+                                        text="Continuar con Google"
+                                    />
 
                                     <div className="text-center mt-4">
                                         <p className="text-sm text-gray-600">

@@ -88,6 +88,11 @@ foreach ($pages as $page) {
 
 Route::get('/base-template', [SystemController::class, 'reactView'])->name('System.jsx');
 Route::get('/login', [AuthController::class, 'loginView'])->name('Login.jsx');
+
+// Google OAuth web routes
+Route::get('/auth/google', [App\Http\Controllers\GoogleAuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [App\Http\Controllers\GoogleAuthController::class, 'handleGoogleCallback']);
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [AdminProfileController::class, 'reactView'])->name('Admin/Profile.jsx');
     Route::get('/account', [AdminAccountController::class, 'reactView'])->name('Admin/Account.jsx');

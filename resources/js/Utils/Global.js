@@ -11,6 +11,10 @@ class Global {
     static APP_COLOR_PRIMARY = null;
     static CULQI_PUBLIC_KEY = null;
     static CULQI_API = null;
+    static CULQI_ENABLED = null;
+    static CULQI_NAME = null;
+    static GOOGLE_CLIENT_ID = null;
+    static GOOGLE_OAUTH_ENABLED = null;
 
     static set = (name, value) => {
         Global[name] = value;

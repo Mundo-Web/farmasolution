@@ -5,8 +5,8 @@ import { useEffect } from "react";
 
 export default function ConfirmationStep({ cart, code, delivery, couponDiscount = 0, couponCode = null, conversionScripts = null, automaticDiscounts = [], automaticDiscountTotal = 0 }) {
     const totalPrice = cart.reduce((acc, item) => {
-        const finalPrice = item.final_price;
-        return acc + finalPrice * item.quantity;
+        const finalPrice = item?.final_price;
+        return acc + finalPrice * item?.quantity;
     }, 0);
 
    
@@ -93,8 +93,8 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                                     <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
                                         <div className="bg-gray-50 p-3 rounded-xl">
                                             <img
-                                                src={`/storage/images/item/${item.image}`}
-                                                alt={item.name}
+                                                src={`/storage/images/item/${item?.image}`}
+                                                alt={item?.name}
                                                 className="w-24 h-24 object-cover rounded-lg"
                                                 onError={(e) =>
                                                 (e.target.src =
@@ -105,16 +105,16 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                                         </div>
                                         <div className="text-center sm:text-left flex-1">
                                             <div className="flex flex-col sm:flex-row sm:justify-between mb-3">
-                                                <h3 className="font-semibold text-xl lg:w-8/12 line-clamp-3">{item.name}</h3>
+                                                <h3 className="font-semibold text-xl lg:w-8/12 line-clamp-3">{item?.name}</h3>
                                                 <div className="mt-2 sm:mt-0 text-center lg:text-right lg:w-4/12">
-                                                    <div className="font-bold text-lg customtext-primary">S/ {Number2Currency(item.final_price * item.quantity)}</div>
+                                                    <div className="font-bold text-lg customtext-primary">S/ {Number2Currency(item?.final_price * item?.quantity)}</div>
 
                                                 </div>
                                             </div>
                                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                                <p className="text-sm customtext-neutral-light">Marca: <span className="customtext-neutral-dark font-medium">{item.brand.name}</span></p>
-                                                <p className="text-sm customtext-neutral-light">Cantidad: <span className="customtext-neutral-dark font-medium">{item.quantity}</span></p>
-                                                <p className="text-sm customtext-neutral-light">SKU: <span className="customtext-neutral-dark font-medium">{item.sku}</span></p>
+                                                <p className="text-sm customtext-neutral-light">Marca: <span className="customtext-neutral-dark font-medium">{item?.brand?.name}</span></p>
+                                                <p className="text-sm customtext-neutral-light">Cantidad: <span className="customtext-neutral-dark font-medium">{item?.quantity}</span></p>
+                                                <p className="text-sm customtext-neutral-light">SKU: <span className="customtext-neutral-dark font-medium">{item?.sku}</span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -134,8 +134,8 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                                 { label: "Envío", value: delivery }
                             ].map((item, index) => (
                                 <div key={index} className="flex justify-between items-center py-2">
-                                    <span className="customtext-neutral-dark">{item.label}</span>
-                                    <span className="font-semibold">S/ {Number2Currency(item.value)}</span>
+                                    <span className="customtext-neutral-dark">{item?.label}</span>
+                                    <span className="font-semibold">S/ {Number2Currency(item?.value)}</span>
                                 </div>
                             ))}
 
