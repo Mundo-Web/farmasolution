@@ -51,6 +51,8 @@ use App\Http\Controllers\Admin\RepositoryController as AdminRepositoryController
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\SaleStatusController as AdminSaleStatusController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\AuthClientController;
 // Public
 use App\Http\Controllers\AuthController;
@@ -416,6 +418,16 @@ Route::middleware('auth')->group(function () {
     Route::patch('/statuses/status', [AdminSaleStatusController::class, 'status']);
     Route::patch('/statuses/{field}', [AdminSaleStatusController::class, 'boolean']);
     Route::delete('/statuses/{id}', [AdminSaleStatusController::class, 'delete']);
+
+    // Users management
+    Route::post('/users', [AdminUserController::class, 'save']);
+    Route::post('/users/paginate', [AdminUserController::class, 'paginate']);
+    Route::patch('/users/{field}', [AdminUserController::class, 'boolean']);
+    Route::delete('/users/{id}', [AdminUserController::class, 'delete']);
+
+    // Clients management
+    Route::post('/clients/paginate', [AdminClientController::class, 'paginate']);
+    Route::patch('/clients/{field}', [AdminClientController::class, 'boolean']);
 
     Route::middleware(['can:Root'])->group(function () {
       Route::post('/system', [AdminSystemController::class, 'save']);
