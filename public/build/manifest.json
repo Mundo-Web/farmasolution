@@ -1521,6 +1521,45 @@
       "swiper.css"
     ]
   },
+  "resources/js/Admin/Clients.jsx": {
+    "file": "assets/Clients-DsCpjm-P.js",
+    "name": "Clients",
+    "src": "resources/js/Admin/Clients.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BOnQTV8N.js",
+      "resources/js/Utils/ReactAppend.jsx",
+      "_Base-pNhuS1i2.js",
+      "_CreateReactScript-SgouzNeL.js",
+      "_Table-CKpi4A13.js",
+      "_ReactAppend-D7S498fx.js",
+      "_DxButton-DV0H-ZcL.js",
+      "_SwitchFormGroup-B-vmnVqk.js",
+      "resources/js/Components/Tailwind/Components/ProductCard.jsx",
+      "_BasicRest-BCYKfs4R.js",
+      "_server.browser-Bf4gQIc7.js",
+      "_index-yBjzXJbu.js",
+      "__commonjsHelpers-D6-XlEtG.js",
+      "_index-fNjTmf9T.js",
+      "_Global-ErywZRdd.js",
+      "_tippy-react.esm-Ce0cOK54.js",
+      "_index-C0Swrixi.js",
+      "_Logout-W0zm0J8x.js",
+      "_main-DKOTUah5.js",
+      "____vite-browser-external_commonjs-proxy-DDYoOVPM.js",
+      "_MenuItemContainer-CHB3tE4h.js",
+      "_index.esm-BNsoPXs8.js",
+      "_index-NIGUFBhG.js",
+      "_General-BmbBKdsB.js",
+      "_LaravelSession-Dz9cpV3l.js",
+      "_index-DRg3WPTA.js"
+    ],
+    "css": [
+      "tippy.css",
+      "swiper.css"
+    ]
+  },
   "resources/js/Admin/Collections.jsx": {
     "file": "assets/Collections-BQBm8YPF.js",
     "name": "Collections",
@@ -2791,6 +2830,48 @@
       "_WebDetailsRest-ByCTRHuH.js",
       "_General-BmbBKdsB.js",
       "_LaravelSession-Dz9cpV3l.js"
+    ],
+    "css": [
+      "tippy.css",
+      "swiper.css"
+    ]
+  },
+  "resources/js/Admin/Users.jsx": {
+    "file": "assets/Users-DAdPoXMV.js",
+    "name": "Users",
+    "src": "resources/js/Admin/Users.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BOnQTV8N.js",
+      "resources/js/Utils/ReactAppend.jsx",
+      "_Base-pNhuS1i2.js",
+      "_CreateReactScript-SgouzNeL.js",
+      "_Table-CKpi4A13.js",
+      "_InputFormGroup-BRr_So2P.js",
+      "_ReactAppend-D7S498fx.js",
+      "_DxButton-DV0H-ZcL.js",
+      "_SwitchFormGroup-B-vmnVqk.js",
+      "resources/js/Components/Tailwind/Components/ProductCard.jsx",
+      "_BasicRest-BCYKfs4R.js",
+      "_server.browser-Bf4gQIc7.js",
+      "_Modal-DElRB-QF.js",
+      "_SelectFormGroup-D4CwPTpm.js",
+      "_index-yBjzXJbu.js",
+      "__commonjsHelpers-D6-XlEtG.js",
+      "_index-fNjTmf9T.js",
+      "_Global-ErywZRdd.js",
+      "_tippy-react.esm-Ce0cOK54.js",
+      "_index-C0Swrixi.js",
+      "_Logout-W0zm0J8x.js",
+      "_main-DKOTUah5.js",
+      "____vite-browser-external_commonjs-proxy-DDYoOVPM.js",
+      "_MenuItemContainer-CHB3tE4h.js",
+      "_index.esm-BNsoPXs8.js",
+      "_index-NIGUFBhG.js",
+      "_General-BmbBKdsB.js",
+      "_LaravelSession-Dz9cpV3l.js",
+      "_index-DRg3WPTA.js"
     ],
     "css": [
       "tippy.css",
