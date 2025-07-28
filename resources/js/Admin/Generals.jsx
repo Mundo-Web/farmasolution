@@ -192,6 +192,16 @@ const Generals = ({ generals }) => {
     customBodyScripts:
       generals.find((x) => x.correlative == "custom_body_scripts")
         ?.description ?? "",
+    // Google OAuth Configuration
+    googleClientId:
+      generals.find((x) => x.correlative == "google_client_id")
+        ?.description ?? "",
+    googleClientSecret:
+      generals.find((x) => x.correlative == "google_client_secret")
+        ?.description ?? "",
+    googleOauthEnabled:
+      generals.find((x) => x.correlative == "google_oauth_enabled")
+        ?.description ?? "false",
   });
 
   const [activeTab, setActiveTab] = useState("general");
@@ -493,6 +503,42 @@ const Generals = ({ generals }) => {
         name: "Scripts Personalizados (Body)",
         description: formData.customBodyScripts || "",
       },
+      {
+        correlative: "google_client_id",
+        name: "Google Client ID",
+        description: formData.googleClientId || "",
+      },
+      {
+        correlative: "google_client_secret",
+        name: "Google Client Secret",
+        description: formData.googleClientSecret || "",
+      },
+      {
+        correlative: "google_oauth_enabled",
+        name: "Habilitar Google OAuth",
+        description: formData.googleOauthEnabled || "",
+      },
+      // Culqi Configuration
+      {
+        correlative: "checkout_culqi",
+        name: "Habilitar Culqi",
+        description: formData.checkout_culqi || "",
+      },
+      {
+        correlative: "checkout_culqi_name",
+        name: "Nombre de la cuenta de Culqi",
+        description: formData.checkout_culqi_name || "",
+      },
+      {
+        correlative: "checkout_culqi_public_key",
+        name: "Llave pública de Culqi",
+        description: formData.checkout_culqi_public_key || "",
+      },
+      {
+        correlative: "checkout_culqi_private_key",
+        name: "Llave privada de Culqi",
+        description: formData.checkout_culqi_private_key || "",
+      },
     ];
 
     try {
@@ -601,6 +647,17 @@ const Generals = ({ generals }) => {
             Píxeles & Analytics
           </button>
         </li>
+        <li className="nav-item" role="presentation">
+          <button
+            className={`nav-link ${activeTab === "oauth" ? "active" : ""}`}
+            onClick={() => setActiveTab("oauth")}
+            type="button"
+            role="tab"
+          >
+            OAuth & Autenticación
+          </button>
+        </li>
+
         </ul>
 
         <div className="tab-content" id="generalTabsContent">
@@ -1747,6 +1804,259 @@ const Generals = ({ generals }) => {
                     })}
                   />
                   <small className="text-muted">Scripts personalizados para el final del &lt;body&gt;</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* OAuth & Autenticación Tab */}
+          <div
+            className={`tab-pane fade ${activeTab === "oauth" ? "show active" : ""}`}
+            role="tabpanel"
+          >
+            <div className="row">
+              <div className="col-12">
+                <h5 className="mb-4">🔐 Configuración de Google OAuth</h5>
+                
+                {/* Switch para habilitar Google OAuth */}
+                <div className="mb-4">
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="googleOauthEnabled"
+                      checked={formData.googleOauthEnabled === "true"}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        googleOauthEnabled: String(e.target.checked)
+                      })}
+                    />
+                    <label className="form-check-label" htmlFor="googleOauthEnabled">
+                      <strong>Habilitar inicio de sesión con Google</strong>
+                    </label>
+                  </div>
+                  <small className="text-muted">
+                    Permite a los clientes registrarse e iniciar sesión usando su cuenta de Google
+                  </small>
+                </div>
+
+                {formData.googleOauthEnabled === "true" && (
+                  <>
+                    <div className="alert alert-info">
+                      <h6>📋 Instrucciones de configuración:</h6>
+                      <ol className="mb-0">
+                        <li>Ve a <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer">Google Cloud Console</a></li>
+                        <li>Crea un nuevo proyecto o selecciona uno existente</li>
+                        <li>Habilita la API de "Google+ API" y "Google Sign-In API"</li>
+                        <li>Ve a "Credenciales" → "Crear credenciales" → "ID de cliente OAuth 2.0"</li>
+                        <li>Configura como "Aplicación web"</li>
+                        <li>Agrega estos dominios autorizados:
+                          <ul>
+                            <li><strong>JavaScript origins:</strong> <code>{window.location.origin}</code></li>
+                            <li><strong>Redirect URIs:</strong> <code>{window.location.origin}/auth/google/callback</code></li>
+                          </ul>
+                        </li>
+                        <li>Copia el Client ID y Client Secret en los campos de abajo</li>
+                      </ol>
+                    </div>
+
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="mb-3">
+                          <label className="form-label">Google Client ID</label>
+                          <input
+                            type="text"
+                            placeholder="123456789-abcdefghijk.apps.googleusercontent.com"
+                            className="form-control"
+                            value={formData.googleClientId}
+                            onChange={(e) => setFormData({
+                              ...formData,
+                              googleClientId: e.target.value
+                            })}
+                          />
+                          <small className="text-muted">Client ID obtenido de Google Cloud Console</small>
+                        </div>
+                      </div>
+                      
+                      <div className="col-md-6">
+                        <div className="mb-3">
+                          <label className="form-label">Google Client Secret</label>
+                          <input
+                            type="password"
+                            placeholder="GOCSPX-xxxxxxxxxxxxxxxxxxxxxxxx"
+                            className="form-control"
+                            value={formData.googleClientSecret}
+                            onChange={(e) => setFormData({
+                              ...formData,
+                              googleClientSecret: e.target.value
+                            })}
+                          />
+                          <small className="text-muted">Client Secret obtenido de Google Cloud Console</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    {formData.googleClientId && formData.googleClientSecret && (
+                      <div className="alert alert-success">
+                        <h6>✅ Configuración completa</h6>
+                        <p className="mb-0">
+                          Una vez guardada la configuración, los botones de "Continuar con Google" 
+                          aparecerán automáticamente en las páginas de login y registro.
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="alert alert-warning">
+                      <h6>⚠️ Importante para producción:</h6>
+                      <p className="mb-0">
+                        Para usar en producción, asegúrate de actualizar los dominios autorizados 
+                        en Google Cloud Console con tu dominio real (ej: https://tudominio.com)
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Pasarelas de Pago Tab */}
+          <div
+            className={`tab-pane fade ${activeTab === "payments" ? "show active" : ""}`}
+            role="tabpanel"
+          >
+            <div className="row">
+              <div className="col-12">
+                <h5 className="mb-4">💳 Configuración de Pasarelas de Pago</h5>
+                
+                {/* Culqi Configuration */}
+                <div className="card mb-4">
+                  <div className="card-header">
+                    <h6 className="card-title mb-0">🔒 Culqi - Pagos con Tarjeta</h6>
+                  </div>
+                  <div className="card-body">
+                    {/* Switch para habilitar Culqi */}
+                    <div className="mb-4">
+                      <div className="form-check form-switch">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="culqiEnabled"
+                          checked={formData.checkout_culqi === "true"}
+                          onChange={(e) => setFormData({
+                            ...formData,
+                            checkout_culqi: String(e.target.checked)
+                          })}
+                        />
+                        <label className="form-check-label" htmlFor="culqiEnabled">
+                          <strong>Habilitar pagos con Culqi</strong>
+                        </label>
+                      </div>
+                      <small className="text-muted">
+                        Permite a los clientes pagar con tarjetas de crédito/débito, Yape, y otros métodos
+                      </small>
+                    </div>
+
+                    {formData.checkout_culqi === "true" && (
+                      <>
+                        <div className="alert alert-info">
+                          <h6>📋 Instrucciones de configuración:</h6>
+                          <ol className="mb-0">
+                            <li>Ve a <a href="https://culqi.com" target="_blank" rel="noopener noreferrer">Culqi.com</a> y crea una cuenta</li>
+                            <li>Ve al panel de Culqi → Desarrollo → Llaves API</li>
+                            <li>Copia la <strong>Llave Pública</strong> y <strong>Llave Privada</strong></li>
+                            <li>Para producción, cambia a las llaves de producción</li>
+                            <li>Configura los webhooks si es necesario</li>
+                          </ol>
+                        </div>
+
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Nombre de la cuenta</label>
+                              <input
+                                type="text"
+                                placeholder="Mi Tienda"
+                                className="form-control"
+                                value={formData.checkout_culqi_name}
+                                onChange={(e) => setFormData({
+                                  ...formData,
+                                  checkout_culqi_name: e.target.value
+                                })}
+                              />
+                              <small className="text-muted">Nombre que aparecerá en el formulario de pago</small>
+                            </div>
+                          </div>
+                          
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Llave Pública</label>
+                              <input
+                                type="text"
+                                placeholder="pk_test_xxxxxxxxxxxxxxxxx"
+                                className="form-control"
+                                value={formData.checkout_culqi_public_key}
+                                onChange={(e) => setFormData({
+                                  ...formData,
+                                  checkout_culqi_public_key: e.target.value
+                                })}
+                              />
+                              <small className="text-muted">Llave pública de Culqi (pk_test_ o pk_live_)</small>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="mb-3">
+                              <label className="form-label">Llave Privada</label>
+                              <input
+                                type="password"
+                                placeholder="sk_test_xxxxxxxxxxxxxxxxx"
+                                className="form-control"
+                                value={formData.checkout_culqi_private_key}
+                                onChange={(e) => setFormData({
+                                  ...formData,
+                                  checkout_culqi_private_key: e.target.value
+                                })}
+                              />
+                              <small className="text-muted">Llave privada de Culqi (sk_test_ o sk_live_)</small>
+                            </div>
+                          </div>
+                        </div>
+
+                        {formData.checkout_culqi_public_key && formData.checkout_culqi_private_key && (
+                          <div className="alert alert-success">
+                            <h6>✅ Configuración completa</h6>
+                            <p className="mb-0">
+                              Una vez guardada la configuración, los pagos con Culqi estarán disponibles en el checkout.
+                              Los clientes podrán pagar con tarjetas, Yape, banca móvil y otros métodos.
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="alert alert-warning">
+                          <h6>⚠️ Importante para producción:</h6>
+                          <p className="mb-0">
+                            Para usar en producción, asegúrate de cambiar a las llaves de producción (pk_live_ y sk_live_) 
+                            y configurar correctamente los webhooks en el panel de Culqi.
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Información adicional */}
+                <div className="alert alert-info">
+                  <h6>ℹ️ Información adicional</h6>
+                  <p className="mb-2">Las configuraciones de pasarelas de pago se almacenan de forma segura en la base de datos.</p>
+                  <ul className="mb-0">
+                    <li>Las llaves privadas nunca se exponen al frontend</li>
+                    <li>Las configuraciones se pueden cambiar sin editar archivos del servidor</li>
+                    <li>Los cambios toman efecto inmediatamente después de guardar</li>
+                  </ul>
                 </div>
               </div>
             </div>

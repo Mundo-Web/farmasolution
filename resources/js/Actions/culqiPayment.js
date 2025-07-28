@@ -15,6 +15,13 @@ export const processCulqiPayment = (request) => {
         try {
             console.log("🔄 Iniciando proceso de pago con Culqi...", request);
             
+            // ✅ Verificar que Culqi esté habilitado
+            if (!Global.CULQI_ENABLED) {
+                console.error("❌ Error: Culqi no está habilitado en la configuración");
+                reject("Método de pago no disponible: Culqi está deshabilitado");
+                return;
+            }
+            
             // ✅ Verificar que Culqi esté disponible
             if (typeof window.Culqi === 'undefined') {
                 console.error("❌ Error: Culqi no está definido. Verifique que el script de Culqi esté cargado.");
@@ -57,7 +64,7 @@ export const processCulqiPayment = (request) => {
             console.log("   - Email:", request.email);
             
             window.Culqi.settings({
-                title: Global.APP_NAME,
+                title: Global.CULQI_NAME || Global.APP_NAME,
                 email: request.email,
                 currency: "PEN",
                 amount: amountInCents, // Monto en céntimos como entero
@@ -77,7 +84,7 @@ export const processCulqiPayment = (request) => {
                     cuotealo: true,
                 },
                 style: {
-                    logo: Global.APP_URL + "/assets/resources/logo.png",
+                    logo: Global.APP_URL + `/assets/resources/icon.png?v=${crypto.randomUUID()}`,
                     bannerColor: Global.APP_COLOR_PRIMARY,
                     buttonBackground: Global.APP_COLOR_PRIMARY,
                 },

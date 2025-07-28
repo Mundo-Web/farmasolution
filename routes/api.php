@@ -121,6 +121,9 @@ Route::post('/signup-client', [AuthClientController::class, 'signup']);
 Route::post('/forgot-password-client', [AuthClientController::class, 'forgotPassword']);
 Route::post('/reset-password-client', [AuthClientController::class, 'resetPassword']);
 
+// Google OAuth routes
+Route::post('/google-login', [App\Http\Controllers\GoogleAuthController::class, 'loginWithGoogle']);
+
 // Rutas públicas para cupones
 Route::post('/coupons/validate', [AdminCouponController::class, 'validateCoupon']);
 

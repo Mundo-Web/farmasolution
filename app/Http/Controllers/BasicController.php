@@ -9,6 +9,7 @@ use App\Models\General;
 use App\Models\Slider;
 use App\Models\Social;
 use App\Models\User;
+use App\Helpers\CulqiConfig;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -100,6 +101,11 @@ class BasicController extends Controller
       $session->getAllPermissions();
     }
 
+    // Get Culqi configuration from database
+    $culqiPublicKey = \App\Models\General::where('correlative', 'checkout_culqi_public_key')->first();
+    $culqiEnabled = \App\Models\General::where('correlative', 'checkout_culqi')->first();
+    $culqiName = \App\Models\General::where('correlative', 'checkout_culqi_name')->first();
+
     $properties = [
       'session' => $session,
       'global' => [
@@ -112,8 +118,10 @@ class BasicController extends Controller
         'APP_PROTOCOL' => env('APP_PROTOCOL', 'https'),
         'GMAPS_API_KEY' => env('GMAPS_API_KEY'),
         'APP_COLOR_PRIMARY' => env('APP_COLOR_PRIMARY', '#000000'),
-        'CULQI_PUBLIC_KEY' => env('CULQI_PUBLIC_KEY'),
-        'CULQI_API' => env('CULQI_API'),
+        'CULQI_PUBLIC_KEY' => CulqiConfig::getPublicKey(),
+        'CULQI_API' => CulqiConfig::getApiUrl(),
+        'CULQI_ENABLED' => CulqiConfig::isEnabled(),
+        'CULQI_NAME' => CulqiConfig::getName(),
       ],
     ];
     $reactViewProperties = $this->setReactViewProperties($request);
