@@ -120,90 +120,7 @@ const ContactGrid = ({ data, contacts }) => {
         loadStores();
     }, []);
 
-    // Función para crear iconos personalizados según el tipo de tienda
-    const getStoreIcon = (type) => {
-        const iconBase = {
-            url: '',
-            scaledSize: { width: 40, height: 40 },
-            origin: { x: 0, y: 0 },
-            anchor: { x: 20, y: 40 }
-        };
-
-        switch (type?.toLowerCase()) {
-            case 'tienda':
-                return {
-                    ...iconBase,
-                    url: 'data:image/svg+xml;base64,' + btoa(`
-                        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="20" cy="20" r="18" fill="#10b981" stroke="#fff" stroke-width="3"/>
-                            <path d="M12 18h16v12H12V18zm4-6h8v6h-8v-6z" fill="#fff"/>
-                            <rect x="14" y="20" width="2" height="2" fill="#10b981"/>
-                            <rect x="18" y="20" width="2" height="2" fill="#10b981"/>
-                            <rect x="22" y="20" width="2" height="2" fill="#10b981"/>
-                            <rect x="26" y="20" width="2" height="2" fill="#10b981"/>
-                        </svg>
-                    `)
-                };
-            case 'oficina':
-                return {
-                    ...iconBase,
-                    url: 'data:image/svg+xml;base64,' + btoa(`
-                        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="20" cy="20" r="18" fill="#3b82f6" stroke="#fff" stroke-width="3"/>
-                            <rect x="12" y="14" width="16" height="14" fill="#fff" rx="1"/>
-                            <rect x="14" y="16" width="2" height="2" fill="#3b82f6"/>
-                            <rect x="18" y="16" width="2" height="2" fill="#3b82f6"/>
-                            <rect x="22" y="16" width="2" height="2" fill="#3b82f6"/>
-                            <rect x="26" y="16" width="2" height="2" fill="#3b82f6"/>
-                            <rect x="14" y="20" width="2" height="2" fill="#3b82f6"/>
-                            <rect x="18" y="20" width="2" height="2" fill="#3b82f6"/>
-                            <rect x="22" y="20" width="2" height="2" fill="#3b82f6"/>
-                            <rect x="26" y="20" width="2" height="2" fill="#3b82f6"/>
-                            <rect x="18" y="24" width="4" height="4" fill="#3b82f6"/>
-                        </svg>
-                    `)
-                };
-            case 'agencia':
-                return {
-                    ...iconBase,
-                    url: 'data:image/svg+xml;base64,' + btoa(`
-                        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="20" cy="20" r="18" fill="#f59e0b" stroke="#fff" stroke-width="3"/>
-                            <path d="M20 12l8 6v12h-6v-8h-4v8h-6V18l8-6z" fill="#fff"/>
-                            <circle cx="20" cy="16" r="2" fill="#f59e0b"/>
-                        </svg>
-                    `)
-                };
-            case 'almacen':
-                return {
-                    ...iconBase,
-                    url: 'data:image/svg+xml;base64,' + btoa(`
-                        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="20" cy="20" r="18" fill="#8b5cf6" stroke="#fff" stroke-width="3"/>
-                            <rect x="10" y="16" width="20" height="12" fill="#fff" rx="1"/>
-                            <rect x="12" y="18" width="4" height="3" fill="#8b5cf6"/>
-                            <rect x="17" y="18" width="4" height="3" fill="#8b5cf6"/>
-                            <rect x="22" y="18" width="4" height="3" fill="#8b5cf6"/>
-                            <rect x="12" y="22" width="4" height="3" fill="#8b5cf6"/>
-                            <rect x="17" y="22" width="4" height="3" fill="#8b5cf6"/>
-                            <rect x="22" y="22" width="4" height="3" fill="#8b5cf6"/>
-                            <path d="M20 10l8 4v2H12v-2l8-4z" fill="#fff"/>
-                        </svg>
-                    `)
-                };
-            default:
-                return {
-                    ...iconBase,
-                    url: 'data:image/svg+xml;base64,' + btoa(`
-                        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="20" cy="20" r="18" fill=Global.APP_COLOR_PRIMARY stroke="#fff" stroke-width="3"/>
-                            <circle cx="20" cy="20" r="8" fill="#fff"/>
-                            <circle cx="20" cy="20" r="4" fill=Global.APP_COLOR_PRIMARY/>
-                        </svg>
-                    `)
-                };
-        }
-    };
+   
 
     // Función para obtener el color del tipo de tienda
     const getStoreTypeColor = (type) => {
@@ -300,8 +217,8 @@ const ContactGrid = ({ data, contacts }) => {
 
         if (!result) return;
 
-        if (data.redirect) {
-            location.href = data.redirect;
+        if (data?.redirect) {
+            location.href = data?.redirect;
         }
     };
     return (
@@ -333,7 +250,7 @@ const ContactGrid = ({ data, contacts }) => {
                         Hablemos Hoy
                     </motion.h2>
                     <motion.p 
-                        className="customtext-neutral-light mb-8"
+                        className={`customtext-neutral-light mb-8 ${data?.class_card_description || ''}`}
                         initial={{ y: -20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.7 }}
@@ -441,7 +358,7 @@ const ContactGrid = ({ data, contacts }) => {
                         </motion.div>
                         <motion.button
                             type="submit"
-                            className="bg-primary text-base font-bold text-white px-6 py-3 rounded-xl hover:brightness-90 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                            className={`bg-primary text-base font-bold text-white px-6 py-3  hover:brightness-90 transition-all flex items-center justify-center gap-2 disabled:opacity-70 ${data?.class_card_button || 'rounded-xl'}`}
                             disabled={sending}
                             initial={{ y: 30, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
@@ -451,7 +368,7 @@ const ContactGrid = ({ data, contacts }) => {
                         >
                             {sending && (
                                 <motion.svg 
-                                    className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" 
+                                    className="animate-spin -ml-1 mr-2 h-5 w-5 " 
                                     xmlns="http://www.w3.org/2000/svg" 
                                     fill="none" 
                                     viewBox="0 0 24 24"
@@ -475,7 +392,7 @@ const ContactGrid = ({ data, contacts }) => {
                     transition={{ duration: 0.8, delay: 0.5 }}
                 >
                     <motion.div 
-                        className="bg-[#F7F9FB] p-6 rounded-xl shadow-lg"
+                        className={`bg-[#F7F9FB] p-6 rounded-xl shadow-lg ${data?.class_card_container || ''}`}
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.2, delay: 0 }}
@@ -490,13 +407,13 @@ const ContactGrid = ({ data, contacts }) => {
                                 whileHover={{ rotate: 15, scale: 1.1 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <Mail className="w-5 h-5" />
+                                <Mail className={`w-5 h-5 ${data?.class_card_title || ''}`} />
                             </motion.div>
-                            <h3 className="customtext-neutral-dark font-bold text-lg">
+                            <h3 className={` font-bold text-lg ${data?.class_card_title || 'customtext-neutral-dark'}`}>
                                 Email
                             </h3>
                         </div>
-                        <p className="customtext-neutral-light mb-2">
+                        <p className={` mb-2 ${data?.class_card_description || 'customtext-neutral-light'}`}>
                             Escríbenos para recibir atención personalizada y
                             resolver tus dudas.
                         </p>
@@ -509,7 +426,7 @@ const ContactGrid = ({ data, contacts }) => {
                     </motion.div>
 
                     <motion.div 
-                        className="bg-[#F7F9FB] p-6 rounded-xl shadow-lg"
+                        className={`bg-[#F7F9FB] p-6 rounded-xl shadow-lg ${data?.class_card_container || ''}`}
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.2, delay: 0 }}
@@ -524,13 +441,13 @@ const ContactGrid = ({ data, contacts }) => {
                                 whileHover={{ rotate: -15, scale: 1.1 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <Phone className="w-5 h-5" />
+                                <Phone className={`w-5 h-5 ${data?.class_card_title || ''}`} />
                             </motion.div>
-                            <h3 className="customtext-neutral-dark font-bold text-lg">
+                            <h3 className={` font-bold text-lg ${data?.class_card_title || 'customtext-neutral-dark'}`}>
                                 Teléfono
                             </h3>
                         </div>
-                        <p className="customtext-neutral-light mb-2">
+                        <p className={`customtext-neutral-light mb-2 ${data?.class_card_description || ''}`}>
                             Llámanos para obtener soporte inmediato y asistencia
                             profesional.
                         </p>
@@ -543,7 +460,7 @@ const ContactGrid = ({ data, contacts }) => {
                     </motion.div>
 
                     <motion.div 
-                        className="bg-[#F7F9FB] p-6 rounded-xl shadow-lg"
+                        className={`bg-[#F7F9FB] p-6 rounded-xl shadow-lg ${data?.class_card_container || ''}`}
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.2, delay: 0 }}
@@ -564,10 +481,10 @@ const ContactGrid = ({ data, contacts }) => {
                                 whileHover={{ rotate: 20, scale: 1.2 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
                             >
-                                <Building2 className="w-5 h-5" />
+                                <Building2 className={`w-5 h-5 ${data?.class_card_title || ''}`} />
                             </motion.div>
                             <motion.h3 
-                                className="customtext-neutral-dark font-bold text-lg"
+                                className={`font-bold text-lg ${data?.class_card_title || 'customtext-neutral-dark'}`}
                             >
                                 Nuestras Oficinas
                             </motion.h3>
@@ -585,7 +502,7 @@ const ContactGrid = ({ data, contacts }) => {
                                 transition={{ duration: 0.3 }}
                             >
                                 <motion.p 
-                                    className="customtext-neutral-light mb-2"
+                                    className={`customtext-neutral-light mb-2 ${data?.class_card_description || ''}`}
                                     whileHover={{ x: 3, opacity: 0.8 }}
                                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                 >
@@ -599,7 +516,7 @@ const ContactGrid = ({ data, contacts }) => {
                         ) : (
                             <div className="space-y-4">
                                 <motion.p 
-                                    className="customtext-neutral-light mb-3"
+                                    className={`customtext-neutral-light mb-3 ${data?.class_card_description || ''}`}
                                     whileHover={{ x: 3, opacity: 0.8 }}
                                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                 >
@@ -630,7 +547,7 @@ const ContactGrid = ({ data, contacts }) => {
                     </motion.div>
 
                     <motion.div 
-                        className="bg-[#F7F9FB] p-6 rounded-xl shadow-lg"
+                        className={`bg-[#F7F9FB] p-6 rounded-xl shadow-lg ${data?.class_card_container || ''}`}
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.2, delay: 0}}
@@ -650,10 +567,10 @@ const ContactGrid = ({ data, contacts }) => {
                                 whileHover={{ rotate: -20, scale: 1.2 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
                             >
-                                <Store className="w-5 h-5" />
+                                <Store className={`w-5 h-5 ${data?.class_card_title || ''}`} />
                             </motion.div>
                             <motion.h3 
-                                className="customtext-neutral-dark font-bold text-lg"
+                                className={`font-bold text-lg ${data?.class_card_title || 'customtext-neutral-dark'}`}
                             >
                                 Tienda
                             </motion.h3>
@@ -685,7 +602,7 @@ const ContactGrid = ({ data, contacts }) => {
                         Nuestras Ubicaciones
                     </motion.h3>
                     <motion.p 
-                        className="customtext-neutral-light mb-4"
+                        className={` mb-4 ${data?.class_card_description || 'customtext-neutral-light'}`}
                         initial={{ y: -20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 1.6 }}
