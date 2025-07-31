@@ -32,7 +32,7 @@ const CarruselBenefitsSimple = ({ items, data }) => {
     return (
         <div
             className={`${
-                data.background ? data.background : "bg-secondary"
+                data?.background ? data?.background : "bg-secondary"
             } py-6 overflow-hidden customtext-primary font-paragraph `}
         >
             <div className="px-primary 2xl:px-0 2xl:max-w-7xl mx-auto relative">
