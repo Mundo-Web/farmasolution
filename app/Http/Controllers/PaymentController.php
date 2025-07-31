@@ -11,6 +11,7 @@ use App\Models\Coupon;
 use App\Notifications\PurchaseSummaryNotification;
 use App\Helpers\PixelHelper;
 use App\Helpers\NotificationHelper;
+use App\Helpers\CulqiConfig;
 use Culqi\Culqi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,7 +45,7 @@ class PaymentController extends Controller
             ]);
 
             $culqi = new Culqi([
-                'api_key' => config('services.culqi.secret_key'),
+                'api_key' => CulqiConfig::getSecretKey(),
             ]);
 
             // Crear el intento de pago

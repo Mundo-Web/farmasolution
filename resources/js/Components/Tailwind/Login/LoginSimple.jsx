@@ -7,6 +7,7 @@ import { GET } from "sode-extend-react";
 import AuthClientRest from "../../../Actions/AuthClientRest";
 import InputForm from "../Checkouts/Components/InputForm";
 import { toast } from "sonner";
+import GoogleSignInButton from "../../Google/GoogleSignInButton";
 
 export default function LoginSimple() {
     const jsEncrypt = new JSEncrypt();
@@ -205,6 +206,26 @@ export default function LoginSimple() {
                                     >
                                         {loading ? "Ingresando..." : "Ingresar"}
                                     </button>
+
+                                    {/* Mostrar Google Sign-In solo si está habilitado */}
+                                    {Global.GOOGLE_OAUTH_ENABLED && (
+                                        <>
+                                            <div className="relative mt-6">
+                                                <div className="absolute inset-0 flex items-center">
+                                                    <div className="w-full border-t border-gray-300" />
+                                                </div>
+                                                <div className="relative flex justify-center text-sm">
+                                                    <span className="px-2 bg-white text-gray-500">O continúa con</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Botón de Google */}
+                                            <GoogleSignInButton 
+                                                onSuccess={() => window.location.href = "/"} 
+                                                text="Continuar con Google"
+                                            />
+                                        </>
+                                    )}
 
                                     <div className="text-center mt-4">
                                         <p className="text-sm text-gray-600">

@@ -332,94 +332,19 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
     console.log("isMobile", isMobile)
     console.log("shouldShowMenu", shouldShowMenu)
 
-    // Si no debe mostrar el menú, retornar null (oculto)
-    if (!shouldShowMenu) {
-        return null;
-    }
+  
 
     return (
         <nav
             className={
-                `${
-                showOnlyTagsMobile
-                        ? " block w-full relative md:block bg-secondary font-paragraph text-sm"
-                        : " relative w-full md:block bg-secondary font-paragraph text-sm"
-                }`
+                " relative w-full md:block bg-secondary font-paragraph text-sm"
+                
             }
-            ref={menuRef}
+           
         >
             <div className="px-primary 2xl:px-0 2xl:max-w-7xl mx-auto w-full">
                 <div className="flex items-center gap-4 lg:gap-6 text-sm w-full overflow-hidden">
-                    {/* Mostrar solo tags en mobile si corresponde */}
-                    {showOnlyTagsMobile ? (
-                        <div className="w-full py-3 px-4">
-                            {/* Carrusel de tags para mobile */}
-                            <div className="relative">
-                                <div className="grid grid-cols-2 gap-3 h-10">
-                                    {tags.slice(currentTagIndex, currentTagIndex + 2).map((tag, index) => {
-                                        const actualIndex = currentTagIndex + index;
-                                        return (
-                                            <a
-                                                key={`${tag.id}-${actualIndex}`}
-                                                href={`/catalogo?tag=${tag.id}`}
-                                                className="group relative border-white border-2 overflow-hidden rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
-                                                style={{
-                                                    background: `linear-gradient(135deg, ${tag.background_color || '#3b82f6'}, ${tag.background_color || '#3b82f6'}dd)`,
-                                                }}
-                                            >
-                                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                                                <div className="relative h-full flex items-center justify-center p-3">
-                                                    <div className="flex items-center gap-2 text-center">
-                                                        {tag.icon ? (
-                                                            <img 
-                                                                src={`/storage/images/tag/${tag.icon}`} 
-                                                                alt={tag.name} 
-                                                                className="w-6 h-6 object-contain filter brightness-0 invert"
-                                                                onError={(e) => e.target.src = "/api/cover/thumbnail/null"}
-                                                            />
-                                                        ) : (
-                                                            <Tag size={20} style={{ color: tag.text_color || '#ffffff' }} />
-                                                        )}
-                                                        <span 
-                                                            className="text-xs font-semibold leading-tight"
-                                                            style={{ color: tag.text_color || '#ffffff' }}
-                                                        >
-                                                            {tag.name}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
-                                            </a>
-                                        );
-                                    })}
-                                    
-                                    {/* Rellenar espacios vacíos si hay menos de 2 tags */}
-                                    {tags.slice(currentTagIndex, currentTagIndex + 2).length < 2 && (
-                                        <div className="rounded-2xl bg-white/10 flex items-center justify-center">
-                                            <div className="text-white/50 text-xs">Más próximamente</div>
-                                        </div>
-                                    )}
-                                </div>
-                                
-                                {/* Indicadores de posición */}
-                                {tags.length > 2 && (
-                                    <div className="flex justify-center mt-2 gap-1">
-                                        {Array.from({ length: Math.ceil(tags.length / 2) }).map((_, i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => setCurrentTagIndex(i * 2)}
-                                                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                                                    Math.floor(currentTagIndex / 2) === i 
-                                                        ? 'bg-primary shadow-lg' 
-                                                        : 'bg-neutral-light hover:bg-white/60'
-                                                }`}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ) : (
+                  
                         <>
                             {/* Título y Lista de categorías con scroll horizontal mejorado */}
                             <div className="flex items-center gap-4 w-full overflow-hidden">
@@ -441,7 +366,7 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
                                                 updateScrollButtons(e.target);
                                             }}
                                         >
-                                            <div className="flex items-center gap-8 text-sm py-4 px-4 w-max min-w-full">
+                                            <div className="flex items-center gap-0 lg:gap-8 text-sm py-4 px-0 lg:px-4 w-max min-w-full">
                                                 {[...items].sort((a, b) => a.name.localeCompare(b.name)).map((category, index, arr) => (
                                                     <div key={index} className="flex-shrink-0 relative group/item category-item" style={{ animationDelay: `${index * 0.1}s` }}>
                                                         <a
@@ -512,7 +437,7 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
                                 </div>
                             )}
                         </>
-                    )}
+                    
                 </div>
             </div>
         </nav>

@@ -140,7 +140,7 @@ const ProductDetailPaani = ({ item, data, setCart, cart, generals, favorites, se
 
     const numeroWhatsApp = phone_whatsapp?.description; // Reemplaza con tu número
     const mensajeWhatsApp = encodeURIComponent(
-        `¡Hola! Tengo dudas sobre este producto: ${item.name}`
+        `¡Hola! Tengo dudas sobre este producto: ${item?.name}`
     );
     const linkWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}`;
 
@@ -148,7 +148,7 @@ const ProductDetailPaani = ({ item, data, setCart, cart, generals, favorites, se
         window.open(linkWhatsApp, "_blank");
     };
     const mensajeWhatsAppCotizar = encodeURIComponent(
-        `¡Hola! Me gustaría cotizar este producto: ${item.name}`
+        `¡Hola! Me gustaría cotizar este producto: ${item?.name}`
     );
     const linkWhatsAppCotizar = `https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsAppCotizar}`;
     const handleClickWhatsAppCotizar = () => {
@@ -538,7 +538,7 @@ const ProductDetailPaani = ({ item, data, setCart, cart, generals, favorites, se
                                     <span className="customtext-neutral-light text-sm">
                                         Marca:{" "}
                                         <span className="customtext-neutral-dark font-medium">
-                                            {item?.brand.name}
+                                            {item?.brand?.name}
                                         </span>
                                     </span>
 

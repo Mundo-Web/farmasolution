@@ -51,8 +51,7 @@ class User extends Authenticatable
         'alternate_phone',
         'document_type',
         'document_number',
-
-
+        'google_id',
     ];
 
     /**
