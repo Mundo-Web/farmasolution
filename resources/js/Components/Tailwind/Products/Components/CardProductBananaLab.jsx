@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircleIcon, Heart, ShoppingCart } from "lucide-react";
+import { CheckCircleIcon, ChevronRightCircle, Heart, ShoppingCart } from "lucide-react";
 import Swal from "sweetalert2";
 import ItemsRest from "../../../../Actions/ItemsRest";
 import CartModal from "../../Components/CartModal";
@@ -220,16 +220,17 @@ const CardProductBananaLab = ({
                         </div>
 
                         <div className="mt-3 overflow-hidden block lg:hidden">
-                            <button
-                                onClick={(e) => onAddClicked(e, product)}
+                            <a
+                                      href={`/product/${product?.slug}`}
+                                //onClick={(e) => onAddClicked(e, product)}
                                 className={`w-full text-[10px] font-light lg:font-normal flex items-center justify-center bg-primary text-white lg:text-sm py-2 lg:py-3 px-4 rounded-full shadow-md hover:bg-primary-dark transition-all duration-300 ${data?.class_button || ""}`}
                             >
-                                <span className="mr-2">Agregar al carrito</span>
-                                <ShoppingCart
+                                <span className="mr-2">Ir a detalle</span>
+                                <ChevronRightCircle
                                     className="w-3 h-3 lg:w-4 lg:h-4"
                                     strokeWidth={2}
                                 />
-                            </button>
+                            </a>
                         </div>
                         {/* Botón de acción - ahora con mejor manejo del hover */}
                         <motion.div
