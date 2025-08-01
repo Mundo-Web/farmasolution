@@ -1,7 +1,9 @@
 import { Minus, Plus, PlusCircle, Trash2 } from "lucide-react";
 import AnimatedGiftBox from "./AnimatedGiftBox";
 
-const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
+const CardItem = ({ setCart, hasPromotion, onPromotionClick, categorias, ...item  }) => {
+    
+    const category = categorias?.find(cat => cat.id === item?.category_id);
 
     const onDeleteClicked = () => {
         setCart(old => old.filter(x => x.id !== item?.id));
@@ -60,7 +62,7 @@ const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
                         <p className="text-sm customtext-neutral-dark">
                             {item?.brand?.name ? `Marca: ` : `Categoría: `}
                             <span className="customtext-neutral-dark">
-                                {item?.brand?.name ? item?.brand?.name : item?.category?.name}
+                                 {item?.brand?.name ? item?.brand?.name : category?.name}
                             </span>
                         </p>
                         <p className="text-sm customtext-neutral-dark">Disponibilidad: <span className="customtext-neutral-dark">{item?.stock >= item?.quantity ? "En stock" : "Agotado"} </span></p>
