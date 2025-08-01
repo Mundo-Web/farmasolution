@@ -13,7 +13,7 @@
     <title>{{ $data['name'] ?? 'Página' }} | {{ env('APP_NAME', 'xcleretor') }}</title>
 
     <link rel="shortcut icon" href="/assets/resources/icon.png?v={{ uniqid() }}" type="image/png">
-    <meta name="description" content="xcleretor">
+    
     @isset($data['description'])
         <meta name="description" content="{{ $data['description'] }}">
     @endisset
