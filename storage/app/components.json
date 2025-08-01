@@ -1312,7 +1312,10 @@
                 ],
                 "using": {
                     "model": "Collection",
-                    "limit": 20
+                    "limit": 20,
+                    "filters": [
+                        "featured"
+                    ]
                 }
             }
         ]
