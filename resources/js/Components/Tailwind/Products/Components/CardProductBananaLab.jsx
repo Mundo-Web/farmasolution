@@ -246,8 +246,8 @@ const CardProductBananaLab = ({
                                 onClick={(e) => onAddClicked(e, product)}
                                 className={`w-full text-[10px] font-light lg:font-normal flex items-center justify-center bg-primary  lg:text-sm py-2 lg:py-3 px-4 rounded-full shadow-md hover:bg-primary-dark transition-all duration-300 ${data?.class_button || "text-white"}`}
                             >
-                                <span className="mr-2">Agregar al carrito</span>
-                                <ShoppingCart
+                                <span className="mr-2">Ir a detalle</span>
+                                <ChevronRightCircle
                                     className="w-3 h-3 lg:w-4 lg:h-4"
                                     strokeWidth={2}
                                 />
