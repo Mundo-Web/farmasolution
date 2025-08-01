@@ -159,7 +159,7 @@ const CardProductBananaLab = ({
                     {/* Información del producto */}
                     <div className="p-3 flex-grow flex flex-col">
                         <div className="flex gap-1">
-                            {data?.visible_variations &&variationsItems &&
+                            {data?.visible_variations && variationsItems &&
                                 variationsItems?.map((variant) => (
                                     <Tippy
                                         content={variant.color}
@@ -179,9 +179,9 @@ const CardProductBananaLab = ({
                                     </Tippy>
                                 ))}
                         </div>
-                          <h2 className="block customtext-accent font-semibold">{product?.category?.name}</h2>
+                        <h2 className="block customtext-accent font-semibold">{product?.category?.name}</h2>
                         <div className="flex justify-between items-start w-full mt-2">
-                         
+
                             <h3 className={` customtext-neutral-dark text-xs lg:text-[15px] leading-4 font-semibold mb-2 line-clamp-3 ${data?.support_favorite ? "w-11/12 lg:w-10/12" : "w-full"}`}>
                                 {product?.name}
                             </h3>
@@ -208,8 +208,8 @@ const CardProductBananaLab = ({
                             <span className="customtext-neutral-dark text-[20px] md:text-2xl font-bold">
                                 S/ {product?.final_price}
                             </span>
-                            {product?.discount>0 && product?.discount != null &&
-                                !isNaN(product?.discount) && product?.discount<product?.final_price && (
+                            {product?.discount > 0 && product?.discount != null &&
+                                !isNaN(product?.discount) && product?.discount < product?.final_price && (
                                     <span className="text-xs lg:text-sm customtext-neutral-dark line-through">
                                         S/ {product?.discount}
                                     </span>
@@ -221,8 +221,8 @@ const CardProductBananaLab = ({
 
                         <div className="mt-3 overflow-hidden block lg:hidden">
                             <a
-                                      href={`/product/${product?.slug}`}
-                                //onClick={(e) => onAddClicked(e, product)}
+                                href={`/product/${product?.slug}`}
+                               
                                 className={`w-full text-[10px] font-light lg:font-normal flex items-center justify-center bg-primary text-white lg:text-sm py-2 lg:py-3 px-4 rounded-full shadow-md hover:bg-primary-dark transition-all duration-300 ${data?.class_button || ""}`}
                             >
                                 <span className="mr-2">Ir a detalle</span>
