@@ -112,9 +112,9 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                                                 </div>
                                             </div>
                                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                                <p className="text-sm customtext-neutral-light">Marca: <span className="customtext-neutral-dark font-medium">{item?.brand?.name}</span></p>
-                                                <p className="text-sm customtext-neutral-light">Cantidad: <span className="customtext-neutral-dark font-medium">{item?.quantity}</span></p>
-                                                <p className="text-sm customtext-neutral-light">SKU: <span className="customtext-neutral-dark font-medium">{item?.sku}</span></p>
+                                                <p className="text-sm customtext-neutral-dark">Marca: <span className="customtext-neutral-dark font-medium">{item?.brand?.name}</span></p>
+                                                <p className="text-sm customtext-neutral-dark">Cantidad: <span className="customtext-neutral-dark font-medium">{item?.quantity}</span></p>
+                                                <p className="text-sm customtext-neutral-dark">SKU: <span className="customtext-neutral-dark font-medium">{item?.sku}</span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -191,7 +191,7 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                         >
-                            <ButtonPrimary href="/catalogo" className="w-full mx-auto md:w-auto">
+                            <ButtonPrimary href="/catalogo" className="w-full mx-auto md:w-auto text-white">
                                 Seguir Comprando
                             </ButtonPrimary>
                         </motion.div>

@@ -34,6 +34,7 @@ export default function ShippingStep({
     envio,
     ubigeos = [],
     openModal,
+    categorias,
     setCouponDiscount: setParentCouponDiscount,
     setCouponCode: setParentCouponCode,
     automaticDiscounts = [], // Descuentos del padre

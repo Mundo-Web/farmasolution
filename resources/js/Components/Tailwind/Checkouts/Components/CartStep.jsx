@@ -18,6 +18,7 @@ export default function CartStep({
     igv, 
     totalFinal, 
     openModal,
+    categorias,
     automaticDiscounts,
     setAutomaticDiscounts,
     automaticDiscountTotal,
@@ -34,7 +35,7 @@ export default function CartStep({
     const [selectedProduct, setSelectedProduct] = useState(null);
     
     const isCartEmpty = cart.length === 0;
-
+    
     // Apply discount rules when cart changes
     useEffect(() => {
         if (cart.length > 0 && subTotal > 0) {
@@ -247,6 +248,7 @@ export default function CartStep({
                             key={index} 
                             {...item} 
                             setCart={setCart}
+                            categorias={categorias}
                             hasPromotion={hasPromotionAvailable(item.id)}
                             onPromotionClick={handlePromotionClick}
                         />

@@ -16,6 +16,7 @@ const Checkout = ({
     ubigeos = [],
     contacts,
     generals= [],
+    categorias,
 }) => {
     const getCheckout = () => {
         switch (which) {
@@ -43,6 +44,7 @@ const Checkout = ({
                         ubigeos={ubigeos}
                         items={items}
                         generals={generals}
+                        categorias={categorias}
                     />
                 );
             case "CheckoutStepsSF":
