@@ -1335,8 +1335,8 @@ export default function ShippingStep({
                             />
                             <div>
                                 <h4 className="font-medium">{item.name}</h4>
-                                <p className="text-sm customtext-neutral-light">Cantidad: {item.quantity}</p>
-                                <p className="text-sm customtext-neutral-light">S/ {Number2Currency(item.final_price)}</p>
+                                <p className="text-sm customtext-neutral-dark">Cantidad: {item.quantity}</p>
+                                <p className="text-sm customtext-neutral-dark">S/ {Number2Currency(item.final_price)}</p>
                             </div>
                         </div>
                     ))}
