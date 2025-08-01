@@ -204,9 +204,10 @@ const System = ({
     stores,
     postsLatest,
     textstatic,
+    categorias,
     hasRole = () => { }
 }) => {
-
+    
     const getItems = (itemsId) => {
         return systemItems[itemsId] ?? [];
     };
@@ -271,7 +272,8 @@ const System = ({
             generals,
             stores,
             headerPosts,
-            contacts
+            contacts,
+            categorias
         };
         
         switch (component) {
@@ -328,7 +330,7 @@ const System = ({
             case "cart":
                 return <Cart which={value} data={data} cart={cart} setCart={setCart} />
             case "checkout":
-                return <Checkout which={value} data={data} items={getItems(itemsId)} cart={cart} setCart={setCart} isUser={session} prefixes={jsons?.prefixes ?? []} ubigeos={jsons?.ubigeos ?? []} contacts={contacts} generals={generals} />
+                return <Checkout which={value} data={data} items={getItems(itemsId)} cart={cart} setCart={setCart} isUser={session} prefixes={jsons?.prefixes ?? []} ubigeos={jsons?.ubigeos ?? []} contacts={contacts} generals={generals} categorias={categorias} />
             case "contact":
                 return <Contact which={value} data={data} contacts={contacts} />
             case "faq":

@@ -9,10 +9,10 @@ import HtmlContent from "../../../Utils/HtmlContent";
 import { X } from "lucide-react";
 import useEcommerceTracking from "../../../Hooks/useEcommerceTracking";
 
-export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items, generals,data }) {
+export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items, generals,data, categorias }) {
     const [currentStep, setCurrentStep] = useState(1);
     const totalPrice = cart.reduce((acc, item) => acc + item.final_price * item.quantity, 0);
-    
+    console.log(categorias, 'eeeeeeeeeeee');
     // Hook de tracking
     const { 
         trackCheckoutPageView, 
@@ -138,6 +138,7 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                         igv={igv}
                         totalFinal={totalFinal}
                         openModal={openModal}
+                        categorias={categorias}
                         automaticDiscounts={automaticDiscounts}
                         setAutomaticDiscounts={setAutomaticDiscounts}
                         automaticDiscountTotal={automaticDiscountTotal}
@@ -164,6 +165,7 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                         totalFinal={totalFinal}
                         user={user}
                         ubigeos={ubigeos}
+                        categorias={categorias}
                         openModal={openModal}
                         setCouponDiscount={setCouponDiscount}
                         setCouponCode={setCouponCode}

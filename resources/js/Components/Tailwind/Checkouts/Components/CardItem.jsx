@@ -1,7 +1,9 @@
 import { Minus, Plus, PlusCircle, Trash2 } from "lucide-react";
 import AnimatedGiftBox from "./AnimatedGiftBox";
 
-const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
+const CardItem = ({ setCart, hasPromotion, onPromotionClick, categorias, ...item  }) => {
+    
+    const category = categorias?.find(cat => cat.id === item?.category_id);
 
     const onDeleteClicked = () => {
         setCart(old => old.filter(x => x.id !== item?.id));
@@ -57,9 +59,14 @@ const CardItem = ({ setCart, hasPromotion, onPromotionClick, ...item }) => {
                     </div>
                     <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-lg mb-2 line-clamp-2">{item?.name}</h3>
-                        <p className="text-sm customtext-neutral-light">{item?.brand?.name ? `Marca: ` : `Categoría: `}<span className="customtext-neutral-dark">{item?.brand?.name} : {item?.category?.name}</span></p>
-                        <p className="text-sm customtext-neutral-light">Disponibilidad: <span className="customtext-neutral-dark">{item?.stock >= item?.quantity ? "En stock" : "Agotado"} </span></p>
-                        <p className="text-sm customtext-neutral-light">SKU: <span className="customtext-neutral-dark">{item?.sku}</span></p>
+                        <p className="text-sm customtext-neutral-dark">
+                            {item?.brand?.name ? `Marca: ` : `Categoría: `}
+                            <span className="customtext-neutral-dark">
+                                 {item?.brand?.name ? item?.brand?.name : category?.name}
+                            </span>
+                        </p>
+                        <p className="text-sm customtext-neutral-dark">Disponibilidad: <span className="customtext-neutral-dark">{item?.stock >= item?.quantity ? "En stock" : "Agotado"} </span></p>
+                        <p className="text-sm customtext-neutral-dark">SKU: <span className="customtext-neutral-dark">{item?.sku}</span></p>
                     </div>
                 </div>
 

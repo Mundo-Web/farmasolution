@@ -54,7 +54,6 @@ const Footer2Den1 = ({ socials = [], pages, generals, contacts, stores }) => {
     emailRef.current.value = null;
   };
 
-
   const formatStoreHours = (businessHours) => {
     const daysOrder = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
     const daysAbbr = {
