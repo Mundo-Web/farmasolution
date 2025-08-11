@@ -112,7 +112,7 @@ const CardProductBananaLab = ({
                     boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
                     transition: { duration: 0.3 },
                 }}
-                className={`group px-1 md:px-2 w-1/2 sm:w-1/3 ${widthClass} rounded-b-3xl overflow-hidden flex-shrink-0 font-font-secondary cursor-pointer relative `}
+                className={`group px-1  ${widthClass} rounded-b-3xl overflow-hidden flex-shrink-0 font-font-secondary cursor-pointer relative `}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
@@ -179,7 +179,7 @@ const CardProductBananaLab = ({
                                     </Tippy>
                                 ))}
                         </div>
-                        <h2 className="block customtext-accent font-semibold">{product?.category?.name}</h2>
+                        <h2 className="block customtext-accent font-semibold line-clamp-1">{product?.category?.name}</h2>
                         <div className="flex justify-between items-start w-full mt-2">
 
                             <h3 className={` customtext-neutral-dark text-xs lg:text-[15px] leading-4 font-semibold mb-2 line-clamp-3 ${data?.support_favorite ? "w-11/12 lg:w-10/12" : "w-full"}`}>

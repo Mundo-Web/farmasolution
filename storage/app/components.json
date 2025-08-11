@@ -164,9 +164,32 @@
                     "link_cart"
                 ]
             },
+            
             {
                 "id": "HeaderSearchB",
                 "name": "HeaderSearchB",
+                "image": "header-with-search.png",
+                "data": [
+                    "class",
+                    "link_cart",
+                    "showLoginCart",
+                    "mobileSearch",
+                    "backgroundColor"
+                ],
+                "using": {
+                    "model": "Category",
+                    "with": [
+                        "subcategories"
+                    ]
+                },
+                "generals": [
+                    "phone_whatsapp",
+                    "message_whatsapp"
+                ]
+            },
+            {
+                "id": "HeaderSearchDental",
+                "name": "HeaderSearchDental",
                 "image": "header-with-search.png",
                 "data": [
                     "class",

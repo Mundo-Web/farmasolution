@@ -1488,7 +1488,100 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
                                         paddingBottom: filtersOpen ? '1rem' : '1.5rem'
                                     }}>
                                     {/* Sección Marcas Mejorada */}
-
+          <motion.div 
+                                    className={modernFilterStyles.filterSection}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                >
+                                    <motion.button
+                                        onClick={() => toggleSection("marca")}
+                                        className={modernFilterStyles.filterButton}
+                                        whileHover={filterAnimations.hover}
+                                        whileTap={filterAnimations.tap}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <motion.div 
+                                                className="p-2 bg-primary rounded-lg shadow-md"
+                                                animate={{ rotate: sections.marca ? 360 : 0 }}
+                                                transition={{ duration: 0.3 }}
+                                            >
+                                                <Tag className="h-4 w-4 text-white" />
+                                            </motion.div>
+                                            <div className="text-left">
+                                                <span className="font-semibold customtext-neutral-dark">Marcas</span>
+                                                <p className="text-xs customtext-neutral-dark">Selecciona tus marcas favoritas</p>
+                                            </div>
+                                        </div>
+                                        <motion.div
+                                            animate={{ rotate: sections.marca ? 180 : 0 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            <ChevronDown className="h-5 w-5 customtext-neutral-dark" />
+                                        </motion.div>
+                                    </motion.button>
+                                    
+                                    <AnimatePresence>
+                                        {sections.marca && (
+                                            <motion.div 
+                                                className={`mt-4 p-4 ${modernFilterStyles.filterContent}`}
+                                                {...filterAnimations.section}
+                                            >
+                                                {/* Barra de búsqueda mejorada */}
+                                                <div className="relative mb-4">
+                                                    <motion.div
+                                                        className="absolute left-4 top-4 z-[99]"
+                                                    
+                                                    >
+                                                        <Search className="h-4 w-4" />
+                                                    </motion.div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Buscar marcas..."
+                                                        className={modernFilterStyles.searchInput}
+                                                        value={searchBrand}
+                                                        onChange={(e) => setSearchBrand(e.target.value)}
+                                                    />
+                                                   
+                                                </div>
+                                                
+                                                {/* Lista de marcas mejorada */}
+                                                <div className="space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar">
+                                                    <AnimatePresence>
+                                                        {filteredBrands.map((brand, index) => (
+                                                            <motion.label
+                                                                key={brand.id}
+                                                                className={modernFilterStyles.label}
+                                                                {...filterAnimations.item}
+                                                                transition={{ delay: index * 0.05 }}
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className={modernFilterStyles.checkbox}
+                                                                    onChange={() => handleFilterChange("brand_id", brand.slug)}
+                                                                    checked={selectedFilters.brand_id?.includes(brand.slug)}
+                                                                />
+                                                                <span className="text-sm font-medium line-clamp-1 customtext-neutral-dark  transition-colors duration-200">
+                                                                    {brand.name}
+                                                                </span>
+                                                                {selectedFilters.brand_id?.includes(brand.slug) && (
+                                                                    <motion.div
+                                                                        className="ml-auto"
+                                                                        initial={{ scale: 0 }}
+                                                                        animate={{ scale: 1 }}
+                                                                        exit={{ scale: 0 }}
+                                                                    >
+                                                                        <CheckCircle2 className="h-4 w-4 customtext-primary" />
+                                                                    </motion.div>
+                                                                )}
+                                                            </motion.label>
+                                                        ))}
+                                                    </AnimatePresence>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
 
                                     {/* Sección Categorías Mejorada */}
                                     <motion.div
@@ -2010,7 +2103,7 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
                                     {Array.isArray(products) && products.length > 0 ? (
                                         products.map((product, index) => (
                                             <motion.div
-                                                className="w-1/2 lg:w-1/3 xl:w-1/3 lg:h-[460px] lg:max-h-[500px] xl:h-[450px] xl:max-h-[450px] 2xl:h-[450px] 2xl:max-h-[450px] flex items-center justify-center"
+                                                className="w-1/2 px-1 lg:w-1/3 xl:w-1/3 lg:h-[460px] lg:max-h-[500px] xl:h-[450px] xl:max-h-[450px] 2xl:h-[450px] 2xl:max-h-[450px] flex items-center justify-center"
                                                 key={product.id}
                                                 initial={{ opacity: 0, y: 20, scale: 0.9 }}
                                                 animate={{ opacity: 1, y: 0, scale: 1 }}
