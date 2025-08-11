@@ -13,7 +13,11 @@
     <title><?php echo e($data['name'] ?? 'Página'); ?> | <?php echo e(env('APP_NAME', 'xcleretor')); ?></title>
 
     <link rel="shortcut icon" href="/assets/resources/icon.png?v=<?php echo e(uniqid()); ?>" type="image/png">
+<<<<<<< HEAD
+    <meta name="description" content="xcleretor">
+=======
     
+>>>>>>> d27aa8f042604652d3546a12fcb7fbc728c0d6c8
     <?php if(isset($data['description'])): ?>
         <meta name="description" content="<?php echo e($data['description']); ?>">
     <?php endif; ?>

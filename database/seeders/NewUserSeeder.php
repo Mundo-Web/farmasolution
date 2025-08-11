@@ -14,11 +14,11 @@ class NewUserSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate([
-            'email' => 'admin@paani.pe'
+            'email' => 'admin@d2en1.com'
         ], [
             'name' => 'Admin',
-            'lastname' => 'Paani',
-            'password' => 'paani2025#',
+            'lastname' => 'D2EN1',
+            'password' => 'd2en12025#',
         ])->assignRole('Admin');
     }
 }
