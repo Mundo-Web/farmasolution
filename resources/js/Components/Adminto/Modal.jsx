@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const Modal = ({ modalRef, title = 'Modal', isStatic = false, size = 'md', children, bodyClass = '', bodyStyle, btnCancelText, btnSubmitText, hideFooter, hideButtonSubmit, onSubmit = (e) => { e.preventDefault(); $(modalRef.current).modal('hide') }, onClose }) => {
+const Modal = ({ modalRef, title = 'Modal', isStatic = false, size = 'md', children, bodyClass = '', bodyStyle, btnCancelText, btnSubmitText, hideFooter, hideButtonSubmit, onSubmit = (e) => { e.preventDefault(); $(modalRef.current).modal('hide') }, onClose, loading }) => {
   if (!modalRef) modalRef = useRef()
   const staticProp = isStatic ? { 'data-bs-backdrop': 'static' } : {}
 
@@ -35,7 +35,9 @@ const Modal = ({ modalRef, title = 'Modal', isStatic = false, size = 'md', child
           !hideFooter && <div className='modal-footer'>
             <button className='btn btn-sm btn-danger pull-left' type='button'
               data-bs-dismiss='modal'>{btnCancelText ?? 'Cerrar'}</button>
-            {!hideButtonSubmit && <button className='btn btn-sm btn-success pull-right' type='submit'>{btnSubmitText ?? 'Aceptar'}</button>}
+            {!hideButtonSubmit && <button className='btn btn-sm btn-success pull-right' type='submit' disabled={loading}>
+              {loading && <i className='mdi mdi-loading mdi-spin'/>}
+              {btnSubmitText ?? 'Aceptar'}</button>}
           </div>
         }
       </div>

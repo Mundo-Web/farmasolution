@@ -50,11 +50,8 @@ const Combos = ({ items }) => {
 
   useEffect(() => {
     const newTotalPrice = calculateTotalPrice(selectedProducts);
-    console.log(newTotalPrice)
     setTotalPrice(newTotalPrice);
   }, [selectedProducts]);
-
-
 
   useEffect(() => {
     if (priceRef.current) {

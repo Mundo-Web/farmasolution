@@ -53,6 +53,7 @@ use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\SaleStatusController as AdminSaleStatusController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ClientController as AdminClientController;
+use App\Http\Controllers\Admin\FillableController;
 use App\Http\Controllers\AuthClientController;
 // Public
 use App\Http\Controllers\AuthController;
@@ -433,6 +434,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/clients/{field}', [AdminClientController::class, 'boolean']);
 
     Route::middleware(['can:Root'])->group(function () {
+      Route::post('/fillable/{model}', [FillableController::class, 'save']);
       Route::post('/system', [AdminSystemController::class, 'save']);
       Route::post('/system/page', [AdminSystemController::class, 'savePage']);
       Route::delete('/system/page/{id}', [AdminSystemController::class, 'deletePage']);

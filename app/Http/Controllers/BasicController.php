@@ -38,6 +38,7 @@ class BasicController extends Controller
   public $throwMediaError = false;
   public $reactData = null;
   public $with4get = [];
+  public $manageFillable = null;
 
   public function get(Request $request, string $id)
   {
@@ -56,7 +57,7 @@ class BasicController extends Controller
       if ($snake_case === 'item_image') {
         $snake_case = 'item';
       }
-     
+
       if (Text::has($uuid, '.')) {
         $route = "images/{$snake_case}/{$uuid}";
       } else {
@@ -106,6 +107,17 @@ class BasicController extends Controller
     $culqiEnabled = \App\Models\General::where('correlative', 'checkout_culqi')->first();
     $culqiName = \App\Models\General::where('correlative', 'checkout_culqi_name')->first();
 
+    $tableName = (new $this->model)->getTable();
+    $fillable = [
+      $tableName => method_exists($this->model, 'columns') ? $this->model::columns() : null
+    ];
+    if (is_array($this->manageFillable)) {
+      foreach ($this->manageFillable as $model) {
+        $tableName = (new $model)->getTable();
+        $fillable[$tableName] = method_exists($model, 'columns') ? $model::columns() : null;
+      }
+    }
+
     $properties = [
       'session' => $session,
       'global' => [
@@ -123,6 +135,7 @@ class BasicController extends Controller
         'CULQI_ENABLED' => CulqiConfig::isEnabled(),
         'CULQI_NAME' => CulqiConfig::getName(),
       ],
+      'fillable' => $fillable
     ];
     $reactViewProperties = $this->setReactViewProperties($request);
     if (\is_array($reactViewProperties)) {
@@ -150,7 +163,7 @@ class BasicController extends Controller
       $instance = $this->setPaginationInstance($request, $this->model)->with($withRelations);
 
       $originalInstance = clone $instance;
-      
+
       $originalInstance = clone $instance;
 
       if ($request->group != null) {
@@ -224,7 +237,7 @@ class BasicController extends Controller
       $response->summary = $this->setPaginationSummary($request, $instance, $originalInstance);
       $response->totalCount = $totalCount;
     } catch (\Throwable $th) {
-     // dump($th);
+      // dump($th);
       $response->message = $th->getMessage() . ' Ln.' . $th->getLine();
     } finally {
       return response(
@@ -245,11 +258,11 @@ class BasicController extends Controller
     try {
 
       $body = $this->beforeSave($request);
-      
+
       // Debug logging
       \Log::info('BasicController save - Body after beforeSave:', $body);
       \Log::info('BasicController save - ID check: ' . (isset($body['id']) ? 'ID existe: ' . $body['id'] : 'ID no existe'));
-      
+
       $snake_case = Text::camelToSnakeCase(str_replace('App\\Models\\', '', $this->model));
       if ($snake_case === "item_image") {
         $snake_case = 'item';
@@ -266,7 +279,7 @@ class BasicController extends Controller
       }
 
       $jpa = $this->model::find(isset($body['id']) ? $body['id'] : null);
-      
+
       // Debug logging
       \Log::info('BasicController save - Model find result: ' . ($jpa ? 'Encontrado ID: ' . $jpa->id : 'No encontrado'));
 
@@ -287,21 +300,21 @@ class BasicController extends Controller
         $slugBase = $jpa->name;
         // Si existe el campo 'color' y tiene valor, añadirlo al slug
         if (Schema::hasColumn($table, 'color') && !empty($jpa->color)) {
-            $slugBase .= '-' . $jpa->color;
+          $slugBase .= '-' . $jpa->color;
         }
 
         if (Schema::hasColumn($table, 'size') && !empty($jpa->size)) {
-            $slugBase .= '-' . $jpa->size;
+          $slugBase .= '-' . $jpa->size;
         }
 
         $slug = Str::slug($slugBase);
         // Verificar si el slug ya existe para otro registro
         $slugExists = $this->model::where('slug', $slug)
-            ->where('id', '<>', $jpa->id)
-            ->exists();
+          ->where('id', '<>', $jpa->id)
+          ->exists();
         // Si existe, añadir un identificador único corto
         if ($slugExists) {
-            $slug = $slug . '-' . Crypto::short();
+          $slug = $slug . '-' . Crypto::short();
         }
         // Actualizar el slug
         $jpa->update(['slug' => $slug]);
@@ -393,11 +406,11 @@ class BasicController extends Controller
 
       $dataBeforeDelete = $this->model::find($id);
       if (!$dataBeforeDelete) throw new Exception('El registro que intenta eliminar no existe');
-      
+
       // Verificar si la tabla tiene el campo 'status' antes de hacer soft delete
       $table = (new $this->model)->getTable();
       $hasStatusColumn = Schema::hasColumn($table, 'status');
-      
+
       if ($this->softDeletion && $hasStatusColumn) {
         $deleted = $this->model::where('id', $id)
           ->update(\array_merge(['status' => false], $body));

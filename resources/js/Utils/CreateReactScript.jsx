@@ -5,6 +5,7 @@ import 'swiper/css'
 import 'tippy.js/dist/tippy.css'
 import General from './General';
 import LaravelSession from './LaravelSession';
+import Fillable from './Fillable';
 
 let roles = [];
 export const hasRole = (...rolesIn) => {
@@ -23,6 +24,12 @@ const CreateReactScript = (render) => {
     resolve: name => `/${name}.jsx`,
     setup: ({ el, props }) => {
       const properties = props.initialPage.props
+
+      for (const key in (properties.fillable ?? {})) {
+        if (!properties.fillable[key]) continue
+        Fillable.set(key, properties.fillable[key])
+      }
+
       if (properties?.global) {
         for (const name in properties.global) {
           Global.set(name, properties.global[name])

@@ -21,12 +21,13 @@ import SetSelectValue from "../Utils/SetSelectValue";
 import ItemsGalleryRest from "../Actions/Admin/ItemsGalleryRest";
 import DynamicField from "../Components/Adminto/form/DynamicField";
 import ModalImportItem from "./Components/ModalImportItem";
+import Fillable from "../Utils/Fillable";
 
 const itemsRest = new ItemsRest();
 
 const Items = ({ categories, brands, collections }) => {
     //!FALTA EDIT AND DELETEDE GALERIA
-    
+
     const [itemData, setItemData] = useState([]);
 
     const gridRef = useRef();
@@ -121,7 +122,7 @@ const Items = ({ categories, brands, collections }) => {
     }, [itemData]);
 
     const onModalOpen = (data) => {
-      
+
         setItemData(data || null); // Guardamos los datos en el estado
         if (data?.id) setIsEditing(true);
         else setIsEditing(false);
@@ -149,26 +150,23 @@ const Items = ({ categories, brands, collections }) => {
         linkvideoRef.current.value = data?.linkvideo || "";
         priceRef.current.value = data?.price || 0;
         discountRef.current.value = data?.discount || 0;
-        
+
         SetSelectValue(tagsRef.current, data?.tags ?? [], "id", "name");
 
         bannerRef.current.value = null;
 
         imageRef.current.value = null;
 
-       
 
-        bannerRef.image.src = `/storage/images/item/${
-            data?.banner ?? "undefined"
-        }`;
 
-        imageRef.image.src = `/storage/images/item/${
-            data?.image ?? "undefined"
-        }`;
+        bannerRef.image.src = `/storage/images/item/${data?.banner ?? "undefined"
+            }`;
 
-        textureRef.image.src = `/storage/images/item/${
-            data?.texture ?? "undefined"
-        }`;
+        imageRef.image.src = `/storage/images/item/${data?.image ?? "undefined"
+            }`;
+
+        textureRef.image.src = `/storage/images/item/${data?.texture ?? "undefined"
+            }`;
 
         setCurrentPdf(data?.pdf ? `/storage/images/item/${data?.pdf}` : "");
 
@@ -197,7 +195,7 @@ const Items = ({ categories, brands, collections }) => {
         } else {
             setSpecifications([]);
         }
-        
+
         // Nuevos campos
         setFeatures(data?.features?.map(f => typeof f === 'object' ? f : { feature: f }) || []);
         stockRef.current.value = data?.stock;
@@ -215,8 +213,8 @@ const Items = ({ categories, brands, collections }) => {
         });
 
         // Limpia especificaciones vacías
-        const cleanSpecs = specifications.filter(s => 
-            (s.title && s.title.trim() !== '') || 
+        const cleanSpecs = specifications.filter(s =>
+            (s.title && s.title.trim() !== '') ||
             (s.description && s.description.trim() !== '')
         );
 
@@ -235,16 +233,16 @@ const Items = ({ categories, brands, collections }) => {
             discount: discountRef.current.value,
             tags: $(tagsRef.current).val(),
             description: descriptionRef.current.value,
-            stock: stockRef.current.value,
+            stock: stockRef.current.value ?? 0,
             features: cleanFeatures,
             specifications: cleanSpecs,
-            linkvideo:linkvideoRef.current.value,
+            linkvideo: linkvideoRef.current.value,
         };
 
 
 
         const formData = new FormData();
-        
+
         for (const key in request) {
             if (key === 'features' || key === 'specifications') {
                 formData.append(key, JSON.stringify(request[key]));
@@ -267,7 +265,7 @@ const Items = ({ categories, brands, collections }) => {
         }
 
         const pdf = pdfRef.current.files[0];
-        
+
         if (pdf) {
             formData.append("pdf", pdf);
         }
@@ -386,7 +384,7 @@ const Items = ({ categories, brands, collections }) => {
                         caption: "ID",
                         visible: false,
                     },
-                    {
+                    Fillable.has('items', 'category_id') && {
                         dataField: "category.name",
                         caption: "Categoría",
                         width: "120px",
@@ -408,12 +406,12 @@ const Items = ({ categories, brands, collections }) => {
                             );
                         },
                     },
-                    {
+                    Fillable.has('items', 'subcategory_id') && {
                         dataField: "subcategory.name",
                         caption: "Subcategoría",
                         visible: false,
                     },
-                    {
+                    Fillable.has('items', 'brand_id') && {
                         dataField: "brand.name",
                         caption: "Marca",
                         width: "120px",
@@ -432,7 +430,7 @@ const Items = ({ categories, brands, collections }) => {
                                 }
                                 return text;
                             };
-                    
+
                             const truncatedSummary = truncateWords(data.summary, 12);
 
                             container.html(
@@ -499,14 +497,14 @@ const Items = ({ categories, brands, collections }) => {
                                         borderRadius: "4px",
                                     }}
                                     onError={(e) =>
-                                        (e.target.src =
-                                            "/api/cover/thumbnail/null")
+                                    (e.target.src =
+                                        "/api/cover/thumbnail/null")
                                     }
                                 />
                             );
                         },
                     },
-                    {
+                    Fillable.has('items', 'is_new') && {
                         dataField: "is_new",
                         caption: "Nuevo",
                         dataType: "boolean",
@@ -528,7 +526,7 @@ const Items = ({ categories, brands, collections }) => {
                             );
                         },
                     },
-                    {
+                    Fillable.has('items', 'offering') && {
                         dataField: "offering",
                         caption: "En oferta",
                         dataType: "boolean",
@@ -550,7 +548,7 @@ const Items = ({ categories, brands, collections }) => {
                             );
                         },
                     },
-                    {
+                    Fillable.has('items', 'recommended') && {
                         dataField: "recommended",
                         caption: "Recomendado",
                         dataType: "boolean",
@@ -572,14 +570,14 @@ const Items = ({ categories, brands, collections }) => {
                             );
                         },
                     },
-                    {
+                    Fillable.has('items', 'featured') && {
                         dataField: "featured",
                         caption: "Destacado",
                         dataType: "boolean",
                         width: "80px",
                         cellTemplate: (container, { data }) => {
                             const featuredValue = data.featured === 1 || data.featured === '1' || data.featured === true;
-                            
+
                             ReactAppend(
                                 container,
                                 <SwitchFormGroup
@@ -595,7 +593,7 @@ const Items = ({ categories, brands, collections }) => {
                             );
                         },
                     },
-                    {
+                    Fillable.has('items', 'visible') && {
                         dataField: "visible",
                         caption: "Visible",
                         dataType: "boolean",
@@ -655,6 +653,7 @@ const Items = ({ categories, brands, collections }) => {
                             eRef={skuRef}
                             label="SKU"
                             required
+                            hidden={!Fillable.has('items', 'sku')}
                         />
                         <SelectFormGroup
                             eRef={categoryRef}
@@ -664,6 +663,7 @@ const Items = ({ categories, brands, collections }) => {
                             onChange={(e) =>
                                 setSelectedCategory(e.target.value)
                             }
+                            hidden={!Fillable.has('items', 'category_id')}
                         >
                             {categories.map((item, index) => (
                                 <option key={index} value={item.id}>
@@ -678,6 +678,7 @@ const Items = ({ categories, brands, collections }) => {
                             onChange={(e) =>
                                 setSelectedCollection(e.target.value)
                             }
+                            hidden={!Fillable.has('items', 'collection_id')}
                         >
                             {collections.map((item, index) => (
                                 <option key={index} value={item.id}>
@@ -692,12 +693,14 @@ const Items = ({ categories, brands, collections }) => {
                             searchBy="name"
                             filter={["category_id", "=", selectedCategory]}
                             dropdownParent="#principal-container"
+                            hidden={!Fillable.has('items', 'subcategory_id')}
                         />
 
                         <SelectFormGroup
                             eRef={brandRef}
                             label="Marca"
                             dropdownParent="#principal-container"
+                            hidden={!Fillable.has('items', 'brand_id')}
                         >
                             {brands.map((item, index) => (
                                 <option key={index} value={item.id}>
@@ -710,6 +713,7 @@ const Items = ({ categories, brands, collections }) => {
                             label="Stock"
                             eRef={stockRef}
                             type="number"
+                            hidden={!Fillable.has('items', 'stock')}
                         />
 
                         <InputFormGroup
@@ -718,6 +722,7 @@ const Items = ({ categories, brands, collections }) => {
                             type="number"
                             step="0.01"
                             required
+                            hidden={!Fillable.has('items', 'price')}
                         />
                         <InputFormGroup
                             eRef={discountRef}
@@ -743,36 +748,39 @@ const Items = ({ categories, brands, collections }) => {
                             eRef={nameRef}
                             label="Nombre"
                             required
+                            hidden={!Fillable.has('items', 'name')}
                         />
-                        
+
                         <InputFormGroup
                             eRef={colorRef}
                             label="Color"
                             required
+                            hidden={!Fillable.has('items', 'color')}
                         />
 
                         <InputFormGroup
                             eRef={sizeRef}
                             label="Talla"
                             required
+                            hidden={!Fillable.has('items', 'size')}
                         />
 
-                        <div className="col-12">
+                        <div className="col-12" hidden={!Fillable.has('items', 'pdf')}>
                             <label className="form-label">Archivo PDF</label>
-                            <input 
+                            <input
                                 ref={pdfRef}
-                                type="file" 
-                                className="form-control" 
-                                accept=".pdf" 
+                                type="file"
+                                className="form-control"
+                                accept=".pdf"
                             />
                             <small className="text-muted">Subir documento PDF relacionado al producto</small>
                         </div>
 
                         {currentPdf && (
                             <div className="my-2">
-                                <a 
-                                    href={currentPdf} 
-                                    target="_blank" 
+                                <a
+                                    href={currentPdf}
+                                    target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn btn-sm btn-outline-primary"
                                 >
@@ -784,18 +792,21 @@ const Items = ({ categories, brands, collections }) => {
                         <InputFormGroup
                             eRef={linkvideoRef}
                             label="Link de video"
+                            hidden={!Fillable.has('items', 'linkvideo')}
                         />
-                       
+
                         <ImageFormGroup
                             eRef={textureRef}
                             label="Imagen Textura"
                             aspect={1}
                             col="col-lg-6 col-md-12 col-sm-6"
+                            hidden={!Fillable.has('items', 'texture')}
                         />
                         <TextareaFormGroup
                             eRef={summaryRef}
                             label="Resumen"
                             rows={3}
+                            hidden={!Fillable.has('items', 'summary')}
                         />
                         {/* Sección de Características */}
                         {/* Características (Lista de textos) */}
@@ -824,12 +835,14 @@ const Items = ({ categories, brands, collections }) => {
                                 label="Banner"
                                 aspect={2 / 1}
                                 col="col-12"
+                                hidden={!Fillable.has('items', 'banner')}
                             />
                             <ImageFormGroup
                                 eRef={imageRef}
                                 label="Imagen"
                                 aspect={1}
                                 col="col-lg-6 col-md-12 col-sm-6"
+                                hidden={!Fillable.has('items', 'image')}
                             />
 
                             <div className="col-lg-6 col-md-12 col-sm-6">

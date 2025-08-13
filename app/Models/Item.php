@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use SoDe\Extend\JSON;
 
 class Item extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, HasDynamic;
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -45,7 +46,6 @@ class Item extends Model
         'linkvideo',
         'size',
         'grouper'
-
     ];
 
     static function getForeign(Builder $builder, string $model, $relation)

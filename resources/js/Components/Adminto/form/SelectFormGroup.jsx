@@ -6,6 +6,7 @@ const SelectFormGroup = ({ id, col, className, value, label, eRef, required = fa
   tags = false,
   minimumResultsForSearch,
   changeWith = [null],
+  hidden
 }) => {
 
   if (!eRef) eRef = useRef()
@@ -27,11 +28,11 @@ const SelectFormGroup = ({ id, col, className, value, label, eRef, required = fa
     }
   }, [...changeWith, value, disabled])
 
-  return <div className={`form-group ${col} ${!noMargin && 'mb-2'}`}>
+  return <div className={`form-group ${col} ${!noMargin && 'mb-2'}`} hidden={hidden}>
     <label htmlFor={id} className="mb-1 form-label">
       {label} {(label && required) && <b className="text-danger">*</b>}
     </label>
-    <select ref={eRef} id={id} required={required} className={`form-control ${className}`} style={{ width: '100%' }} disabled={disabled} multiple={multiple} value={value}>
+    <select ref={eRef} id={id} required={required && !hidden} className={`form-control ${className}`} style={{ width: '100%' }} disabled={disabled} multiple={multiple} value={value}>
       {children}
     </select>
   </div>
