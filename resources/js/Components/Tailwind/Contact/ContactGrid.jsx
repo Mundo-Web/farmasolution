@@ -185,11 +185,16 @@ const ContactGrid = ({ data, contacts }) => {
                     {stores.map((store, storeIndex) => (
                         <motion.div
                             key={store.id}
-                            className="bg-white p-4 rounded-lg border border-gray-100 hover:shadow-md transition-all duration-300 hover:border-blue-200"
+                            className={`bg-white p-4 rounded-lg border transition-all duration-300 cursor-pointer ${
+                                selectedStore?.id === store.id 
+                                    ? 'border-blue-500 shadow-lg bg-blue-50' 
+                                    : 'border-gray-100 hover:shadow-md hover:border-blue-200'
+                            }`}
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.4, delay: 1.5 + (index * 0.1) + (storeIndex * 0.05) }}
-                            whileHover={{ x: 2, scale: 1.01, backgroundColor: "#f8fafc" }}
+                            whileHover={{ x: 2, scale: 1.01, backgroundColor: selectedStore?.id === store.id ? "#dbeafe" : "#f8fafc" }}
+                            onClick={() => setSelectedStore(store)}
                         >
                             <div className="flex items-start gap-3">
                               
@@ -615,47 +620,6 @@ const ContactGrid = ({ data, contacts }) => {
                             ))}
                         </div>
                     </motion.div>
-                    
-                    {/* Título y descripción de sucursales - solo si hay tiendas */}
-                    {!loadingStores && Object.keys(storesByType).length > 0 && (
-                        <motion.div
-                            className="text-center py-4"
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 0.3 }}
-                        >
-                            <motion.h3
-                                className={`font-bold text-xl mb-2 ${data?.class_card_title || 'customtext-neutral-dark'}`}
-                                initial={{ y: -10, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ duration: 0.5, delay: 0.4 }}
-                            >
-                                Nuestras Sucursales
-                            </motion.h3>
-                            <motion.p
-                                className={`text-sm ${data?.class_card_description || 'customtext-neutral-light'}`}
-                                initial={{ y: -10, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ duration: 0.5, delay: 0.5 }}
-                            >
-                                Visita nuestras sedes para una atención personalizada. Te esperamos con los mejores productos y servicios.
-                            </motion.p>
-                        </motion.div>
-                    )}
-
-                    {loadingStores ? (
-                        <div className="flex items-center justify-center py-8">
-                            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                            <span className="ml-2 text-sm customtext-neutral-light">Cargando sucursales...</span>
-                        </div>
-                    ) : (
-                        <>
-                            {/* Renderizar tarjetas por tipo de tienda */}
-                            {Object.entries(storesByType).map(([type, stores], index) => 
-                                renderStoreTypeCard(type, stores, index)
-                            )}
-                        </>
-                    )}
 
                 </motion.div>
             </motion.div>
@@ -682,157 +646,499 @@ const ContactGrid = ({ data, contacts }) => {
                     >
                         Encuentra nuestras tiendas, oficinas y agencias más cercanas a tu ubicación.
                     </motion.p>
-
-
                 </motion.div>
 
-                <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 1.8 }}
-                    className="relative"
-                >
-                    {loadingStores && (
-                        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-xl">
-                            <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                <span className="customtext-neutral-light">Cargando ubicaciones...</span>
-                            </div>
-                        </div>
+                {/* Layout responsivo: si hay tiendas, división en columnas; si no, mapa completo */}
+                <div className={`flex flex-col gap-8 ${!loadingStores && Object.keys(storesByType).length > 0 ? 'lg:flex-row' : ''}`}>
+                    
+                    {/* Sección de sucursales - solo si hay tiendas */}
+                    {!loadingStores && Object.keys(storesByType).length > 0 && (
+                        <motion.div
+                            className="lg:w-1/3 space-y-4"
+                            initial={{ x: -50, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ duration: 0.8, delay: 1.7 }}
+                        >
+                            {/* Loading de sucursales */}
+                            {loadingStores ? (
+                                <div className="flex items-center justify-center py-8">
+                                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                    <span className="ml-2 text-sm customtext-neutral-light">Cargando sucursales...</span>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {/* Renderizar tarjetas por tipo de tienda */}
+                                    {Object.entries(storesByType).map(([type, stores], index) => 
+                                        renderStoreTypeCard(type, stores, index)
+                                    )}
+                                </div>
+                            )}
+                        </motion.div>
                     )}
 
-                    <LoadScript
-                        googleMapsApiKey={Global.GMAPS_API_KEY}
-                        className="rounded-xl"
+                    {/* Sección del mapa y detalles */}
+                    <motion.div
+                        className={`${!loadingStores && Object.keys(storesByType).length > 0 ? 'lg:w-2/3' : 'w-full'} space-y-6`}
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.6, delay: 1.8 }}
                     >
-                        <GoogleMap
-                            mapContainerStyle={{ width: "100%", height: "500px", borderRadius: "12px" }}
-                            zoom={allStores.length > 0 ? 12 : 16}
-                            center={allStores.length > 0 ? {
-                                lat: allStores.filter(store => store.latitude && store.longitude)
-                                    .reduce((sum, store) => sum + parseFloat(store.latitude), parseFloat(locationGps.lat)) / 
-                                    (allStores.filter(store => store.latitude && store.longitude).length + 1),
-                                lng: allStores.filter(store => store.latitude && store.longitude)
-                                    .reduce((sum, store) => sum + parseFloat(store.longitude), parseFloat(locationGps.lng)) / 
-                                    (allStores.filter(store => store.latitude && store.longitude).length + 1)
-                            } : locationGps}
-                            options={{
-                                styles: [
-                                    {
-                                        featureType: "poi",
-                                        elementType: "labels",
-                                        stylers: [{ visibility: "off" }]
-                                    }
-                                ]
-                            }}
-                        >
-                            {/* Marcador de la ubicación principal */}
-                            <Marker
-                                position={locationGps}
-                                icon={{
-                                    url: "data:image/svg+xml;base64," + btoa(`
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${Global.APP_COLOR_PRIMARY}" width="48" height="48">
-                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                        </svg>
-                                    `),
-                                    scaledSize: { width: 48, height: 48 },
-                                    anchor: { x: 24, y: 48 }
-                                }}
-                                title="Sede Principal"
-                                onClick={() => setSelectedStore({
-                                    id: 'main',
-                                    name: 'Sede Principal',
-                                    type: 'principal',
-                                    address: getContact("address"),
-                                    phone: getContactPhones('phone_contact')[0],
-                                    latitude: locationGps.lat,
-                                    longitude: locationGps.lng
-                                })}
-                            />
-
-                            {/* Marcadores de todas las tiendas */}
-                            {allStores
-                                .filter(store => store.latitude && store.longitude && 
-                                    store.latitude !== "0" && store.longitude !== "0")
-                                .map((store) => (
-                                <Marker
-                                    key={store.id}
-                                    position={{
-                                        lat: parseFloat(store.latitude),
-                                        lng: parseFloat(store.longitude)
-                                    }}
-                                    icon={{
-                                        url: "data:image/svg+xml;base64," + btoa(`
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${getStoreTypeColor(store.type)}" width="36" height="36">
-                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                            </svg>
-                                        `),
-                                        scaledSize: { width: 36, height: 36 },
-                                        anchor: { x: 18, y: 36 }
-                                    }}
-                                    title={`${store.name} (${getStoreTypeName(store.type)})`}
-                                    onClick={() => setSelectedStore(store)}
-                                />
-                            ))}
-
-                            {/* InfoWindow para mostrar detalles de la tienda seleccionada */}
-                            {selectedStore && (
-                                <InfoWindow
-                                    position={{
-                                        lat: parseFloat(selectedStore.latitude),
-                                        lng: parseFloat(selectedStore.longitude)
-                                    }}
-                                    onCloseClick={() => setSelectedStore(null)}
-                                >
-                                    <div style={{ padding: "10px", maxWidth: "250px" }}>
-                                        <h4 style={{ margin: "0 0 8px 0", color: getStoreTypeColor(selectedStore.type), fontWeight: "bold" }}>
-                                            {selectedStore.name}
-                                        </h4>
-                                        <p style={{ margin: "0 0 5px 0", color: Global.APP_COLOR_PRIMARY, fontSize: "12px", textTransform: "uppercase", fontWeight: "500" }}>
-                                            {selectedStore.type === 'principal' ? 'Sede Principal' : getStoreTypeName(selectedStore.type)}
-                                        </p>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "5px", margin: "0 0 8px 0", color: "#374151", lineHeight: "1.4" }}>
-                                            <svg style={{ width: "14px", height: "14px", color: "#6B7280" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            <span>{selectedStore.address}</span>
-                                        </div>
-                                        {selectedStore.phone && (
-                                            <div style={{ display: "flex", alignItems: "center", gap: "5px", margin: "0 0 8px 0", color: Global.APP_COLOR_PRIMARY }}>
-                                                <svg style={{ width: "14px", height: "14px", color: "#10B981" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                                </svg>
-                                                <a href={`tel:${selectedStore.phone}`} style={{ color: getStoreTypeColor(selectedStore.type), textDecoration: "none" }}>
-                                                    {selectedStore.phone}
-                                                </a>
-                                            </div>
-                                        )}
-                                        {selectedStore.email && (
-                                            <div style={{ display: "flex", alignItems: "center", gap: "5px", margin: "0 0 8px 0", color: Global.APP_COLOR_PRIMARY }}>
-                                                <svg style={{ width: "14px", height: "14px", color: "#3B82F6" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                </svg>
-                                                <a href={`mailto:${selectedStore.email}`} style={{ color: getStoreTypeColor(selectedStore.type), textDecoration: "none" }}>
-                                                    {selectedStore.email}
-                                                </a>
-                                            </div>
-                                        )}
-                                        {selectedStore.schedule && (
-                                            <div style={{ display: "flex", alignItems: "center", gap: "5px", margin: "0", color: Global.APP_COLOR_PRIMARY, fontSize: "13px" }}>
-                                                <svg style={{ width: "14px", height: "14px", color: "#F59E0B" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                <span>{selectedStore.schedule}</span>
-                                            </div>
-                                        )}
+                        <div className="relative">
+                            {loadingStores && (
+                                <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-xl">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                        <span className="customtext-neutral-light">Cargando ubicaciones...</span>
                                     </div>
-                                </InfoWindow>
+                                </div>
                             )}
 
-                        </GoogleMap>
-                    </LoadScript>
-                </motion.div>
+                            <LoadScript
+                                googleMapsApiKey={Global.GMAPS_API_KEY}
+                                className="rounded-xl"
+                            >
+                                <GoogleMap
+                                    mapContainerStyle={{ width: "100%", height: "500px", borderRadius: "12px" }}
+                                    zoom={selectedStore ? 16 : (allStores.length > 0 ? 12 : 16)}
+                                    center={selectedStore && selectedStore.latitude && selectedStore.longitude ? {
+                                        lat: parseFloat(selectedStore.latitude),
+                                        lng: parseFloat(selectedStore.longitude)
+                                    } : (allStores.length > 0 ? {
+                                        lat: allStores.filter(store => store.latitude && store.longitude)
+                                            .reduce((sum, store) => sum + parseFloat(store.latitude), parseFloat(locationGps.lat)) / 
+                                            (allStores.filter(store => store.latitude && store.longitude).length + 1),
+                                        lng: allStores.filter(store => store.latitude && store.longitude)
+                                            .reduce((sum, store) => sum + parseFloat(store.longitude), parseFloat(locationGps.lng)) / 
+                                            (allStores.filter(store => store.latitude && store.longitude).length + 1)
+                                    } : locationGps)}
+                                    options={{
+                                        styles: [
+                                            {
+                                                featureType: "poi",
+                                                elementType: "labels",
+                                                stylers: [{ visibility: "off" }]
+                                            }
+                                        ]
+                                    }}
+                                >
+                                    {/* Marcador de la ubicación principal */}
+                                    <Marker
+                                        position={locationGps}
+                                        icon={{
+                                            url: "data:image/svg+xml;base64," + btoa(`
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${Global.APP_COLOR_PRIMARY}" width="48" height="48">
+                                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                                </svg>
+                                            `),
+                                            scaledSize: { width: 48, height: 48 },
+                                            anchor: { x: 24, y: 48 }
+                                        }}
+                                        title="Sede Principal"
+                                        onClick={() => setSelectedStore({
+                                            id: 'main',
+                                            name: 'Sede Principal',
+                                            type: 'principal',
+                                            address: getContact("address"),
+                                            phone: getContactPhones('phone_contact')[0],
+                                            latitude: locationGps.lat,
+                                            longitude: locationGps.lng
+                                        })}
+                                    />
+
+                                    {/* Marcadores de todas las tiendas */}
+                                    {allStores
+                                        .filter(store => store.latitude && store.longitude && 
+                                            store.latitude !== "0" && store.longitude !== "0")
+                                        .map((store) => (
+                                        <Marker
+                                            key={store.id}
+                                            position={{
+                                                lat: parseFloat(store.latitude),
+                                                lng: parseFloat(store.longitude)
+                                            }}
+                                            icon={{
+                                                url: "data:image/svg+xml;base64," + btoa(`
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${getStoreTypeColor(store.type)}" width="36" height="36">
+                                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                                    </svg>
+                                                `),
+                                                scaledSize: { width: 36, height: 36 },
+                                                anchor: { x: 18, y: 36 }
+                                            }}
+                                            title={`${store.name} (${getStoreTypeName(store.type)})`}
+                                            onClick={() => setSelectedStore(store)}
+                                        />
+                                    ))}
+
+                                    {/* InfoWindow para mostrar detalles de la tienda seleccionada */}
+                                    {selectedStore && (
+                                        <InfoWindow
+                                            position={{
+                                                lat: parseFloat(selectedStore.latitude),
+                                                lng: parseFloat(selectedStore.longitude)
+                                            }}
+                                            onCloseClick={() => setSelectedStore(null)}
+                                        >
+                                            <div style={{ padding: "10px", maxWidth: "250px" }}>
+                                                <h4 style={{ margin: "0 0 8px 0", color: getStoreTypeColor(selectedStore.type), fontWeight: "bold" }}>
+                                                    {selectedStore.name}
+                                                </h4>
+                                                <p style={{ margin: "0 0 5px 0", color: Global.APP_COLOR_PRIMARY, fontSize: "12px", textTransform: "uppercase", fontWeight: "500" }}>
+                                                    {selectedStore.type === 'principal' ? 'Sede Principal' : getStoreTypeName(selectedStore.type)}
+                                                </p>
+                                                <div style={{ display: "flex", alignItems: "center", gap: "5px", margin: "0 0 8px 0", color: "#374151", lineHeight: "1.4" }}>
+                                                    <svg style={{ width: "14px", height: "14px", color: "#6B7280" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    <span>{selectedStore.address}</span>
+                                                </div>
+                                                {selectedStore.phone && (
+                                                    <div style={{ display: "flex", alignItems: "center", gap: "5px", margin: "0 0 8px 0", color: Global.APP_COLOR_PRIMARY }}>
+                                                        <svg style={{ width: "14px", height: "14px", color: "#10B981" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                        </svg>
+                                                        <a href={`tel:${selectedStore.phone}`} style={{ color: getStoreTypeColor(selectedStore.type), textDecoration: "none" }}>
+                                                            {selectedStore.phone}
+                                                        </a>
+                                                    </div>
+                                                )}
+                                                {selectedStore.email && (
+                                                    <div style={{ display: "flex", alignItems: "center", gap: "5px", margin: "0 0 8px 0", color: Global.APP_COLOR_PRIMARY }}>
+                                                        <svg style={{ width: "14px", height: "14px", color: "#3B82F6" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <a href={`mailto:${selectedStore.email}`} style={{ color: getStoreTypeColor(selectedStore.type), textDecoration: "none" }}>
+                                                            {selectedStore.email}
+                                                        </a>
+                                                    </div>
+                                                )}
+                                                {selectedStore.schedule && (
+                                                    <div style={{ display: "flex", alignItems: "center", gap: "5px", margin: "0", color: Global.APP_COLOR_PRIMARY, fontSize: "13px" }}>
+                                                        <svg style={{ width: "14px", height: "14px", color: "#F59E0B" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        <span>{selectedStore.schedule}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </InfoWindow>
+                                    )}
+
+                                </GoogleMap>
+                            </LoadScript>
+                        </div>
+
+                        {/* Información detallada de la tienda seleccionada */}
+                        {selectedStore ? (
+                            <motion.div
+                                className="space-y-6"
+                                initial={{ y: 30, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                {/* Imagen grande de la tienda seleccionada */}
+                                <motion.div
+                                    className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden"
+                                    initial={{ scale: 0.95, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    transition={{ duration: 0.6 }}
+                                >
+                                    {selectedStore.image ? (
+                                        <div className="relative">
+                                            <img 
+                                                src={`/storage/images/store/${selectedStore.image}`} 
+                                            
+                                                alt={selectedStore.name}
+                                                className="w-full h-64 object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                            <div className="absolute bottom-4 left-6 text-white">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <div className="p-2 rounded-lg bg-white/20 backdrop-blur-sm">
+                                                        {(() => {
+                                                            const IconComponent = getStoreTypeIcon(selectedStore.type);
+                                                            return <IconComponent className="w-5 h-5 text-white" />;
+                                                        })()}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-xl font-bold text-white">
+                                                            {selectedStore.name}
+                                                        </h4>
+                                                        <p className="text-sm font-medium text-white/90">
+                                                            {selectedStore.type === 'principal' ? 'Sede Principal' : getStoreTypeName(selectedStore.type)}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <p className="text-white/90 flex items-center gap-2">
+                                                    <MapPin className="w-4 h-4" />
+                                                    {selectedStore.address}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="h-64 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                                            <div className="text-center">
+                                                <div className="p-6 rounded-full bg-white/80 backdrop-blur-sm mb-4 inline-block">
+                                                    {(() => {
+                                                        const IconComponent = getStoreTypeIcon(selectedStore.type);
+                                                        return <IconComponent className="w-12 h-12 text-blue-600" />;
+                                                    })()}
+                                                </div>
+                                                <h4 className="text-2xl font-bold text-gray-700 mb-2">
+                                                    {selectedStore.name}
+                                                </h4>
+                                                <p className="text-blue-600 font-medium mb-2">
+                                                    {selectedStore.type === 'principal' ? 'Sede Principal' : getStoreTypeName(selectedStore.type)}
+                                                </p>
+                                                <p className="text-gray-600 flex items-center justify-center gap-2">
+                                                    <MapPin className="w-4 h-4" />
+                                                    {selectedStore.address}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </motion.div>
+
+                                {/* Horarios de atención semanal */}
+                                <motion.div
+                                    className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                >
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="p-2 rounded-lg bg-amber-50">
+                                            <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                        <h5 className="text-lg font-bold text-gray-800">Horarios de Atención</h5>
+                                    </div>
+
+                                    {selectedStore.business_hours ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {/* Parseamos los horarios reales desde business_hours */}
+                                            {(() => {
+                                                let businessHours;
+                                                try {
+                                                    // Intentamos parsear el JSON de business_hours
+                                                    businessHours = typeof selectedStore.business_hours === 'string' 
+                                                        ? JSON.parse(selectedStore.business_hours) 
+                                                        : selectedStore.business_hours;
+                                                } catch (error) {
+                                                    console.error('Error parsing business_hours:', error);
+                                                    businessHours = null;
+                                                }
+
+                                                // Si no se pudo parsear, usar horarios predeterminados
+                                                if (!businessHours || !Array.isArray(businessHours)) {
+                                                    businessHours = [
+                                                        { day: 'Lunes', open: '08:00', close: '18:00', closed: false },
+                                                        { day: 'Martes', open: '08:00', close: '18:00', closed: false },
+                                                        { day: 'Miércoles', open: '08:00', close: '18:00', closed: false },
+                                                        { day: 'Jueves', open: '08:00', close: '18:00', closed: false },
+                                                        { day: 'Viernes', open: '08:00', close: '18:00', closed: false },
+                                                        { day: 'Sábado', open: '09:00', close: '13:00', closed: false },
+                                                        { day: 'Domingo', open: '', close: '', closed: true }
+                                                    ];
+                                                }
+
+                                                // Función para formatear la hora
+                                                const formatTime = (time) => {
+                                                    if (!time) return '';
+                                                    const [hours, minutes] = time.split(':');
+                                                    const hour = parseInt(hours);
+                                                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                                                    const hour12 = hour % 12 || 12;
+                                                    return `${hour12}:${minutes} ${ampm}`;
+                                                };
+
+                                                const currentDay = new Date().getDay(); // 0 = Domingo, 1 = Lunes, etc.
+                                                const dayMapping = [6, 0, 1, 2, 3, 4, 5]; // Mapeo para que Lunes sea 0
+                                                const todayIndex = dayMapping[currentDay];
+
+                                                return businessHours.map((schedule, index) => {
+                                                    const isToday = index === todayIndex;
+                                                    const isClosed = schedule.closed;
+                                                    const hoursText = isClosed 
+                                                        ? 'Cerrado' 
+                                                        : `${formatTime(schedule.open)} - ${formatTime(schedule.close)}`;
+
+                                                    return (
+                                                        <motion.div
+                                                            key={schedule.day}
+                                                            className={`flex justify-between items-center p-3 rounded-lg transition-all ${
+                                                                isToday 
+                                                                    ? 'bg-blue-50 border-2 border-blue-200' 
+                                                                    : 'bg-gray-50 border border-gray-200'
+                                                            }`}
+                                                            initial={{ x: -20, opacity: 0 }}
+                                                            animate={{ x: 0, opacity: 1 }}
+                                                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                                                        >
+                                                            <span className={`font-medium ${
+                                                                isToday ? 'text-blue-700' : 'text-gray-700'
+                                                            }`}>
+                                                                {schedule.day}
+                                                                {isToday && (
+                                                                    <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
+                                                                        Hoy
+                                                                    </span>
+                                                                )}
+                                                            </span>
+                                                            <span className={`text-sm ${
+                                                                isClosed
+                                                                    ? 'text-red-500 font-medium' 
+                                                                    : isToday 
+                                                                        ? 'text-blue-600 font-medium' 
+                                                                        : 'text-gray-600'
+                                                            }`}>
+                                                                {hoursText}
+                                                            </span>
+                                                        </motion.div>
+                                                    );
+                                                });
+                                            })()}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-8">
+                                            <div className="p-4 rounded-full bg-gray-100 inline-block mb-4">
+                                                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </div>
+                                            <p className="text-gray-500">Horarios no disponibles</p>
+                                            <p className="text-sm text-gray-400 mt-1">Contacta directamente para más información</p>
+                                        </div>
+                                    )}
+
+                                    {/* Información de contacto adicional */}
+                                    <div className="mt-6 pt-6 border-t border-gray-200">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {selectedStore.phone && (
+                                                <a 
+                                                    href={`tel:${selectedStore.phone}`}
+                                                    className="flex items-center gap-3 p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors group"
+                                                >
+                                                    <PhoneCall className="w-5 h-5 text-green-500 group-hover:text-green-600" />
+                                                    <div>
+                                                        <p className="font-medium text-green-700">Llamar ahora</p>
+                                                        <p className="text-sm text-green-600">{selectedStore.phone}</p>
+                                                    </div>
+                                                </a>
+                                            )}
+                                            
+                                            {selectedStore.email && (
+                                                <a 
+                                                    href={`mailto:${selectedStore.email}`}
+                                                    className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors group"
+                                                >
+                                                    <Mail className="w-5 h-5 text-blue-500 group-hover:text-blue-600" />
+                                                    <div>
+                                                        <p className="font-medium text-blue-700">Enviar email</p>
+                                                        <p className="text-sm text-blue-600">{selectedStore.email}</p>
+                                                    </div>
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        ) : !loadingStores && Object.keys(storesByType).length > 0 && (
+                            <motion.div
+                                className="space-y-6"
+                                initial={{ y: 30, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                {/* Grid estilo Fibonacci de imágenes */}
+                                <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                                    <h5 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-3">
+                                        <div className="p-2 rounded-lg bg-blue-50">
+                                            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        Galería de Sucursales
+                                    </h5>
+                                    
+                                    <div className="grid grid-cols-2 gap-4 h-80">
+                                        {allStores.slice(0, 4).map((store, index) => {
+                                            // Layout optimizado para 4 imágenes
+                                            const layoutClasses = [
+                                                "col-span-1 row-span-1", // Superior izquierdo
+                                                "col-span-1 row-span-1", // Superior derecho
+                                                "col-span-1 row-span-1", // Inferior izquierdo
+                                                "col-span-1 row-span-1", // Inferior derecho
+                                            ];
+
+                                            return (
+                                                <motion.div
+                                                    key={store.id}
+                                                    className={`${layoutClasses[index]} relative group cursor-pointer overflow-hidden rounded-xl shadow-lg`}
+                                                    initial={{ scale: 0.8, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1 }}
+                                                    transition={{ duration: 0.5, delay: index * 0.15 }}
+                                                    whileHover={{ scale: 1.02, y: -5 }}
+                                                    onClick={() => setSelectedStore(store)}
+                                                >
+                                                    {store.image ? (
+                                                        <img 
+                                                            src={`/storage/images/store/${store.image}`} 
+                                                            alt={store.name}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 flex items-center justify-center">
+                                                            {(() => {
+                                                                const IconComponent = getStoreTypeIcon(store.type);
+                                                                return <IconComponent className="w-16 h-16 text-blue-600" />;
+                                                            })()}
+                                                        </div>
+                                                    )}
+                                                    
+                                                    {/* Overlay con información mejorado */}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                                        <div className="absolute bottom-4 left-4 right-4 text-white">
+                                                            <h6 className="font-bold text-lg leading-tight mb-2">
+                                                                {store.name}
+                                                            </h6>
+                                                            <p className="text-sm opacity-90 mb-2">
+                                                                {getStoreTypeName(store.type)}
+                                                            </p>
+                                                            <div className="flex items-center gap-2 text-xs opacity-80">
+                                                                <MapPin className="w-3 h-3" />
+                                                                <span className="truncate">{store.address}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {/* Badge de tipo en la esquina superior */}
+                                                    <div className="absolute top-3 right-3 p-2 rounded-lg bg-white/90 backdrop-blur-sm shadow-sm">
+                                                        {(() => {
+                                                            const IconComponent = getStoreTypeIcon(store.type);
+                                                            return <IconComponent className="w-4 h-4 text-blue-600" />;
+                                                        })()}
+                                                    </div>
+                                                    
+                                                    {/* Indicador de clic */}
+                                                    <div className="absolute top-3 left-3 p-2 rounded-lg bg-black/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
+                                                    </div>
+                                                </motion.div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                            </motion.div>
+                        )}
+                    </motion.div>
+                </div>
             </motion.div>
         </motion.section>
     );
