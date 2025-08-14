@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 import StoresRest from "../Actions/Admin/StoresRest";
 import CreateReactScript from "../Utils/CreateReactScript";
@@ -14,6 +15,7 @@ import SwitchFormGroup from "../Components/Adminto/form/SwitchFormGroup";
 import SelectFormGroup from "../Components/Adminto/form/SelectFormGroup";
 import DxButton from "../Components/dx/DxButton";
 import Swal from "sweetalert2";
+import Global from "../Utils/Global";
 
 const storesRest = new StoresRest();
 
@@ -39,6 +41,13 @@ const Stores = ({ ubigeos = [] }) => {
     const typeRef = useRef();
 
     const [isEditing, setIsEditing] = useState(false);
+    
+    // Estados para el mapa de Google
+    const [mapCenter, setMapCenter] = useState({
+        lat: -12.046374,
+        lng: -77.042793
+    }); // Lima por defecto
+    const [markerPosition, setMarkerPosition] = useState(null);
     
     // Estados para horarios de atención
     const [businessHours, setBusinessHours] = useState([
@@ -107,6 +116,22 @@ const Stores = ({ ubigeos = [] }) => {
                 { day: "Sábado", open: "09:00", close: "15:00", closed: false },
                 { day: "Domingo", open: "09:00", close: "15:00", closed: true },
             ]);
+        }
+
+        // Configurar el mapa con las coordenadas existentes
+        if (data?.latitude && data?.longitude) {
+            const lat = parseFloat(data.latitude);
+            const lng = parseFloat(data.longitude);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                const position = { lat, lng };
+                setMapCenter(position);
+                setMarkerPosition(position);
+            }
+        } else {
+            // Resetear mapa a Lima por defecto
+            const defaultPosition = { lat: -12.046374, lng: -77.042793 };
+            setMapCenter(defaultPosition);
+            setMarkerPosition(null);
         }
 
         $(modalRef.current).modal("show");
@@ -253,6 +278,48 @@ const Stores = ({ ubigeos = [] }) => {
         const newHours = [...businessHours];
         newHours[index][field] = value;
         setBusinessHours(newHours);
+    };
+
+    // Función para manejar clics en el mapa
+    const handleMapClick = (event) => {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        
+        console.log("Coordenadas seleccionadas:", { lat, lng });
+        
+        // Actualizar la posición del marcador
+        setMarkerPosition({ lat, lng });
+        
+        // Actualizar los campos de latitud y longitud
+        if (latitudeRef.current) {
+            latitudeRef.current.value = lat.toFixed(8);
+        }
+        if (longitudeRef.current) {
+            longitudeRef.current.value = lng.toFixed(8);
+        }
+        
+        // Mostrar notificación
+        Swal.fire({
+            title: "Ubicación seleccionada",
+            text: `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end"
+        });
+    };
+
+    // Función para centrar el mapa en las coordenadas ingresadas manualmente
+    const handleCoordinateChange = () => {
+        const lat = parseFloat(latitudeRef.current?.value);
+        const lng = parseFloat(longitudeRef.current?.value);
+        
+        if (!isNaN(lat) && !isNaN(lng)) {
+            const newPosition = { lat, lng };
+            setMapCenter(newPosition);
+            setMarkerPosition(newPosition);
+        }
     };
 
     // Función para validar formato de coordenadas según restricciones de base de datos
@@ -564,53 +631,104 @@ const Stores = ({ ubigeos = [] }) => {
                     </div>
 
                     <div className="col-12">
-                        <div className="alert alert-info">
-                            <h6><i className="fas fa-map-marker-alt"></i> Cómo obtener coordenadas exactas:</h6>
-                            <ol className="mb-2">
-                                <li>Ve a <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">Google Maps</a></li>
-                                <li>Busca la dirección exacta de tu tienda</li>
-                                <li>Haz clic derecho en el marcador del lugar</li>
-                                <li>Selecciona "¿Qué hay aquí?" o haz clic en las coordenadas que aparecen</li>
-                                <li>Copia los valores que aparecen (ej: -12.0464, -77.0428)</li>
-                            </ol>
-                            <small>
-                                <strong>Importante:</strong> Las coordenadas deben estar en formato decimal, no en grados/minutos/segundos.
-                                Para Lima, la latitud típica es alrededor de -12 y la longitud alrededor de -77.
-                            </small>
-                        </div>
-                    </div>
+                        <div className="card">
+                            <div className="card-header">
+                                <h5 className="card-title mb-0">
+                                    <i className="fas fa-map-marker-alt me-2"></i>
+                                    Ubicación de la Tienda
+                                </h5>
+                            </div>
+                            <div className="card-body">
+                               
 
-                    <div className="col-md-6">
-                        <InputFormGroup
-                            eRef={latitudeRef}
-                            label="Latitud (Google Maps)"
-                            col="col-12"
-                            type="number"
-                            step="0.000000000000001"
-                            min="-18.5"
-                            max="-0.1"
-                            placeholder="Ej: -12.042626777544823"
-                        />
-                        <small className="text-muted">
-                            Rango válido para Perú: -18.5 a -0.1<br/>
-                            Acepta hasta 15 dígitos decimales de precisión
-                        </small>
-                    </div>
-                    <div className="col-md-6">
-                        <InputFormGroup
-                            eRef={longitudeRef}
-                            label="Longitud (Google Maps)"
-                            col="col-12"
-                            type="number"
-                            step="0.000000000000001"
-                            min="-81.5"
-                            max="-68.5"
-                            placeholder="Ej: -77.04753389161506"
-                        />
-                        <small className="text-muted">
-                            Rango válido para Perú: -81.5 a -68.5<br/>
-                            Acepta hasta 15 dígitos decimales de precisión
-                        </small>
+                                {/* Mapa de Google */}
+                                <div className="mb-3">
+                                    <LoadScript
+                                        googleMapsApiKey={Global.GMAPS_API_KEY}
+                                    >
+                                        <GoogleMap
+                                            mapContainerStyle={{
+                                                width: "100%",
+                                                height: "400px",
+                                                borderRadius: "8px"
+                                            }}
+                                            center={mapCenter}
+                                            zoom={15}
+                                            onClick={handleMapClick}
+                                            options={{
+                                                streetViewControl: true,
+                                                mapTypeControl: true,
+                                                fullscreenControl: true
+                                            }}
+                                        >
+                                            {markerPosition && (
+                                                <Marker
+                                                    position={markerPosition}
+                                                    title="Ubicación de la tienda"
+                                                />
+                                            )}
+                                        </GoogleMap>
+                                    </LoadScript>
+                                </div>
+
+                                {/* Campos de coordenadas */}
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <InputFormGroup
+                                            eRef={latitudeRef}
+                                            label="Latitud"
+                                            col="col-12"
+                                            type="number"
+                                            step="0.00000001"
+                                            min="-18.5"
+                                            max="-0.1"
+                                            placeholder="Ej: -12.042626777544823"
+                                            onChange={handleCoordinateChange}
+                                        />
+                                        <small className="text-muted">
+                                            Rango válido para Perú: -18.5 a -0.1
+                                        </small>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <InputFormGroup
+                                            eRef={longitudeRef}
+                                            label="Longitud"
+                                            col="col-12"
+                                            type="number"
+                                            step="0.00000001"
+                                            min="-81.5"
+                                            max="-68.5"
+                                            placeholder="Ej: -77.04753389161506"
+                                            onChange={handleCoordinateChange}
+                                        />
+                                        <small className="text-muted">
+                                            Rango válido para Perú: -81.5 a -68.5
+                                        </small>
+                                    </div>
+                                </div>
+
+                                {/* Botones de acción rápida */}
+                                <div className="row mt-3">
+                                    <div className="col-12">
+                                        <div className="d-flex gap-2 flex-wrap">
+                                            
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary btn-sm"
+                                                onClick={() => {
+                                                    setMarkerPosition(null);
+                                                    latitudeRef.current.value = "";
+                                                    longitudeRef.current.value = "";
+                                                }}
+                                            >
+                                                <i className="fas fa-eraser me-1"></i>
+                                                Limpiar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="col-md-6">
