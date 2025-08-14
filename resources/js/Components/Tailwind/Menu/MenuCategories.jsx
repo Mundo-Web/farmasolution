@@ -1,66 +1,123 @@
-import { Tag } from "lucide-react";
+import { Tag, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Mousewheel, FreeMode } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/free-mode';
 import Global from "../../../Utils/Global";
 import tagsItemsRest from "../../../Utils/Services/tagsItemsRest";
 
 const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
     const [tags, setTags] = useState([]);
     const [currentTagIndex, setCurrentTagIndex] = useState(0);
-    const [canScrollLeft, setCanScrollLeft] = useState(false);
-    const [canScrollRight, setCanScrollRight] = useState(true);
-    const [scrollProgress, setScrollProgress] = useState(0);
+    const [swiper, setSwiper] = useState(null);
+    const [isBeginning, setIsBeginning] = useState(true);
+    const [isEnd, setIsEnd] = useState(false);
     const menuRef = useRef(null);
-    const scrollRef = useRef(null);
+    const prevRef = useRef(null);
+    const nextRef = useRef(null);
 
-    // Función para actualizar estado del scroll
-    const updateScrollButtons = (container) => {
-        if (container) {
-            const isAtStart = container.scrollLeft <= 10;
-            const isAtEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth - 10;
-            
-            setCanScrollLeft(!isAtStart);
-            setCanScrollRight(!isAtEnd);
-            
-            // Calcular progreso del scroll
-            const maxScroll = container.scrollWidth - container.clientWidth;
-            const progress = maxScroll > 0 ? (container.scrollLeft / maxScroll) * 100 : 0;
-            setScrollProgress(Math.min(100, Math.max(0, progress)));
-        }
+    // Configuración de Swiper
+    const swiperConfig = {
+        modules: [Navigation, Mousewheel, FreeMode],
+        spaceBetween: 8,
+        slidesPerView: 'auto',
+        freeMode: {
+            enabled: true,
+            momentum: true,
+            momentumRatio: 0.5,
+            momentumVelocityRatio: 0.5,
+        },
+        mousewheel: {
+            enabled: true,
+            forceToAxis: true,
+            sensitivity: 0.5,
+        },
+        navigation: {
+            prevEl: prevRef.current,
+            nextEl: nextRef.current,
+        },
+        onSwiper: (swiperInstance) => {
+            setSwiper(swiperInstance);
+            // Asignar navegación después de que Swiper esté listo
+            setTimeout(() => {
+                if (prevRef.current && nextRef.current) {
+                    swiperInstance.params.navigation.prevEl = prevRef.current;
+                    swiperInstance.params.navigation.nextEl = nextRef.current;
+                    swiperInstance.navigation.init();
+                    swiperInstance.navigation.update();
+                }
+            }, 100);
+        },
+        onSlideChange: (swiperInstance) => {
+            setIsBeginning(swiperInstance.isBeginning);
+            setIsEnd(swiperInstance.isEnd);
+        },
+        breakpoints: {
+            320: {
+                spaceBetween: 4,
+            },
+            768: {
+                spaceBetween: 8,
+            },
+            1024: {
+                spaceBetween: 12,
+            },
+        },
     };
 
-    // Estilos para scrollbar completamente invisible y animaciones mejoradas
+    // Estilos para Swiper y animaciones mejoradas
     useEffect(() => {
         const style = document.createElement('style');
         style.textContent = `
-            .scrollbar-invisible {
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                -webkit-overflow-scrolling: touch;
-                scroll-behavior: smooth;
-                overscroll-behavior-x: contain;
-                overscroll-behavior-y: none;
-                scroll-snap-type: none;
-                -webkit-scroll-behavior: smooth;
-                -webkit-overflow-scrolling: touch;
+            .categories-swiper {
+                overflow: hidden !important;
+                padding: 8px 0;
+                margin: 0 40px;
             }
             
-            .scrollbar-invisible::-webkit-scrollbar {
-                display: none;
-                width: 0 !important;
-                height: 0 !important;
-                background: transparent !important;
+            .categories-swiper .swiper-slide {
+                width: auto !important;
+                flex-shrink: 0;
             }
             
-            .scrollbar-invisible::-webkit-scrollbar-track {
-                display: none !important;
+            .swiper-nav-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             }
             
-            .scrollbar-invisible::-webkit-scrollbar-thumb {
-                display: none !important;
+            .swiper-nav-btn:hover {
+                background: rgba(255, 255, 255, 1);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                transform: translateY(-50%) scale(1.05);
             }
             
-            .scrollbar-invisible::-webkit-scrollbar-corner {
-                display: none !important;
+            .swiper-nav-btn.swiper-button-disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+            
+            .swiper-nav-prev {
+                left: 0;
+            }
+            
+            .swiper-nav-next {
+                right: 0;
             }
             
             @keyframes slideInFromBottom {
@@ -133,37 +190,6 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
                 );
                 box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
             }
-            
-            @keyframes breathe {
-                0%, 100% {
-                    opacity: 0.6;
-                    transform: scaleY(1);
-                }
-                50% {
-                    opacity: 1;
-                    transform: scaleY(1.2);
-                }
-            }
-            
-            .progress-bar {
-                animation: breathe 3s ease-in-out infinite;
-            }
-            
-            .enhanced-gradient-left {
-                background: linear-gradient(90deg, 
-                    rgba(var(--secondary-rgb, 248, 250, 252), 1) 0%,
-                    rgba(var(--secondary-rgb, 248, 250, 252), 0.8) 50%,
-                    transparent 100%
-                );
-            }
-            
-            .enhanced-gradient-right {
-                background: linear-gradient(270deg, 
-                    rgba(var(--secondary-rgb, 248, 250, 252), 1) 0%,
-                    rgba(var(--secondary-rgb, 248, 250, 252), 0.8) 50%,
-                    transparent 100%
-                );
-            }
         `;
         document.head.appendChild(style);
         return () => {
@@ -228,96 +254,6 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
         }
     }, [tags.length]);
 
-    // Inicializar estado de scroll cuando las categorías cambien - SCROLL ULTRA SUAVE
-    useEffect(() => {
-        if (scrollRef.current && items && items.length > 0) {
-            const container = scrollRef.current;
-            let isScrolling = false;
-            let scrollTimeout = null;
-            
-            // Configurar estado inicial
-            setTimeout(() => {
-                updateScrollButtons(container);
-            }, 100);
-            
-            // Scroll FLUIDO y NATURAL - Completamente rediseñado
-            const handleWheel = (e) => {
-                e.preventDefault();
-                
-                // Eliminar throttling agresivo - permitir scroll más natural
-                if (isScrolling) return;
-                
-                // Valores más amplios para scroll fluido
-                const isTrackpad = Math.abs(e.deltaY) < 120; // Mejor detección
-                const scrollMultiplier = isTrackpad ? 1.2 : 1.5; // Multiplicadores más altos
-                const maxScrollStep = isTrackpad ? 100 : 100; // Pasos más grandes
-                
-                let scrollAmount = 0;
-                
-                if (e.deltaY !== 0) {
-                    // Scroll vertical a horizontal - MÁS FLUIDO
-                    const rawAmount = e.deltaY * scrollMultiplier;
-                    scrollAmount = Math.sign(rawAmount) * Math.min(Math.abs(rawAmount), maxScrollStep);
-                } else if (e.deltaX !== 0) {
-                    // Scroll horizontal directo
-                    scrollAmount = e.deltaX * 1.0;
-                }
-                
-                // Shift + scroll con velocidad alta
-                if (e.shiftKey && e.deltaY !== 0) {
-                    scrollAmount = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY * 2.0), 150);
-                }
-                
-                if (scrollAmount !== 0) {
-                    isScrolling = true;
-                    
-                    // Limpiar timeout anterior
-                    if (scrollTimeout) {
-                        clearTimeout(scrollTimeout);
-                    }
-                    
-                    // Animación más rápida pero suave
-                    const currentScroll = container.scrollLeft;
-                    let start = null;
-                    const duration = 250; // Duración más corta para mejor respuesta
-                    
-                    const smoothFluidScroll = (timestamp) => {
-                        if (!start) start = timestamp;
-                        const progress = Math.min((timestamp - start) / duration, 1);
-                        
-                        // Easing más natural - menos exagerado
-                        const ease = 1 - Math.pow(1 - progress, 2); // easeOutQuad
-                        
-                        const newScrollLeft = currentScroll + (scrollAmount * ease);
-                        container.scrollLeft = newScrollLeft;
-                        
-                        if (progress < 1) {
-                            requestAnimationFrame(smoothFluidScroll);
-                        } else {
-                            // Liberar scroll más rápido
-                            scrollTimeout = setTimeout(() => {
-                                isScrolling = false;
-                            }, 30); // Reducido de 100ms a 30ms
-                        }
-                    };
-                    
-                    requestAnimationFrame(smoothFluidScroll);
-                } else {
-                    isScrolling = false;
-                }
-            };
-            
-            container.addEventListener('wheel', handleWheel, { passive: false });
-            
-            return () => {
-                container.removeEventListener('wheel', handleWheel);
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                }
-            };
-        }
-    }, [items]);
-
     // Detectar si estamos en mobile
     const isMobile = window.innerWidth < 1024;
     
@@ -355,48 +291,56 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
                                 
                                 {/* Mostrar categorías si existen, sino mostrar mensaje */}
                                 {items && items.length > 0 ? (
-                                    /* Contenedor moderno y limpio */
+                                    /* Contenedor moderno con Swiper y navegación */
                                     <div className="relative flex-1 overflow-hidden">
-                                       
-                                        {/* Contenedor scrolleable invisible */}
-                                        <div 
-                                            ref={scrollRef}
-                                            className="overflow-x-auto scrollbar-invisible"
-                                            onScroll={(e) => {
-                                                updateScrollButtons(e.target);
-                                            }}
+                                        {/* Botón anterior */}
+                                        <button
+                                            ref={prevRef}
+                                            className={`swiper-nav-btn swiper-nav-prev ${isBeginning ? 'swiper-button-disabled' : ''}`}
+                                            aria-label="Categoría anterior"
                                         >
-                                            <div className="flex items-center gap-0 lg:gap-8 text-sm py-4 px-0 lg:px-4 w-max min-w-full">
-                                                {[...items].sort((a, b) => a.name.localeCompare(b.name)).map((category, index, arr) => (
-                                                    <div key={index} className="flex-shrink-0 relative group/item category-item" style={{ animationDelay: `${index * 0.1}s` }}>
-                                                        <a
-                                                            href={`/catalogo?category=${category.slug}`}
-                                                            className="relative font-medium text-gray-700 hover:text-primary transition-all duration-500 cursor-pointer px-4 py-2.5 rounded-lg hover:bg-white/80 hover:shadow-lg whitespace-nowrap transform hover:scale-110 hover:-translate-y-1 category-hover-effect"
+                                            <ChevronLeft className="w-4 h-4 text-gray-600" />
+                                        </button>
+
+                                        {/* Swiper Container */}
+                                        <div className="">
+                                            <Swiper
+                                                {...swiperConfig}
+                                                className="categories-swiper"
+                                            >
+                                                {[...items].sort((a, b) => a.name.localeCompare(b.name)).map((category, index) => (
+                                                    <SwiperSlide key={index}>
+                                                        <div 
+                                                            className="category-item" 
+                                                            style={{ animationDelay: `${index * 0.1}s` }}
                                                         >
-                                                            {/* Underline hover effect mejorado */}
-                                                            <span className="relative">
-                                                                {category.name}
-                                                                <span className="absolute bottom-0 left-0 w-0 h-0.5 enhanced-underline transition-all duration-500 group-hover/item:w-full rounded-full"></span>
-                                                                
-                                                                {/* Efecto de brillo al hover */}
-                                                                <span className="absolute inset-0 opacity-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent group-hover/item:opacity-100 transition-opacity duration-700 rounded-lg"></span>
-                                                            </span>
-                                                        </a>
-                                                    </div>
+                                                            <a
+                                                                href={`/catalogo?category=${category.slug}`}
+                                                                className="relative font-medium text-gray-700 hover:text-primary transition-all duration-500 cursor-pointer px-4 py-2.5 rounded-lg hover:bg-white/80 hover:shadow-lg whitespace-nowrap transform hover:scale-110 hover:-translate-y-1 category-hover-effect group/item"
+                                                            >
+                                                                {/* Underline hover effect mejorado */}
+                                                                <span className="relative">
+                                                                    {category.name}
+                                                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 enhanced-underline transition-all duration-500 group-hover/item:w-full rounded-full"></span>
+                                                                    
+                                                                    {/* Efecto de brillo al hover */}
+                                                                    <span className="absolute inset-0 opacity-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent group-hover/item:opacity-100 transition-opacity duration-700 rounded-lg"></span>
+                                                                </span>
+                                                            </a>
+                                                        </div>
+                                                    </SwiperSlide>
                                                 ))}
-                                            </div>
+                                            </Swiper>
                                         </div>
-                                        
-                                        {/* Indicador de progreso mejorado */}
-                                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-gray-200/10 via-gray-200/20 to-gray-200/10 overflow-hidden rounded-full">
-                                            <div 
-                                                className="h-full bg-gradient-to-r from-primary/60 via-primary to-primary/60 transition-all duration-700 ease-out rounded-full progress-bar"
-                                                style={{
-                                                    width: `${scrollProgress}%`,
-                                                    boxShadow: scrollProgress > 0 ? '0 0 15px rgba(99, 102, 241, 0.4), 0 0 30px rgba(99, 102, 241, 0.2)' : 'none'
-                                                }}
-                                            ></div>
-                                        </div>
+
+                                        {/* Botón siguiente */}
+                                        <button
+                                            ref={nextRef}
+                                            className={`swiper-nav-btn swiper-nav-next ${isEnd ? 'swiper-button-disabled' : ''}`}
+                                            aria-label="Categoría siguiente"
+                                        >
+                                            <ChevronRight className="w-4 h-4 text-gray-600" />
+                                        </button>
                                     </div>
                                 ) : (
                                     <div className="py-3">
