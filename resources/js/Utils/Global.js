@@ -15,6 +15,7 @@ class Global {
     static CULQI_NAME = null;
     static GOOGLE_CLIENT_ID = null;
     static GOOGLE_OAUTH_ENABLED = null;
+    static API_KEY_TINYMCE = null;
 
     static set = (name, value) => {
         Global[name] = value;

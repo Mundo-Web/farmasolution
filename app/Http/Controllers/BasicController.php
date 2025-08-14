@@ -145,6 +145,7 @@ class BasicController extends Controller
         'CULQI_API' => CulqiConfig::getApiUrl(),
         'CULQI_ENABLED' => CulqiConfig::isEnabled(),
         'CULQI_NAME' => CulqiConfig::getName(),
+        'API_KEY_TINYMCE' => env('API_KEY_TINYMCE',"xiambljzyxjms4y2148wtxxl05f7bcpyt5o949l0c78tfe7c"),
       ],
       'can_access' => $menus,
       'fillable' => $fillable
