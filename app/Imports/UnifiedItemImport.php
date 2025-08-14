@@ -108,7 +108,7 @@ class UnifiedItemImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsO
         Item::truncate();
         SubCategory::truncate();
         Collection::truncate();
-        // Category::truncate();
+        Category::truncate();
         Brand::truncate();
         
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
