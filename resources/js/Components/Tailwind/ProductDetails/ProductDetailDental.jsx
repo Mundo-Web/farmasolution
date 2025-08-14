@@ -632,7 +632,8 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                                 }`}
                                             style={{ listStyleType: "disc" }}
                                         >
-                                            {item?.features.map(
+                                            {console.log(item?.specifications)}
+                                            {item?.specifications.map(
                                                 (spec, index) =>
                                                     spec.type ===
                                                     "principal" && (
@@ -641,11 +642,17 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                                             className="flex items-center gap-2"
                                                         >
                                                             <CircleCheckIcon className="customtext-primary min-h-4 min-w-4 max-h-4 max-w-4" />
-                                                            {spec.feature}
+                                                            {spec?.title && (
+                                                                <>
+                                                                
+                                                               <span className="font-semibold"> {spec?.title}:</span>
+                                                                {spec?.description}
+                                                                </>
+                                                            )} 
                                                         </li>
                                                     )
                                             )}
-                                             {item?.features.map(
+                                             {item?.specifications.map(
                                                 (spec, index) =>
                                                     spec.type ===
                                                     "general" && (
@@ -654,7 +661,13 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                                             className="flex items-center gap-2"
                                                         >
                                                             <CircleCheckIcon className="customtext-primary min-h-4 min-w-4 max-h-4 max-w-4" />
-                                                            {spec.feature}
+                                                            {spec?.title && (
+                                                                <>
+                                                                
+                                                               <span className="font-semibold"> {spec?.title}:</span>
+                                                                {spec?.description}
+                                                                </>
+                                                            )} 
                                                         </li>
                                                     )
                                             )}
