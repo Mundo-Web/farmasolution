@@ -645,6 +645,19 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                                         </li>
                                                     )
                                             )}
+                                             {item?.features.map(
+                                                (spec, index) =>
+                                                    spec.type ===
+                                                    "general" && (
+                                                        <li
+                                                            key={index}
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <CircleCheckIcon className="customtext-primary min-h-4 min-w-4 max-h-4 max-w-4" />
+                                                            {spec.feature}
+                                                        </li>
+                                                    )
+                                            )}
                                         </ul>
                                       
                                     </div>
