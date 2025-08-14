@@ -282,14 +282,14 @@ const Categories = () => {
                             label="Banner"
                             col="col-12"
                             aspect={3 / 1}
-                           hidden={!Fillable.has('categories', 'banner')}
+                            hidden={!Fillable.has('categories', 'banner')}
                         />
                         <ImageFormGroup
                             eRef={imageRef}
                             label="Imagen"
                             col="col-12"
                             aspect={16 / 9}
-                             hidden={!Fillable.has('categories', 'image')}
+                            hidden={!Fillable.has('categories', 'image')}
                         />
 
                     </div>
