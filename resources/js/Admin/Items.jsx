@@ -314,8 +314,8 @@ const Items = ({ categories, brands, collections }) => {
 
     const onDeleteClicked = async (id) => {
         const { isConfirmed } = await Swal.fire({
-            title: "Eliminar curso",
-            text: "¿Estás seguro de eliminar este curso?",
+            title: "Eliminar item",
+            text: "¿Estás seguro de eliminar este item?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Sí, eliminar",
@@ -642,7 +642,7 @@ const Items = ({ categories, brands, collections }) => {
             />
             <Modal
                 modalRef={modalRef}
-                title={isEditing ? "Editar curso" : "Agregar curso"}
+                title={isEditing ? "Editar item" : "Agregar item"}
                 onSubmit={onModalSubmit}
                 size="xl"
             >
@@ -862,7 +862,7 @@ const Items = ({ categories, brands, collections }) => {
                                         border: "2px dashed #ccc",
                                         padding: "20px",
                                         textAlign: "center",
-                                        cursor: "pointer",
+                                        itemr: "pointer",
                                         borderRadius: "4px",
                                         boxShadow:
                                             "2.5px 2.5px 5px rgba(0,0,0,.125)",
