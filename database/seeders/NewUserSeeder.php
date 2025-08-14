@@ -14,11 +14,11 @@ class NewUserSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate([
-            'email' => 'admin@d2en1.com'
+            'email' => 'admin@clickdentalperu.com'
         ], [
-            'name' => 'Admin',
-            'lastname' => 'D2EN1',
-            'password' => 'd2en12025#',
+            'name' => 'Click Dental',
+            'lastname' => 'Perú',
+            'password' => 'C!1ckD3nt@lP3ru',
         ])->assignRole('Admin');
     }
 }
