@@ -26,13 +26,13 @@ export default function CategoryGrid({
                         return (
                             <div key={category.id} className="w-full lg:row-span-2 lg:col-span-2">
                                 <a href={`/catalogo?category=${category.slug}`}>
-                                    <section className="group font-font-general text-white w-full h-[250px] sm:h-full">
+                                    <section className="group font-font-general text-white w-full h-[200px] sm:h-full">
                                         <div className="flex gap-4 h-full">
                                             <div
                                                 className="relative w-full h-full overflow-hidden rounded-2xl"
                                             >
                                                 <img
-                                                    src={`/storage/images/category/${category?.image}`}
+                                                    src={`/storage/images/category/${category?.banner || category?.image}`}
                                                     onError={e => e.target.src = 'assets/img/noimage/noimagenslider.jpg'}
                                                     alt={category?.name}
                                                     className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
@@ -63,13 +63,13 @@ export default function CategoryGrid({
                         return (
                             <div key={category.id} className="w-full lg:col-span-2">
                                 <a href={`/catalogo?category=${category.slug}`}>
-                                    <section className="group font-font-general text-white w-full h-[250px] sm:h-full sm:max-h-[320px] 2xl:h-[350px]">
+                                    <section className="group font-font-general text-white w-full h-[200px] sm:h-full sm:max-h-[320px] 2xl:h-[350px]">
                                         <div className="flex gap-4 h-full">
                                             <div
                                                 className="relative w-full h-full overflow-hidden rounded-2xl"
                                             >
                                                 <img
-                                                    src={`/storage/images/category/${category?.image}`}
+                                                    src={`/storage/images/category/${category?.banner || category?.image}`}
                                                     onError={e => e.target.src = 'assets/img/noimage/noimagenslider.jpg'}
                                                     alt={category?.name}
                                                     className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
@@ -100,13 +100,13 @@ export default function CategoryGrid({
                         return (
                             <div key={category.id} className="w-full">
                                 <a href={`/catalogo?category=${category.slug}`}>
-                                    <section className="group font-font-general text-white w-full h-[250px] sm:h-full sm:min-h-[320px] 2xl:min-h-[350px] 2xl:max-h-[350px]">
+                                    <section className="group font-font-general text-white w-full h-[200px] sm:h-full sm:min-h-[300px] 2xl:min-h-[300px] 2xl:max-h-[300px]">
                                         <div className="flex gap-4 h-full">
                                             <div
                                                 className="relative w-full h-full overflow-hidden rounded-2xl"
                                             >
                                                 <img
-                                                    src={`/storage/images/category/${category?.image}`}
+                                                    src={`/storage/images/category/${category?.banner || category?.image}`}
                                                     onError={e => e.target.src = 'assets/img/noimage/noimagenslider.jpg'}
                                                     alt={category?.name}
                                                     className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
@@ -152,13 +152,13 @@ export default function CategoryGrid({
                             {remainderCategories.map(category => (
                                 <div key={category.id} className="w-full">
                                     <a href={`/catalogo?category=${category.slug}`}>
-                                        <section className="group font-font-general text-white w-full h-[250px] sm:h-full max-h-[400px]">
+                                        <section className="group font-font-general text-white w-full h-[200px] sm:h-full max-h-[400px]">
                                             <div className="flex gap-4 h-full">
                                                 <div
                                                     className="relative w-full h-full overflow-hidden rounded-2xl"
                                                 >
                                                     <img
-                                                        src={`/storage/images/category/${category?.image}`}
+                                                        src={`/storage/images/category/${category?.banner || category?.image}`}
                                                         onError={e => e.target.src = 'assets/img/noimage/noimagenslider.jpg'}
                                                         alt={category?.name}
                                                         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
@@ -192,13 +192,13 @@ export default function CategoryGrid({
                             {remainderCategories.map(category => (
                                 <div key={category.id} className="w-full">
                                     <a href={`/catalogo?category=${category.slug}`}>
-                                        <section className="group font-font-general text-white w-full h-[250px] sm:h-full max-h-[400px]">
+                                        <section className="group font-font-general text-white w-full h-[200px] sm:h-full max-h-[400px]">
                                             <div className="flex gap-4 h-full">
                                                 <div
                                                     className="relative w-full h-full overflow-hidden rounded-2xl"
                                                 >
                                                     <img
-                                                        src={`/storage/images/category/${category?.image}`}
+                                                        src={`/storage/images/category/${category?.banner || category?.image}`}
                                                         onError={e => e.target.src = 'assets/img/noimage/noimagenslider.jpg'}
                                                         alt={category?.name}
                                                         className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
@@ -230,14 +230,14 @@ export default function CategoryGrid({
                     return (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 xl:gap-7 2xl:gap-10 mt-5 xl:mt-7 2xl:mt-10">
                             {remainderCategories.map((category, index) => (
-                                <section key={category.id} className={`group font-font-general text-white w-full h-[250px] ${index === 0 ? 'sm:row-span-2 sm:h-full' : 'sm:h-[320px] 2xl:h-[350px]'}`}>
+                                <section key={category.id} className={`group font-font-general text-white w-full h-[200px] ${index === 0 ? 'sm:row-span-2 sm:h-full' : 'sm:h-[320px] 2xl:h-[350px]'}`}>
                                     <a href={`/catalogo?category=${category.slug}`}>
                                         <div className="flex gap-4 h-full">
                                             <div
                                                 className="relative w-full h-full overflow-hidden rounded-2xl"
                                             >
                                                 <img
-                                                    src={`/storage/images/category/${category?.image}`}
+                                                    src={`/storage/images/category/${category?.banner || category?.image}`}
                                                     onError={e => e.target.src = 'assets/img/noimage/noimagenslider.jpg'}
                                                     alt={category?.name}
                                                     className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"

@@ -1293,7 +1293,9 @@
                     "path",
                     "title",
                     "description",
-                    "link_catalog"
+                    "link_catalog",
+                    "class_title",
+                    "class_container"
                 ],
                 "using": {
                     "model": "Category",
