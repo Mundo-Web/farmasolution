@@ -6,6 +6,7 @@ import 'tippy.js/dist/tippy.css'
 import General from './General';
 import LaravelSession from './LaravelSession';
 import Fillable from './Fillable';
+import CanAccess from './CanAccess';
 
 let roles = [];
 export const hasRole = (...rolesIn) => {
@@ -28,6 +29,10 @@ const CreateReactScript = (render) => {
       for (const key in (properties.fillable ?? {})) {
         if (!properties.fillable[key]) continue
         Fillable.set(key, properties.fillable[key])
+      }
+
+      for (const menu of (properties.can_access ?? [])) {
+        CanAccess[menu.menu] = menu.can_access == 1
       }
 
       if (properties?.global) {

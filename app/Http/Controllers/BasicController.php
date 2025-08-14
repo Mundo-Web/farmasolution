@@ -10,6 +10,7 @@ use App\Models\Slider;
 use App\Models\Social;
 use App\Models\User;
 use App\Helpers\CulqiConfig;
+use App\Models\RoleHasMenu;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -107,15 +108,25 @@ class BasicController extends Controller
     $culqiEnabled = \App\Models\General::where('correlative', 'checkout_culqi')->first();
     $culqiName = \App\Models\General::where('correlative', 'checkout_culqi_name')->first();
 
-    $tableName = (new $this->model)->getTable();
-    $fillable = [
-      $tableName => method_exists($this->model, 'columns') ? $this->model::columns() : null
-    ];
+    $fillable = [];
+    try {
+      $tableName =  (new $this->model)->getTable();
+      $fillable = [
+        $tableName => method_exists($this->model, 'columns') ? $this->model::columns() : null
+      ];
+    } catch (\Throwable $th) {
+    }
     if (is_array($this->manageFillable)) {
       foreach ($this->manageFillable as $model) {
         $tableName = (new $model)->getTable();
         $fillable[$tableName] = method_exists($model, 'columns') ? $model::columns() : null;
       }
+    }
+
+    $menus = [];
+    if ($session) {
+      $roleIds = $session->roles()->pluck('id')->toArray();
+      $menus = RoleHasMenu::whereIn('role_id', $roleIds)->get();
     }
 
     $properties = [
@@ -135,6 +146,7 @@ class BasicController extends Controller
         'CULQI_ENABLED' => CulqiConfig::isEnabled(),
         'CULQI_NAME' => CulqiConfig::getName(),
       ],
+      'can_access' => $menus,
       'fillable' => $fillable
     ];
     $reactViewProperties = $this->setReactViewProperties($request);

@@ -233,7 +233,7 @@ const Items = ({ categories, brands, collections }) => {
             discount: discountRef.current.value,
             tags: $(tagsRef.current).val(),
             description: descriptionRef.current.value,
-            stock: stockRef.current.value ?? 0,
+            stock: stockRef.current.value || 0,
             features: cleanFeatures,
             specifications: cleanSpecs,
             linkvideo: linkvideoRef.current.value,
@@ -713,6 +713,7 @@ const Items = ({ categories, brands, collections }) => {
                             label="Stock"
                             eRef={stockRef}
                             type="number"
+                            required
                             hidden={!Fillable.has('items', 'stock')}
                         />
 

@@ -54,6 +54,7 @@ use App\Http\Controllers\Admin\SaleStatusController as AdminSaleStatusController
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Admin\FillableController;
+use App\Http\Controllers\Admin\RoleHasMenuController;
 use App\Http\Controllers\AuthClientController;
 // Public
 use App\Http\Controllers\AuthController;
@@ -445,6 +446,8 @@ Route::middleware('auth')->group(function () {
       Route::post('/system/backup', [AdminSystemController::class, 'importBK']);
 
       Route::post('/colors', [AdminSystemColorController::class, 'save']);
+
+      Route::post('/role-has-menus', [RoleHasMenuController::class, 'save']);
 
       Route::get('/system/fetch-remote-changes', [AdminSystemController::class, 'fetchRemoteChanges']);
       Route::get('/system/has-remote-changes', [AdminSystemController::class, 'hasRemoteChanges']);

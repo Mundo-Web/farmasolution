@@ -4,6 +4,8 @@ import "tippy.js/dist/tippy.css";
 import Logout from "../../Actions/Logout";
 import MenuItem from "../MenuItem";
 import MenuItemContainer from "../MenuItemContainer";
+import menus from '../../../json/menus.json'
+import CanAccess from "../../Utils/CanAccess";
 
 const Menu = ({ session, hasRole }) => {
   const mainRole = session.roles[0];
@@ -91,11 +93,9 @@ const Menu = ({ session, hasRole }) => {
         {hasRole("Admin", "Root") && (
           <div id="sidebar-menu" className="show">
             <ul id="side-menu">
-              <li className="menu-title">Navigation Panel</li>
               {hasRole("Admin", "Root") && (
                 <>
-                  {/* Administración */}
-                  <MenuItem href="/admin/home" icon="mdi mdi-home">Dashboard</MenuItem>
+                  {/* <MenuItem href="/admin/home" icon="mdi mdi-home">Dashboard</MenuItem>
                   <MenuItem href="/admin/sales" icon="mdi mdi-cart-outline">Pedidos</MenuItem>
                   <MenuItem href="/admin/items" icon="mdi mdi-bookshelf">Items</MenuItem>
 
@@ -118,12 +118,11 @@ const Menu = ({ session, hasRole }) => {
                     <MenuItem href="/admin/brands" icon="mdi mdi-label">Marcas</MenuItem>
                     <MenuItem href="/admin/tags" icon="mdi mdi-label-multiple">Etiquetas</MenuItem>
                   </MenuItemContainer>
-                   <MenuItem href="/admin/stores" icon="mdi mdi-office-building-marker">Sucursales</MenuItem>
+                  <MenuItem href="/admin/stores" icon="mdi mdi-office-building-marker">Sucursales</MenuItem>
                   <MenuItem href="/admin/prices" icon="mdi mdi-moped">Costos de envío</MenuItem>
                   <MenuItem href="/admin/messages" icon="mdi mdi-message-text">Mensajes</MenuItem>
                   <MenuItem href="/admin/subscriptions" icon="mdi mdi-email-multiple">Suscripciones</MenuItem>
 
-                  {/* Landing Page */}
                   <li className="menu-title">Landing Page</li>
                   <MenuItem href="/admin/ads" icon='mdi mdi-google-ads'>Pop-ups</MenuItem>
                   <MenuItem href="/admin/posts" icon="mdi mdi-post">Posts</MenuItem>
@@ -140,17 +139,19 @@ const Menu = ({ session, hasRole }) => {
                   <MenuItem href="/admin/socials" icon="mdi mdi-web">Redes Sociales</MenuItem>
                   <MenuItem href="/admin/statuses" icon="mdi mdi-bell-circle">Estados de ventas</MenuItem>
 
-                  {/* Recursos */}
                   <li className="menu-title">Recursos</li>
                   <MenuItem href="/admin/gallery" icon="mdi mdi-image-multiple">Galeria</MenuItem>
                   <MenuItem href="/admin/repository" icon="mdi mdi-database">Repositorio</MenuItem>
 
-                  {/* Configuraciones */}
                   <li className="menu-title">Configuraciones</li>
                   <MenuItemContainer title="Usuarios" icon="mdi mdi-account-multiple">
                     <MenuItem href="/admin/users" icon="mdi mdi-account-box-multiple">Sistema</MenuItem>
                     <MenuItem href="/admin/clients" icon="mdi mdi-account-group">Clientes</MenuItem>
                   </MenuItemContainer>
+                  {hasRole("Root") && <MenuItem href="/admin/menus" icon="mdi mdi-menu">
+                    Menus
+                    <i className="mdi mdi-security ms-1 text-danger"></i>
+                  </MenuItem>}
                   {hasRole("Root") && (
                     <MenuItem href="/admin/system" icon="mdi mdi-cog" target="_blank">
                       Configuraciones
@@ -159,7 +160,41 @@ const Menu = ({ session, hasRole }) => {
                   )}
                   <MenuItem href="/admin/generals" icon="mdi mdi-credit-card-settings">Datos Generales</MenuItem>
                   <MenuItem href="/admin/profile" icon="mdi mdi-account-box">Mi perfil</MenuItem>
-                  <MenuItem href="/admin/account" icon="mdi mdi-account-key">Mi cuenta</MenuItem>
+                  <MenuItem href="/admin/account" icon="mdi mdi-account-key">Mi cuenta</MenuItem> */}
+
+                  {menus.map((section, i) => (
+                    <React.Fragment key={i}>
+                      <li className="menu-title">{section.title}</li>
+                      {section.items.map((item, idx) =>
+                        item.children ? (
+                          <MenuItemContainer key={idx} title={item.label} icon={item.icon}>
+                            {item.children.map((child, childIdx) => CanAccess[child.href] && <MenuItem key={childIdx} href={child.href} icon={child.icon}>
+                              {child.label}
+                            </MenuItem>)}
+                          </MenuItemContainer>
+                        ) : item.role ? (
+                          hasRole(item.role) && CanAccess[item.href] && <MenuItem
+                            key={idx}
+                            href={item.href}
+                            icon={item.icon}
+                            target={item.target}
+                          >
+                            {item.label}
+                            {item.target && (
+                              <i className="mdi mdi-arrow-top-right ms-1"></i>
+                            )}
+                          </MenuItem>
+                        ) : <>
+                          {
+                            CanAccess[item.href] &&
+                            <MenuItem key={idx} href={item.href} icon={item.icon}>
+                              {item.label}
+                            </MenuItem>
+                          }
+                        </>
+                      )}
+                    </React.Fragment>
+                  ))}
                 </>
               )}
             </ul>
