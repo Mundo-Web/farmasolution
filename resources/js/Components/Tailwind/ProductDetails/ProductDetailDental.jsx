@@ -639,7 +639,7 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                                     "principal" && (
                                                         <li
                                                             key={index}
-                                                            className="flex items-center gap-2"
+                                                            className="flex items-start gap-3"
                                                         >
                                                             <CircleCheckIcon className="customtext-primary min-h-4 min-w-4 max-h-4 max-w-4" />
                                                            
