@@ -493,7 +493,9 @@
                     "overlayMobile",
                     "whatsapp_info",
                     "class_button_primary",
-                    "class_icon_primary"
+                    "class_icon_primary",
+                    "class_title",
+                    "class_description"
                 ],
                 "using": {
                     "model": "Slider",

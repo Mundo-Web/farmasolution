@@ -105,20 +105,18 @@ const CardProductBananaLab = ({
                 href={`/product/${product?.slug}`}
                 initial={{
                     scale: 1,
-                    boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
                 }}
                 whileHover={{
                     scale: 1.02,
-                    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
                     transition: { duration: 0.3 },
                 }}
-                className={`group px-1  ${widthClass} rounded-b-3xl overflow-hidden flex-shrink-0 font-font-secondary cursor-pointer relative `}
+                className={`group px-3  bg-transparent  ${widthClass} rounded-b-3xl overflow-hidden flex-shrink-0 font-paragraph cursor-pointer relative `}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <div className="bg-white rounded-md lg:p-4 h-full  flex flex-col ">
+                <div className="bg-transparent rounded-md  h-full  flex flex-col ">
                     {/* Imagen del producto y etiqueta de descuento */}
-                    <div className="relative">
+                    <div className="relative bg-white rounded-xl overflow-hidden">
                         {product?.discount != null &&
                             !isNaN(product?.discount) && (
                                 styleOffer === "square" ? (
@@ -204,14 +202,13 @@ const CardProductBananaLab = ({
                                 </button>}
                         </div>
                         {/* Precio */}
-                        <div className="flex flex-col lg:flex-row lg:justify-between items-baseline mt-1">
+                        <div className="flex flex-col lg:flex-row  items-center gap-4 items-baseline mt-1">
                             <span className="customtext-neutral-dark text-[20px] md:text-2xl font-bold">
                                 S/ {product?.final_price}
                             </span>
-                            {product?.discount > 0 && product?.discount != null &&
-                                !isNaN(product?.discount) && product?.discount < product?.final_price && (
-                                    <span className="text-xs lg:text-sm customtext-neutral-dark line-through">
-                                        S/ {product?.discount}
+                            {Number(product?.discount) > 0 && Number(product?.final_price) < Number(product?.price) && (
+                                    <span className="text-base lg:text-base customtext-neutral-light line-through font-semibold">
+                                        S/ {product?.price}
                                     </span>
                                 )}
                             {/*  <p className="text-[10px] lg:text-xs customtext-neutral-dark mt-1">

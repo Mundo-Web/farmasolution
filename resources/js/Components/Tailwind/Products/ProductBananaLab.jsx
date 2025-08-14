@@ -59,7 +59,7 @@ const ProductBananaLab = ({ items, data, setCart, cart ,setFavorites,favorites})
                     {/* Products container */}
                     <div className="hidden md:block overflow-hidden py-0">
                         <div
-                            className="flex  items-center transition-all duration-300   ease-in-out lg:h-[460px] lg:max-h-[460px]  xl:h-[400px] xl:max-h-[420px] 2xl:h-[460px] 2xl:max-h-[460px] lg:mt-4 lg:mb-10 lg:gap-0"
+                            className="flex   items-center transition-all duration-300   ease-in-out lg:h-[460px] lg:max-h-[460px]  xl:h-[400px] xl:max-h-[420px] 2xl:h-[460px] 2xl:max-h-[460px] lg:mt-4 lg:mb-10 lg:gap-0"
                             style={{
                                 transform: `translateX(-${
                                     currentSlide * (100 / slidesPerView)
