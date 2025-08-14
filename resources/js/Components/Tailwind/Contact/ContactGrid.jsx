@@ -16,6 +16,20 @@ const ContactGrid = ({ data, contacts }) => {
         );
     };
 
+    // Función para procesar emails separados por comas
+    const getContactEmails = (correlative) => {
+        const emailString = getContact(correlative);
+        if (!emailString) return [];
+        return emailString.split(',').map(email => email.trim()).filter(email => email);
+    };
+
+    // Función para procesar teléfonos separados por comas
+    const getContactPhones = (correlative) => {
+        const phoneString = getContact(correlative);
+        if (!phoneString) return [];
+        return phoneString.split(',').map(phone => phone.trim()).filter(phone => phone);
+    };
+
     const location =
         contacts.find((x) => x.correlative == "location")?.description ?? "0,0";
 
@@ -417,12 +431,17 @@ const ContactGrid = ({ data, contacts }) => {
                             Escríbenos para recibir atención personalizada y
                             resolver tus dudas.
                         </p>
-                        <a
-                            href={`mailto:${getContact('email_contact')}`}
-                            className="customtext-primary font-bold hover:no-underline"
-                        >
-                            {getContact("email_contact")}
-                        </a>
+                        <div className="space-y-1">
+                            {getContactEmails('email_contact').map((email, index) => (
+                                <a
+                                    key={index}
+                                    href={`mailto:${email}`}
+                                    className="customtext-primary font-bold hover:no-underline block"
+                                >
+                                    {email}
+                                </a>
+                            ))}
+                        </div>
                     </motion.div>
 
                     <motion.div 
@@ -451,12 +470,17 @@ const ContactGrid = ({ data, contacts }) => {
                             Llámanos para obtener soporte inmediato y asistencia
                             profesional.
                         </p>
-                        <a
-                            href={`tel:${getContact("phone_contact")}`}
-                            className="customtext-primary hover:no-underline font-bold"
-                        >
-                            {getContact("phone_contact")}
-                        </a>
+                        <div className="space-y-1">
+                            {getContactPhones('phone_contact').map((phone, index) => (
+                                <a
+                                    key={index}
+                                    href={`tel:${phone}`}
+                                    className="customtext-primary hover:no-underline font-bold block"
+                                >
+                                    {phone}
+                                </a>
+                            ))}
+                        </div>
                     </motion.div>
 
                     <motion.div 
