@@ -685,9 +685,7 @@ const Stores = ({ ubigeos = [] }) => {
                                             placeholder="Ej: -12.042626777544823"
                                             onChange={handleCoordinateChange}
                                         />
-                                        <small className="text-muted">
-                                            Rango válido para Perú: -18.5 a -0.1
-                                        </small>
+                                      
                                     </div>
                                     <div className="col-md-6">
                                         <InputFormGroup
@@ -701,9 +699,7 @@ const Stores = ({ ubigeos = [] }) => {
                                             placeholder="Ej: -77.04753389161506"
                                             onChange={handleCoordinateChange}
                                         />
-                                        <small className="text-muted">
-                                            Rango válido para Perú: -81.5 a -68.5
-                                        </small>
+                                      
                                     </div>
                                 </div>
 
