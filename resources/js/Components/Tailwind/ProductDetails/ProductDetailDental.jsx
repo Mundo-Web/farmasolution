@@ -642,34 +642,70 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                                             className="flex items-center gap-2"
                                                         >
                                                             <CircleCheckIcon className="customtext-primary min-h-4 min-w-4 max-h-4 max-w-4" />
-                                                            {spec?.title && (
-                                                                <>
+                                                           
                                                                 
-                                                               <span className="font-semibold"> {spec?.title}:</span>
+                                                              
                                                                 {spec?.description}
-                                                                </>
-                                                            )} 
+                                                               
                                                         </li>
                                                     )
                                             )}
-                                             {item?.specifications.map(
-                                                (spec, index) =>
-                                                    spec.type ===
-                                                    "general" && (
-                                                        <li
-                                                            key={index}
-                                                            className="flex items-center gap-2"
-                                                        >
-                                                            <CircleCheckIcon className="customtext-primary min-h-4 min-w-4 max-h-4 max-w-4" />
-                                                            {spec?.title && (
-                                                                <>
-                                                                
-                                                               <span className="font-semibold"> {spec?.title}:</span>
-                                                                {spec?.description}
-                                                                </>
-                                                            )} 
-                                                        </li>
-                                                    )
+                                           
+                                        </ul>
+                                      
+                                    </div>
+                                </div>
+
+                                    <div className="flex-1 w-full ">
+                                    <div className="bg-gray-100 rounded-lg p-6">
+                                        <h3 className="font-bold text-lg mb-4 customtext-neutral-dark">
+                                            Especificaciones Técnicas
+                                        </h3>
+                                        <ul
+                                            className={`space-y-2  customtext-primary mb-4 transition-all duration-300 ${expandedSpecificationMain
+                                                ? "max-h-full"
+                                                : "max-h-full overflow-hidden"
+                                                }`}
+                                            style={{ listStyleType: "disc" }}
+                                        >
+                                          
+                                             {item?.specifications.filter(spec => spec.type === "general").length > 0 ? (
+                                                <div className="overflow-hidden rounded-lg border border-gray-200">
+                                                    <table className="w-full">
+                                                        <thead>
+                                                            <tr className="bg-gray-50 border-b border-gray-200">
+                                                                <th className="px-4 py-3 text-left text-sm font-semibold customtext-neutral-dark w-1/3">
+                                                                    Especificación
+                                                                </th>
+                                                                <th className="px-4 py-3 text-left text-sm font-semibold customtext-neutral-dark w-2/3">
+                                                                    Detalle
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {item?.specifications.map(
+                                                                (spec, index) =>
+                                                                    spec.type === "general" && (
+                                                                        <tr
+                                                                            key={index}
+                                                                            className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors duration-200"
+                                                                        >
+                                                                            <td className="px-4 py-3 text-sm font-medium customtext-neutral-dark align-top">
+                                                                                {spec?.title || "Característica"}
+                                                                            </td>
+                                                                            <td className="px-4 py-3 text-sm customtext-primary">
+                                                                                {spec?.description}
+                                                                            </td>
+                                                                        </tr>
+                                                                    )
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center py-8 text-gray-500">
+                                                    <p className="text-sm">No hay especificaciones técnicas disponibles</p>
+                                                </div>
                                             )}
                                         </ul>
                                       
