@@ -12,7 +12,7 @@ import Table from "../Components/Adminto/Table";
 import DxButton from "../Components/dx/DxButton";
 import CreateReactScript from "../Utils/CreateReactScript";
 import ReactAppend from "../Utils/ReactAppend";
-
+import Fillable from "../Utils/Fillable";
 const categoriesRest = new CategoriesRest();
 
 const Categories = () => {
@@ -153,7 +153,7 @@ const Categories = () => {
                         caption: "Descripción",
                         width: "50%",
                     },
-                    {
+                      Fillable.has('categories', 'image') && {
                         dataField: "image",
                         caption: "Imagen",
                         width: "90px",
@@ -163,6 +163,31 @@ const Categories = () => {
                                 container,
                                 <img
                                     src={`/storage/images/category/${data.image}`}
+                                    style={{
+                                        width: "80px",
+                                        height: "48px",
+                                        objectFit: "cover",
+                                        objectPosition: "center",
+                                        borderRadius: "4px",
+                                    }}
+                                    onError={(e) =>
+                                    (e.target.src =
+                                        "/api/cover/thumbnail/null")
+                                    }
+                                />
+                            );
+                        },
+                    },
+                     Fillable.has('categories', 'banner') && {
+                        dataField: "banner",
+                        caption: "Banner",
+                        width: "90px",
+                        allowFiltering: false,
+                        cellTemplate: (container, { data }) => {
+                            ReactAppend(
+                                container,
+                                <img
+                                    src={`/storage/images/category/${data.banner}`}
                                     style={{
                                         width: "80px",
                                         height: "48px",
@@ -257,12 +282,14 @@ const Categories = () => {
                             label="Banner"
                             col="col-12"
                             aspect={3 / 1}
+                           hidden={!Fillable.has('categories', 'banner')}
                         />
                         <ImageFormGroup
                             eRef={imageRef}
                             label="Imagen"
                             col="col-12"
                             aspect={16 / 9}
+                             hidden={!Fillable.has('categories', 'image')}
                         />
 
                     </div>
