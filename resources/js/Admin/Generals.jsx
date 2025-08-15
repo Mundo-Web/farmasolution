@@ -680,6 +680,7 @@ const Generals = ({ generals }) => {
                 ))}
               </select>
               <TinyMCEFormGroup
+              height={600}
                 label={
                   <>
                     Plantilla de Email (HTML seguro, variables: <code>{`{{variable}}`}</code>)
