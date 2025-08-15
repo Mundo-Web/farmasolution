@@ -9,22 +9,22 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
   const imageVariants = {
         initial: {
             scale: 1,
-            opacity: 0.1
+            opacity: 0.8
         },
         animate: {
             scale: [1, 1.05, 1.1],
             opacity: 1,
             transition: {
-                duration: 0.8,
-                delay: 0.2,
+                duration: 5,
+             
                 ease: "easeOut"
             }
         },
         exit: {
             scale: 1,
-            opacity: 0.1,
+            opacity: 0.6,
             transition: {
-                duration: 0.5,
+                duration: 0.3,
                 ease: "easeInOut"
             }
         }
@@ -155,7 +155,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
     const startX = useRef(0);
     const currentTranslate = useRef(0);
 
-    const duplicatedItems = [items[items.length - 1], ...items, items[0], ...items];
+    const duplicatedItems = [items[items.length - 1], ...items, items[0]];
     const validAlignments = ["center", "left", "right"];
     const validPosition = ["yes", "true", "si"];
     const showPagination = validAlignments.includes(data?.paginationAlignment);
