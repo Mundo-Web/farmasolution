@@ -12,12 +12,12 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
             opacity: 0.8
         },
         animate: {
-            scale: [1, 1.5, 1],
+            scale: [1, 1.2, 1],
             opacity: 1,
             transition: {
                 duration: 20,
              
-                ease: "easeOut"
+               
             }
         },
         exit: {
