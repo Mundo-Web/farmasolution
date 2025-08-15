@@ -86,7 +86,8 @@ const SliderImagen = ({ items, data }) => {
                         >
                             {[...items,...items].filter((brand) => brand.image).map((brand, index) => (
                                 <SwiperSlide key={index}>
-                                    <div 
+                                  <a  href={`catalogo?brand=${brand?.slug}`}>
+                                      <div 
                                         className={`group w-full flex items-center justify-center px-2 font-font-secondary ${imagesLoaded ? 'h-[50px] lg:h-[80px]' : 'auto'}`}
                              
                                     >
@@ -102,6 +103,7 @@ const SliderImagen = ({ items, data }) => {
                                             }}
                                         />
                                     </div>
+                                  </a>
                                 </SwiperSlide>
                             ))}
                         </Swiper>

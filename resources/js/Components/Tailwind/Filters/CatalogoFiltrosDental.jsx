@@ -308,9 +308,9 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
             if (GET.category) {
                 params.category_slugs = GET.category;
             }
-            {/*if (GET.brand) {
+            if (GET.brand) {
                 params.brand_slugs = GET.brand;
-            } */}
+            } 
             if (GET.subcategory) {
                 params.subcategory_slugs = GET.subcategory;
             }
