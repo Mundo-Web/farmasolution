@@ -15,7 +15,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
             scale: [1, 1.5, 1],
             opacity: 1,
             transition: {
-                duration: 10,
+                duration: 20,
              
                 ease: "easeOut"
             }
