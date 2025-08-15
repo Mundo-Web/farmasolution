@@ -9,7 +9,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
   const imageVariants = {
         initial: {
             scale: 1,
-            opacity: 0.8
+            opacity: 1
         },
         animate: {
             scale: [1, 1.2, 1],
@@ -17,12 +17,13 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
             transition: {
                 duration: 20,
              
-               
+                  repeat: Infinity,
+            repeatType: "loop"
             }
         },
         exit: {
             scale: 1,
-            opacity: 0.6,
+            opacity: 0.8,
             transition: {
                 duration: 0.3,
                 ease: "easeInOut"
@@ -45,7 +46,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
             scale: 1,
             transition: {
                 duration: 0.8,
-                delay: 0.2,
+                delay: 0.8,
                 ease: "easeOut"
             }
         },
@@ -72,7 +73,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
             filter: "blur(0px)",
             transition: {
                 duration: 0.7,
-                delay: 0.5,
+                delay: 1.3,
                 ease: "easeOut"
             }
         },
@@ -99,7 +100,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
             scale: 1,
             transition: {
                 duration: 0.6,
-                delay: 0.8,
+                delay: 1.6,
                 ease: "easeOut"
             }
         },
@@ -118,7 +119,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
         initial: {},
         animate: {
             transition: {
-                staggerChildren: 0.2
+                staggerChildren: 0.1
             }
         },
         exit: {}

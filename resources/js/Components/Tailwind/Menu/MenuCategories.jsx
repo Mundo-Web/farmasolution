@@ -123,7 +123,7 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
             @keyframes slideInFromBottom {
                 from {
                     opacity: 0;
-                    transform: translateY(20px) scale(0.95);
+                    transform: translateY(12px) scale(0.995);
                 }
                 to {
                     opacity: 1;
@@ -150,8 +150,15 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
             }
             
             .category-item {
-                animation: slideInFromBottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
                 opacity: 0;
+                transform: translateY(12px) scale(0.995);
+                transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+                will-change: transform, opacity;
+            }
+
+            .category-item.visible {
+                opacity: 1;
+                transform: translateY(0) scale(1);
             }
             
             .category-hover-effect {
@@ -200,6 +207,60 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
             }
         };
     }, []);
+
+    // Motion variants and manual stagger control (because Swiper adds wrapper nodes)
+    const itemVariants = {
+        hidden: { opacity: 0, y: 10, scale: 0.995 },
+        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.9, ease: [0.22,1,0.36,1] } }
+    };
+
+    // visibleItems is a map keyed by category id or slug to avoid index mismatches
+    const [visibleItems, setVisibleItems] = useState({});
+    const timersRef = useRef([]);
+
+    useEffect(() => {
+        // clear existing timers
+        timersRef.current.forEach(t => clearTimeout(t));
+        timersRef.current = [];
+
+        if (!items || items.length === 0) {
+            setVisibleItems({});
+            return;
+        }
+
+        // sort once and keep deterministic order for staggering
+        const sorted = [...items].sort((a, b) => a.name.localeCompare(b.name));
+
+        // initialize map with all false
+        const initialMap = {};
+        sorted.forEach((cat) => {
+            const key = cat.id ?? cat.slug ?? cat.name;
+            initialMap[key] = false;
+        });
+        setVisibleItems(initialMap);
+
+        // Stagger each item one by one with longer delay (400ms between items)
+        // This ensures a clear sequential appearance
+        const showNextItem = (index) => {
+            if (index >= sorted.length) return;
+            
+            const key = sorted[index].id ?? sorted[index].slug ?? sorted[index].name;
+            const t = setTimeout(() => {
+                setVisibleItems(prev => ({ ...prev, [key]: true }));
+                // After showing current item, schedule next one
+                showNextItem(index + 1);
+            }, 400); // 400ms delay between each item
+            timersRef.current.push(t);
+        };
+
+        // Start the sequence with the first item
+        showNextItem(0);
+
+        return () => {
+            timersRef.current.forEach(t => clearTimeout(t));
+            timersRef.current = [];
+        };
+    }, [items]);
 
     useEffect(() => {
         // Obtener tags activos al cargar el componente
@@ -262,11 +323,7 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
     // Mostrar solo tags en mobile si existen Y visible es true
     const showOnlyTagsMobile = tags.length > 0 && isMobile && visible;
 
-    console.log("items", items)
-    console.log("data", data)
-    console.log("tags", tags)
-    console.log("isMobile", isMobile)
-    console.log("shouldShowMenu", shouldShowMenu)
+    // console logs removed for cleanliness
 
   
 
@@ -308,28 +365,32 @@ const MenuCategories = ({ pages = [], items, data ,visible=false}) => {
                                                 {...swiperConfig}
                                                 className="categories-swiper"
                                             >
-                                                {[...items].sort((a, b) => a.name.localeCompare(b.name)).map((category, index) => (
-                                                    <SwiperSlide key={index}>
-                                                        <div 
-                                                            className="category-item" 
-                                                            style={{ animationDelay: `${index * 0.1}s` }}
-                                                        >
-                                                            <a
-                                                                href={`/catalogo?category=${category.slug}`}
-                                                                className="relative font-medium text-gray-700 hover:text-primary transition-all duration-500 cursor-pointer px-4 py-2.5 rounded-lg hover:bg-white/80 hover:shadow-lg whitespace-nowrap transform hover:scale-110 hover:-translate-y-1 category-hover-effect group/item"
+                                                {[...items].sort((a, b) => a.name.localeCompare(b.name)).map((category, index) => {
+                                                    const key = category.id ?? category.slug ?? category.name;
+                                                    return (
+                                                        <SwiperSlide key={key}>
+                                                            <div
+                                                                className={`category-item ${visibleItems[key] ? 'visible' : ''}`}
+                                                                onMouseEnter={(e) => e.currentTarget.classList.add('')}
+                                                                onMouseLeave={(e) => e.currentTarget.classList.remove('')}
                                                             >
-                                                                {/* Underline hover effect mejorado */}
-                                                                <span className="relative">
-                                                                    {category.name}
-                                                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 enhanced-underline transition-all duration-500 group-hover/item:w-full rounded-full"></span>
-                                                                    
-                                                                    {/* Efecto de brillo al hover */}
-                                                                    <span className="absolute inset-0 opacity-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent group-hover/item:opacity-100 transition-opacity duration-700 rounded-lg"></span>
-                                                                </span>
-                                                            </a>
-                                                        </div>
-                                                    </SwiperSlide>
-                                                ))}
+                                                                <a
+                                                                    href={`/catalogo?category=${category.slug}`}
+                                                                    className="relative font-medium text-gray-700 hover:customtext-primary transition-all duration-500 cursor-pointer px-4 py-2.5 rounded-lg   whitespace-nowrap transform hover:scale-110 hover:-translate-y-1  "
+                                                                >
+                                                                    {/* Underline hover effect mejorado */}
+                                                                    <span className="relative">
+                                                                        {category.name}
+                                                                        <span className="absolute bottom-0 left-0 w-0 h-0.5 enhanced-underline transition-all duration-500 group-hover/item:w-full rounded-full"></span>
+                                                                        
+                                                                        {/* Efecto de brillo al hover */}
+                                                                        <span className="absolute inset-0 opacity-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent group-hover/item:opacity-100 transition-opacity duration-700 rounded-lg"></span>
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                        </SwiperSlide>
+                                                    );
+                                                })}
                                             </Swiper>
                                         </div>
 
