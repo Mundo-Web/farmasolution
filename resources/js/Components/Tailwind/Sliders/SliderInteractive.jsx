@@ -13,6 +13,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
         },
         animate: {
             scale: [1, 1.2, 1],
+                x: [1, -50, 1],
             opacity: 1,
             transition: {
                 duration: 20,
@@ -70,6 +71,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
         animate: { 
             opacity: 1, 
             y: 0,
+        
             filter: "blur(0px)",
             transition: {
                 duration: 0.7,
