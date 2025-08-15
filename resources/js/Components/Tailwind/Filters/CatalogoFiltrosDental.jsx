@@ -328,7 +328,7 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
                     setSelectedFilters(prev => ({
                         ...prev,
                         category_id: Array.isArray(response.data.category_ids) ? response.data.category_ids : (response.data.category_ids ? [response.data.category_ids] : []),
-                        brand_id: GET.brand || [],
+                        brand_id: Array.isArray(response.data.brand_ids) ? response.data.brand_ids : (response.data.brand_ids ? [response.data.brand_ids] : []),
                         subcategory_id: Array.isArray(response.data.subcategory_ids) ? response.data.subcategory_ids : (response.data.subcategory_ids ? [response.data.subcategory_ids] : []),
                         collection_id: Array.isArray(response.data.collection_ids) ? response.data.collection_ids : (response.data.collection_ids ? [response.data.collection_ids] : []),
                     }));
