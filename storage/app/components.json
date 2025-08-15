@@ -632,7 +632,12 @@
                     "title",
                     "description",
                     "link_cart",
-                    "class_button"
+                    "class_button",
+                    "is_short_description",
+                    "class_card_image",
+                    "class_card_title",
+                    "class_card_subtitle",
+                    "class_card_description"
                 ],
                 "options": [
                     {
@@ -1453,7 +1458,13 @@
                     "link_cart",
                     "class_header",
                     "class_content",
-                    "class_button"
+                    "class_button",
+                    "class_card_title",
+                    "class_card_image",
+                    "is_short_description",
+                    "class_card_subtitle",
+                    "class_card_description"
+
                 ],
                 "using": {
                     "model": "Item",
