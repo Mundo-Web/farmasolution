@@ -5,6 +5,33 @@ import { adjustTextColor } from "../../../Functions/adjustTextColor";
 import Global from "../../../Utils/Global";
 
 const SliderInteractive = ({ items, data, generals = [] }) => {
+
+  const imageVariants = {
+        initial: {
+            scale: 1,
+            opacity: 0.1
+        },
+        animate: {
+            scale: [1, 1.05, 1.1],
+            opacity: 1,
+            transition: {
+                duration: 0.8,
+                delay: 0.2,
+                ease: "easeOut"
+            }
+        },
+        exit: {
+            scale: 1,
+            opacity: 0.1,
+            transition: {
+                duration: 0.5,
+                ease: "easeInOut"
+            }
+        }
+    };
+
+
+
     // Variantes de animación para los textos
     const titleVariants = {
         initial: { 
@@ -91,7 +118,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
         initial: {},
         animate: {
             transition: {
-                staggerChildren: 0.1
+                staggerChildren: 0.2
             }
         },
         exit: {}
@@ -128,7 +155,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
     const startX = useRef(0);
     const currentTranslate = useRef(0);
 
-    const duplicatedItems = [items[items.length - 1], ...items, items[0]];
+    const duplicatedItems = [items[items.length - 1], ...items, items[0], ...items];
     const validAlignments = ["center", "left", "right"];
     const validPosition = ["yes", "true", "si"];
     const showPagination = validAlignments.includes(data?.paginationAlignment);
@@ -356,14 +383,21 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
                             key={`slide-${index}`}
                             className="w-full h-[589px] lg:h-auto  flex-shrink-0 relative"
                         >
-                            <img
-                                src={`/storage/images/slider/${
-                                    item.bg_image || "undefined"
-                                }`}
-                                alt={item.name}
-                                loading="lazy"
-                                className={`absolute top-0  left-0 h-full md:h-full  w-screen md:w-full object-cover ${data?.imageBgPosition || "object-right-25 "} md:object-center  z-0  md:mr-20 lg:mr-0`}
-                            />
+                           <AnimatePresence>
+                                {currentIndex === index && (
+                                    <motion.img
+                                        key={`image-${index}`}
+                                        src={`/storage/images/slider/${item.bg_image || "undefined"}`}
+                                        alt={item.name}
+                                        loading="lazy"
+                                        className={`absolute top-0 left-0 h-full md:h-full w-screen md:w-full object-cover ${data?.imageBgPosition || "object-right-25"} md:object-center z-0 md:mr-20 lg:mr-0`}
+                                        variants={imageVariants}
+                                        initial="initial"
+                                        animate="animate"
+                                        exit="exit"
+                                    />
+                                )}
+                            </AnimatePresence>
 
                           {data?.overlayMobile && (
                               <div className="md:hidden absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
