@@ -564,7 +564,8 @@
                     "fields": [
                         "name",
                         "description",
-                        "image"
+                        "image",
+                        "slug"
                     ]
                 }
             },
