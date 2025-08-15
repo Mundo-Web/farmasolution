@@ -89,7 +89,7 @@ const CardHoverBtn = ({
                                     (e.target.src = "/api/cover/thumbnail/null")
                                 }
                                 alt={product.name}
-                                className={`w-full h-full  bg-slate-100 ${data?.class_card_image || "object-cover"}`}
+                                className={`w-full h-full   ${data?.class_card_image || "object-cover bg-slate-100"}`}
                                 loading="lazy"
 
                                 transition={{ duration: 0.3 }}
