@@ -34,7 +34,7 @@ const Stores = ({ ubigeos = [] }) => {
     const latitudeRef = useRef();
     const longitudeRef = useRef();
     const imageRef = useRef();
-    const statusRef = useRef();
+ 
     const business_hoursRef = useRef();
     const managerRef = useRef();
     const capacityRef = useRef();
@@ -87,14 +87,66 @@ const Stores = ({ ubigeos = [] }) => {
             .val(data?.ubigeo ?? null)
             .trigger("change");
 
-        $(typeRef.current)
-            .val(data?.type ?? "tienda")
-            .trigger("change");
-
-        if (statusRef.current) {
-            statusRef.current.checked = data?.status ?? true;
+        // Verificar si ya existe una tienda principal al abrir el modal
+        if (!data?.id) {
+            // Si es una nueva tienda, verificar si ya existe una principal
+            storesRest.paginate({ 
+                filter: JSON.stringify({ type: 'tienda_principal' })
+            }).then(response => {
+                console.log('Verificando tiendas principales existentes:', response);
+                const hasMainStore = response?.data && Array.isArray(response.data) && response.data.length > 0;
+                const typeSelect = $(typeRef.current);
+                
+                // Si ya existe una tienda principal, deshabilitar esa opción
+                if (hasMainStore) {
+                    console.log('Se encontraron tiendas principales:', response.data);
+                    typeSelect.find('option[value="tienda_principal"]').prop('disabled', true);
+                } else {
+                    console.log('No se encontraron tiendas principales');
+                    typeSelect.find('option[value="tienda_principal"]').prop('disabled', false);
+                }
+                
+                typeSelect.val(data?.type ?? "tienda").trigger("change");
+            }).catch(error => {
+                console.error('Error al verificar tiendas principales:', error);
+            });
+        } else {
+            // Si es edición, verificar si hay otra tienda principal diferente a la actual
+            storesRest.paginate({ 
+                filter: JSON.stringify({ type: 'tienda_principal' })
+            }).then(response => {
+                console.log('Verificando tiendas principales para edición:', response);
+                const typeSelect = $(typeRef.current);
+                
+                if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+                    // Verificar si hay otra tienda principal diferente a la actual
+                    const otherMainStore = response.data.find(store => store.id !== data.id);
+                    
+                    if (otherMainStore) {
+                        console.log('Existe otra tienda principal:', otherMainStore);
+                        // Si la tienda actual NO es principal, deshabilitar la opción
+                        if (data.type !== 'tienda_principal') {
+                            typeSelect.find('option[value="tienda_principal"]').prop('disabled', true);
+                        } else {
+                            typeSelect.find('option[value="tienda_principal"]').prop('disabled', false);
+                        }
+                    } else {
+                        console.log('No existe otra tienda principal');
+                        typeSelect.find('option[value="tienda_principal"]').prop('disabled', false);
+                    }
+                } else {
+                    console.log('No hay tiendas principales');
+                    typeSelect.find('option[value="tienda_principal"]').prop('disabled', false);
+                }
+                
+                typeSelect.val(data?.type ?? "tienda").trigger("change");
+            }).catch(error => {
+                console.error('Error al verificar tiendas principales:', error);
+                $(typeRef.current).val(data?.type ?? "tienda").trigger("change");
+            });
         }
 
+      
         // Cargar horarios de atención si existen
         if (data?.business_hours) {
             try {
@@ -139,6 +191,53 @@ const Stores = ({ ubigeos = [] }) => {
 
     const onModalSubmit = async (e) => {
         e.preventDefault();
+
+        // Verificar si se está intentando crear o editar a tienda principal
+        if (typeRef.current.value === 'tienda_principal') {
+            try {
+                const currentId = idRef.current.value; // ID del registro actual (si es edición)
+                
+                // Verificar si ya existe una tienda principal
+                const response = await storesRest.paginate({ 
+                    filter: JSON.stringify({ type: 'tienda_principal' })
+                });
+                console.log('Respuesta de validación tienda principal:', response);
+
+                // Verificar si hay tiendas principales existentes
+                if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+                    // Si es edición, verificar que no sea otra tienda diferente
+                    if (currentId) {
+                        const existingMainStore = response.data.find(store => store.id !== currentId);
+                        if (existingMainStore) {
+                            console.log('Ya existe otra tienda principal:', existingMainStore);
+                            Swal.fire({
+                                title: "Error",
+                                text: "Ya existe una Tienda Principal. Solo puede haber una tienda de este tipo.",
+                                icon: "error"
+                            });
+                            return;
+                        }
+                    } else {
+                        // Si es creación nueva, no permitir
+                        console.log('Tiendas principales encontradas:', response.data);
+                        Swal.fire({
+                            title: "Error",
+                            text: "Ya existe una Tienda Principal. Solo puede haber una tienda de este tipo.",
+                            icon: "error"
+                        });
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error al verificar tienda principal:', error);
+                Swal.fire({
+                    title: "Error",
+                    text: "Error al verificar si existe una tienda principal",
+                    icon: "error"
+                });
+                return;
+            }
+        }
 
         // Validar y procesar coordenadas antes de enviar
         const latitudeValue = latitudeRef.current.value.trim();
@@ -234,7 +333,7 @@ const Stores = ({ ubigeos = [] }) => {
         formData.append("manager", managerRef.current.value);
         formData.append("capacity", capacityRef.current.value);
         formData.append("type", typeRef.current.value);
-        formData.append("status", statusRef.current.checked ? 1 : 0);
+     
         formData.append("business_hours", JSON.stringify(businessHours));
 
         // Agregar imagen si existe
@@ -445,6 +544,7 @@ const Stores = ({ ubigeos = [] }) => {
                         width: "100px",
                         cellTemplate: (container, { data }) => {
                             const typeLabels = {
+                                'tienda_principal': 'Tienda Principal',
                                 'tienda': 'Tienda',
                                 'oficina': 'Oficina',
                                 'almacen': 'Almacén',
@@ -452,6 +552,7 @@ const Stores = ({ ubigeos = [] }) => {
                                 'otro': 'Otro'
                             };
                             const typeColors = {
+                                'tienda_principal': 'danger',
                                 'tienda': 'success',
                                 'oficina': 'primary',
                                 'almacen': 'warning',
@@ -571,6 +672,7 @@ const Stores = ({ ubigeos = [] }) => {
                             required
                             dropdownParent={'#form-container'}
                         >
+                            <option value="tienda_principal">Tienda Principal</option>
                             <option value="tienda">Tienda</option>
                             <option value="oficina">Oficina</option>
                             <option value="almacen">Almacén</option>
@@ -737,13 +839,7 @@ const Stores = ({ ubigeos = [] }) => {
                         />
                     </div>
 
-                    <div className="col-md-6">
-                        <SwitchFormGroup
-                            eRef={statusRef}
-                            label="Tienda activa"
-                            col="col-12"
-                        />
-                    </div>
+                 
 
                     <div className="col-12">
                         <ImageFormGroup

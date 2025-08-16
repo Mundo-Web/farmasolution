@@ -2643,7 +2643,7 @@
     ]
   },
   "resources/js/Admin/Stores.jsx": {
-    "file": "assets/Stores-BDSgk7Al.js",
+    "file": "assets/Stores-CY7Tazo5.js",
     "name": "Stores",
     "src": "resources/js/Admin/Stores.jsx",
     "isEntry": true,
@@ -2661,7 +2661,6 @@
       "_InputFormGroup-iZIO11ZN.js",
       "_TextareaFormGroup-CliirJM1.js",
       "_ImageFormGroup-Brimgjsn.js",
-      "_SwitchFormGroup-B-vmnVqk.js",
       "_SelectFormGroup-D63EMIiA.js",
       "_DxButton-DV0H-ZcL.js",
       "resources/js/Components/Tailwind/Components/ProductCard.jsx",

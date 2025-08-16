@@ -61,7 +61,7 @@ class StoreController extends BasicController
             'longitude' => 'nullable|numeric|between:-81.5,-68.5',
             'manager' => 'nullable|string|max:255',
             'capacity' => 'nullable|integer|min:1',
-            'type' => 'required|in:tienda,oficina,almacen,showroom,otro',
+            'type' => 'required|in:tienda_principal,tienda,oficina,almacen,showroom,otro',
             'status' => 'boolean',
         ], [
             'latitude.between' => 'La latitud debe estar entre -18.5 y -0.1 para ubicaciones en Perú',
@@ -77,6 +77,16 @@ class StoreController extends BasicController
         ]);
 
         $data['status'] = $request->boolean('status', true);
+        
+        // Validar tienda principal - solo puede existir una
+        if ($data['type'] === 'tienda_principal') {
+            $currentId = $data['id'] ?? null;
+            
+            // Verificar si ya existe una tienda principal (excluyendo el registro actual si es edición)
+            if (Store::hasMainStore($currentId)) {
+                throw new \Exception('Ya existe una Tienda Principal. Solo puede haber una tienda de este tipo en el sistema.');
+            }
+        }
         
         // Debug: Log para verificar si el ID está en los datos procesados
         if (isset($data['id']) && !empty($data['id'])) {

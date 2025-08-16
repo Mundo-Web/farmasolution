@@ -210,6 +210,7 @@ class Store extends Model
     public function getTypeFormattedAttribute()
     {
         $types = [
+            'tienda_principal' => 'Tienda Principal',
             'tienda' => 'Tienda',
             'oficina' => 'Oficina',
             'almacen' => 'Almacén',
@@ -224,11 +225,24 @@ class Store extends Model
     public static function getTypes()
     {
         return [
+            'tienda_principal' => 'Tienda Principal',
             'tienda' => 'Tienda',
             'oficina' => 'Oficina', 
             'almacen' => 'Almacén',
             'showroom' => 'Showroom',
             'otro' => 'Otro'
         ];
+    }
+
+    // Método para verificar si ya existe una tienda principal
+    public static function hasMainStore($excludeId = null)
+    {
+        $query = self::where('type', 'tienda_principal');
+        
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+        
+        return $query->exists();
     }
 }
