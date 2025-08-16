@@ -242,7 +242,7 @@ const CardHoverBtn = ({
                         </h3>
                         {/* Descripción corta del producto */}
                         {data?.is_short_description && (
-                            <p className={`text-sm customtext-neutral-light mb-2 ${product.discount != null && !isNaN(product.discount) ? '!line-clamp-1' : '!line-clamp-2'} ${data?.class_card_description}`} dangerouslySetInnerHTML={{ __html: product.description }}>
+                            <p className={`text-sm customtext-neutral-light mb-2 ${product.discount != null && !isNaN(product.discount) ? '!line-clamp-1 !h-4' : '!line-clamp-2'} ${data?.class_card_description}`} dangerouslySetInnerHTML={{ __html: product.description }}>
                                
                             </p>
                         )}
