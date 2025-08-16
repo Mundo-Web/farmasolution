@@ -3,6 +3,7 @@ import General from "../../../Utils/General"
 import { adjustTextColor } from "../../../Functions/adjustTextColor";
 import Tippy from "@tippyjs/react";
 import Global from "../../../Utils/Global";
+import AnimatedCintillo from "../Components/AnimatedCintillo";
 
 
 const TopBarSocials = ({ items, data }) => {
@@ -31,9 +32,9 @@ const TopBarSocials = ({ items, data }) => {
       className={`${data?.background_color ? data?.background_color : "bg-primary"}  font-paragraph font-bold transition-all duration-300 w-full z-50  ${data?.border_color ? `border-t-2 ${data?.border_color}`:""} text-white`}
     >
       <div className="px-primary  mx-auto py-1.5 flex flex-wrap justify-center md:justify-between items-center gap-2 2xl:max-w-7xl 2xl:px-0">
-        <p className="hidden md:block text-xs">{data.isCopyright ? 
+        <p className="hidden md:block text-xs">{data?.isCopyright ? 
        ` Copyright © ${new Date().getFullYear()} ${Global.APP_NAME}. Reservados todos los derechos.`
-        : General.get('cintillo')}</p>
+        : <AnimatedCintillo />}</p>
         <p className="hidden md:block text-xs">{data?.title}</p>
         <div className="flex gap-4">
           {

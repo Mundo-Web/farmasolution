@@ -74,9 +74,10 @@ const Generals = ({ generals }) => {
       .find((x) => x.correlative == "email_contact")
       ?.description?.split(",")
       ?.map((x) => x.trim()) ?? [""],
-    cintillo:
-      generals.find((x) => x.correlative == "cintillo")?.description ??
-      "",
+    cintillos: generals
+      .find((x) => x.correlative == "cintillo")
+      ?.description?.split(",")
+      ?.map((x) => x.trim()) ?? [""],
     copyright:
       generals.find((x) => x.correlative == "copyright")?.description ??
       "",
@@ -275,7 +276,7 @@ const Generals = ({ generals }) => {
       {
         correlative: "cintillo",
         name: "Cintillo",
-        description: formData.cintillo || "",
+        description: formData.cintillos.join(","),
       },
       {
         correlative: "copyright",
@@ -722,20 +723,53 @@ const Generals = ({ generals }) => {
           >
             <div className="row">
               <div className="col-md-6 mb-2">
-                <label htmlFor="cintillo" className="form-label">
-                  Cintillo
-                </label>
-                <textarea
-                  className="form-control"
-                  id="cintillo"
-                  value={formData.cintillo}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      cintillo: e.target.value,
-                    })
-                  }
-                ></textarea>
+                {formData.cintillos.map((cintillo, index) => (
+                  <div
+                    key={`cintillo-${index}`}
+                    className="mb-3"
+                  >
+                    <label
+                      htmlFor={`cintillo-${index}`}
+                      className="form-label"
+                    >
+                      Cintillo {index + 1} (No usar coma)
+                    </label>
+                    <div className="input-group">
+                      <textarea
+                        className="form-control"
+                        id={`cintillo-${index}`}
+                        value={cintillo}
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            index,
+                            "cintillos"
+                          )
+                        }
+                        rows="2"
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger"
+                        onClick={() =>
+                          handleRemoveField(
+                            index,
+                            "cintillos"
+                          )
+                        }
+                      >
+                        <i className="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={() => handleAddField("cintillos")}
+                >
+                  Agregar cintillo
+                </button>
               </div>
               <div className="col-md-6 mb-2">
                 <label htmlFor="copyright" className="form-label">

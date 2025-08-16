@@ -5,6 +5,7 @@ import { CircleUser, DoorClosed, ShoppingCart } from "lucide-react";
 import Logout from "../../../Actions/Logout";
 import CartModal from "../Components/CartModal";
 import { hasRole } from "../../../Utils/CreateReactScript";
+import AnimatedCintillo from "../Components/AnimatedCintillo";
 
 const TopBarCart = ({ data, cart, setCart, isUser, items }) => {
     const sectionRef = useRef(null);
@@ -43,7 +44,9 @@ const TopBarCart = ({ data, cart, setCart, isUser, items }) => {
             className="font-semibold text-lg bg-primary text-white font-font-general"
         >
             <div className="px-[5%] replace-max-w-here mx-auto py-3 flex flex-wrap justify-end md:justify-between items-center gap-2">
-                <p className="hidden md:block ">{General.get("cintillo")}</p>
+                <p className="hidden md:block">
+                    <AnimatedCintillo />
+                </p>
                 <p className="hidden md:block text-xs">{data?.title}</p>
 
                 {/* Account and Cart */}
