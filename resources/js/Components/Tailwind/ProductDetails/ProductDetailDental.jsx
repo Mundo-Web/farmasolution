@@ -570,12 +570,14 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                 <div className=" w-full ">
                                     <div className="flex gap-8">
                                         <div>
+                                               {item?.discount > 0 && item?.discount < item?.price && (
                                             <p className="text-sm customtext-primary mb-1 font-bold">
                                                 Precio:{" "}
                                                 <span className="line-through">
                                                     S/ {item?.price}
                                                 </span>
                                             </p>
+                                               )}
                                             <div className="flex items-center gap-4 relative customtext-neutral-dark font-extrabold">
                                                 <span className="text-[40px] font-bold ">
                                                     S/ {item?.final_price}
@@ -584,13 +586,14 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4 mt-4">
+                                               {item?.discount > 0 && item?.discount < item?.price && (
                                             <span className=" bg-[#F93232] text-white font-bold px-3 py-2 rounded-xl">
                                                 -
                                                 {Number(
                                                     item?.discount_percent
                                                 ).toFixed(0)}
                                                 %
-                                            </span>
+                                            </span>)}
                                         </div>
                                     </div>
 
