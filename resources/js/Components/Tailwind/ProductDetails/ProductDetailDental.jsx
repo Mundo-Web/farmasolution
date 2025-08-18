@@ -422,16 +422,19 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                             <div className="flex lg:hidden gap-8 border-b-2 pb-8">
                                 {/* Price Section */}
                                 <div className=" w-full ">
-                                    <p className="text-sm customtext-primary mb-1">
+                                 {item?.discount > 0 && item?.discount < item?.price && (
+                                       <p className="text-sm customtext-primary mb-1">
                                         Precio:{" "}
                                         <span className="line-through line-clamp-1">
                                             S/ {item?.price}
                                         </span>
                                     </p>
+                                 )}
                                     <div className="flex items-center gap-4 ">
                                         <span className="text-[40px] font-bold line-clamp-1">
                                             S/ {item?.final_price}
                                         </span>
+                                          {item?.discount > 0 && item?.discount < item?.price && (
                                         <span className="bg-[#F93232] text-white font-bold px-3 py-2 rounded-xl">
                                             -
                                             {Number(
@@ -439,6 +442,7 @@ const ProductDetailDental = ({ item, data, setCart, cart, generals, favorites, s
                                             ).toFixed(1)}
                                             %
                                         </span>
+                                          )}
                                     </div>
 
                                     {/* Quantity */}
