@@ -4,14 +4,15 @@
     "items": [
       { "label": "Dashboard", "href": "/admin/home", "icon": "mdi mdi-home" },
       { "label": "Pedidos", "href": "/admin/sales", "icon": "mdi mdi-cart-outline" },
-      { "label": "Items", "href": "/admin/items", "icon": "mdi mdi-bookshelf" },
+     
       { "label": "Combos", "href": "/admin/combos", "icon": "mdi mdi-package-variant-closed" },
       { "label": "Cupones", "href": "/admin/coupons", "icon": "mdi mdi-brightness-percent" },
       { "label": "Reglas de Descuento", "href": "/admin/discount-rules", "icon": "mdi mdi-pencil-ruler" },
       {
-        "label": "Características",
+        "label": "Productos",
         "icon": "mdi mdi-view-dashboard",
         "children": [
+          { "label": "Productos", "href": "/admin/items", "icon": "mdi mdi-bookshelf" },
           { "label": "Colecciones", "href": "/admin/collections", "icon": "mdi mdi-view-carousel-outline" },
           { "label": "Categorías", "href": "/admin/categories", "icon": "mdi mdi-shape-outline" },
           { "label": "SubCategorías", "href": "/admin/subcategories", "icon": "mdi mdi-file-tree" },
@@ -29,7 +30,17 @@
     "title": "Landing Page",
     "items": [
       { "label": "Pop-ups", "href": "/admin/ads", "icon": "mdi mdi-google-ads" },
-      { "label": "Posts", "href": "/admin/posts", "icon": "mdi mdi-post" },
+      {
+        "label": "Blog",
+        "icon": "mdi mdi-view-dashboard",
+        "children": [
+          { "label": "Posts", "href": "/admin/posts", "icon": "mdi mdi-post" },
+        
+          { "label": "Categorías", "href": "/admin/blog-categories", "icon": "mdi mdi-shape-outline" }
+        ]
+      },
+      
+    
       { "label": "Nosotros", "href": "/admin/about", "icon": "mdi mdi-briefcase" },
       { "label": "Zonas de Cobertura", "href": "/admin/delivery-zones", "icon": "mdi mdi-map-marker-radius" },
       { "label": "Indicadores", "href": "/admin/indicators", "icon": "mdi mdi-dots-grid" },

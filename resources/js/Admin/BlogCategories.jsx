@@ -4,7 +4,7 @@ import TextareaFormGroup from "@Adminto/form/TextareaFormGroup";
 import React, { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import Swal from "sweetalert2";
-import CategoriesRest from "../Actions/Admin/CategoriesRest";
+import BlogCategoriesRest from "../Actions/Admin/BlogCategoriesRest";
 import ImageFormGroup from "../Components/Adminto/form/ImageFormGroup";
 import InputFormGroup from "../Components/Adminto/form/InputFormGroup";
 import Modal from "../Components/Adminto/Modal";
@@ -13,9 +13,9 @@ import DxButton from "../Components/dx/DxButton";
 import CreateReactScript from "../Utils/CreateReactScript";
 import ReactAppend from "../Utils/ReactAppend";
 import Fillable from "../Utils/Fillable";
-const categoriesRest = new CategoriesRest();
+const categoriesRest = new BlogCategoriesRest();
 
-const Categories = () => {
+const BlogCategories = () => {
     const gridRef = useRef();
     const modalRef = useRef();
 
@@ -35,9 +35,9 @@ const Categories = () => {
         idRef.current.value = data?.id ?? "";
         nameRef.current.value = data?.name ?? "";
         descriptionRef.current.value = data?.description ?? "";
-        bannerRef.image.src = `/storage/images/blog_category/${data?.banner}`;
+        bannerRef.image.src = `/storage/images/category/${data?.banner}`;
         bannerRef.current.value = null;
-        imageRef.image.src = `/storage/images/blog_category/${data?.image}`;
+        imageRef.image.src = `/storage/images/category/${data?.image}`;
         imageRef.current.value = null;
 
         $(modalRef.current).modal("show");
@@ -153,7 +153,7 @@ const Categories = () => {
                         caption: "Descripción",
                         width: "50%",
                     },
-                      Fillable.has('categories', 'image') && {
+                      Fillable.has('blog_categories', 'image') && {
                         dataField: "image",
                         caption: "Imagen",
                         width: "90px",
@@ -162,7 +162,7 @@ const Categories = () => {
                             ReactAppend(
                                 container,
                                 <img
-                                    src={`/storage/images/category/${data.image}`}
+                                    src={`/storage/images/blog_category/${data.image}`}
                                     style={{
                                         width: "80px",
                                         height: "48px",
@@ -178,7 +178,7 @@ const Categories = () => {
                             );
                         },
                     },
-                     Fillable.has('categories', 'banner') && {
+                     Fillable.has('blog_categories', 'banner') && {
                         dataField: "banner",
                         caption: "Banner",
                         width: "90px",
@@ -282,14 +282,14 @@ const Categories = () => {
                             label="Banner"
                             col="col-12"
                             aspect={3 / 1}
-                            hidden={!Fillable.has('categories', 'banner')}
+                            hidden={!Fillable.has('blog_categories', 'banner')}
                         />
                         <ImageFormGroup
                             eRef={imageRef}
                             label="Imagen"
                             col="col-12"
                             aspect={16 / 9}
-                            hidden={!Fillable.has('categories', 'image')}
+                            hidden={!Fillable.has('blog_categories', 'image')}
                         />
 
                     </div>
@@ -315,7 +315,7 @@ const Categories = () => {
 CreateReactScript((el, properties) => {
     createRoot(el).render(
         <BaseAdminto {...properties} title="Categorías">
-            <Categories {...properties} />
+            <BlogCategories {...properties} />
         </BaseAdminto>
     );
 });
