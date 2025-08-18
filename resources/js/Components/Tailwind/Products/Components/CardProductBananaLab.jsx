@@ -202,24 +202,27 @@ const CardProductBananaLab = ({
                                 </button>}
                         </div>
                         {/* Precio */}
-                        <div className="flex flex-col lg:flex-row  items-center gap-4 items-baseline mt-1">
-                            <span className="customtext-neutral-dark text-[20px] md:text-2xl font-bold">
-                                S/ {product?.final_price}
-                            </span>
-                            {Number(product?.discount) > 0 && Number(product?.final_price) < Number(product?.price) && (
+                        {data?.show_price && (
+
+                            <div className="flex flex-col lg:flex-row  items-center gap-4 items-baseline mt-1">
+                                <span className="customtext-neutral-dark text-[20px] md:text-2xl font-bold">
+                                    S/ {product?.final_price}
+                                </span>
+                                {Number(product?.discount) > 0 && Number(product?.final_price) < Number(product?.price) && (
                                     <span className="text-base lg:text-base customtext-neutral-light line-through font-semibold">
                                         S/ {product?.price}
                                     </span>
                                 )}
-                            {/*  <p className="text-[10px] lg:text-xs customtext-neutral-dark mt-1">
+                                {/*  <p className="text-[10px] lg:text-xs customtext-neutral-dark mt-1">
                                 Más vendidos (100)
                             </p> */}
-                        </div>
+                            </div>
+                        )}
 
                         <div className="mt-3 overflow-hidden block lg:hidden">
                             <a
                                 href={`/product/${product?.slug}`}
-                               
+
                                 className={`w-full text-[10px] font-light lg:font-normal flex items-center justify-center bg-primary text-white lg:text-sm py-2 lg:py-3 px-4 rounded-full shadow-md hover:bg-primary-dark transition-all duration-300 ${data?.class_button || ""}`}
                             >
                                 <span className="mr-2">Ir a detalle</span>
@@ -240,7 +243,7 @@ const CardProductBananaLab = ({
                             className="hidden lg:block mt-3 overflow-hidden"
                         >
                             <a
-                               href={`/product/${product?.slug}`}
+                                href={`/product/${product?.slug}`}
                                 className={`w-full text-[10px] font-light lg:font-normal flex items-center justify-center bg-primary  lg:text-sm py-2 lg:py-3 px-4 rounded-full shadow-md hover:bg-primary-dark transition-all duration-300 ${data?.class_button || "text-white"}`}
                             >
                                 <span className="mr-2">Ir a detalle</span>

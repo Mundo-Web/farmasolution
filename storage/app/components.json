@@ -705,7 +705,8 @@
                     "title",
                     "description",
                     "link_cart",
-                    "class_button"
+                    "class_button",
+                    "show_price"
                 ],
                 "options": [
                     {
@@ -1043,7 +1044,8 @@
                     "path",
                     "title",
                     "description",
-                    "link_cart"
+                    "link_cart",
+                    "show_price"
                 ],
                 "options": [
                     {
@@ -1669,7 +1671,8 @@
                     "class_button",
                     "is_use_category",
                     "visible_variations",
-                    "class_section"
+                    "class_section",
+                    "show_price"
                 ],
                 "using": {
                     "model": "Item",
