@@ -148,7 +148,7 @@ const CardProductBananaLab = ({
                                     (e.target.src = "/api/cover/thumbnail/null")
                                 }
                                 alt={product?.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain object-center"
                                 loading="lazy"
                             />
                         </motion.div>

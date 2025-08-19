@@ -18,7 +18,7 @@ const BannerPidelo = ({ data }) => {
 
     return (
         <section>
-            <div className="px-primary w-full mx-auto py-[5%] md:py-[1.5%]">
+            <div className="px-primary 2xl:max-w-7xl 2xl:px-0 w-full mx-auto py-[5%] md:py-[1.5%]">
                 <div
                     className="w-full aspect-[5/2] rounded-2xl flex flex-col items-center justify-center shadow-lg text-center relative overflow-hidden"
                     style={{
