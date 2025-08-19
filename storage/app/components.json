@@ -187,6 +187,32 @@
                     "message_whatsapp"
                 ]
             },
+              {
+                "id": "HeaderPidelo",
+                "name": "HeaderPidelo",
+                "image": "header-with-search.png",
+                "data": [
+                    "class",
+                    "link_cart",
+                    "showLoginCart",
+                    "mobileSearch",
+                    "backgroundColor"
+                ],
+                "using": {
+                    "model": "Store",
+                    "fields": [
+                        "name",
+                        "slug",
+                        "id"
+                    ]
+
+                  
+                },
+                "generals": [
+                    "phone_whatsapp",
+                    "message_whatsapp"
+                ]
+            },
             {
                 "id": "HeaderSearchDental",
                 "name": "HeaderSearchDental",

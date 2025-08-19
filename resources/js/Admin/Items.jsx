@@ -25,7 +25,7 @@ import Fillable from "../Utils/Fillable";
 
 const itemsRest = new ItemsRest();
 
-const Items = ({ categories, brands, collections }) => {
+const Items = ({ categories, brands, collections,stores }) => {
     //!FALTA EDIT AND DELETEDE GALERIA
 
     const [itemData, setItemData] = useState([]);
@@ -57,6 +57,7 @@ const Items = ({ categories, brands, collections }) => {
 
     const stockRef = useRef();
     const linkvideoRef = useRef();
+    const storeRef = useRef();
 
     const featuresRef = useRef([]);
     const specificationsRef = useRef([]);
@@ -64,6 +65,7 @@ const Items = ({ categories, brands, collections }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedCollection, setSelectedCollection] = useState(null);
+    const [selectedStore, setSelectedStore] = useState(null);
     const [currentPdf, setCurrentPdf] = useState("");
     /*ADD NEW LINES GALLERY */
 
@@ -142,6 +144,12 @@ const Items = ({ categories, brands, collections }) => {
         $(brandRef.current)
             .val(data?.brand_id || null)
             .trigger("change");
+
+            console.log("data item:", data)
+        $(storeRef.current)
+            .val(data?.store_id || null)
+            .trigger("change");
+
         nameRef.current.value = data?.name || "";
         skuRef.current.value = data?.sku || "";
         colorRef.current.value = data?.color || "";
@@ -150,6 +158,8 @@ const Items = ({ categories, brands, collections }) => {
         linkvideoRef.current.value = data?.linkvideo || "";
         priceRef.current.value = data?.price || 0;
         discountRef.current.value = data?.discount || 0;
+
+
 
         SetSelectValue(tagsRef.current, data?.tags ?? [], "id", "name");
 
@@ -237,6 +247,7 @@ const Items = ({ categories, brands, collections }) => {
             features: cleanFeatures,
             specifications: cleanSpecs,
             linkvideo: linkvideoRef.current.value,
+            store_id: storeRef.current.value || null,
         };
 
 
@@ -709,6 +720,22 @@ const Items = ({ categories, brands, collections }) => {
                             ))}
                         </SelectFormGroup>
 
+                       <SelectFormGroup
+                            eRef={storeRef}
+                            label="Tienda"
+                            
+                            dropdownParent="#principal-container"
+                            onChange={(e) =>
+                                setSelectedStore(e.target.value)
+                            }
+                            hidden={!Fillable.has('items', 'store_id')}
+                        >
+                            {stores.map((item, index) => (
+                                <option key={index} value={item.id}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </SelectFormGroup>
                         <InputFormGroup
                             label="Stock"
                             eRef={stockRef}
@@ -716,6 +743,8 @@ const Items = ({ categories, brands, collections }) => {
                             required
                             hidden={!Fillable.has('items', 'stock')}
                         />
+
+
 
                         <InputFormGroup
                             eRef={priceRef}

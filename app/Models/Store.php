@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class Store extends Model
 {
     use HasFactory, HasUuids;
- public $incrementing = false;
+    public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = [
         'name',
@@ -58,11 +58,11 @@ class Store extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($store) {
             if (empty($store->slug)) {
                 $store->slug = Str::slug($store->name);
-                
+
                 // Verificar si el slug ya existe y agregar un número si es necesario
                 $count = static::where('slug', 'like', $store->slug . '%')->count();
                 if ($count > 0) {
@@ -70,11 +70,11 @@ class Store extends Model
                 }
             }
         });
-        
+
         static::updating(function ($store) {
             if ($store->isDirty('name') && empty($store->slug)) {
                 $store->slug = Str::slug($store->name);
-                
+
                 // Verificar si el slug ya existe y agregar un número si es necesario
                 $count = static::where('slug', 'like', $store->slug . '%')
                     ->where('id', '!=', $store->id)
@@ -124,7 +124,7 @@ class Store extends Model
         foreach ($this->business_hours as $schedule) {
             if ($schedule['day'] === $todaySpanish) {
                 if ($schedule['closed']) return false;
-                
+
                 return $currentTime >= $schedule['open'] && $currentTime <= $schedule['close'];
             }
         }
@@ -200,9 +200,9 @@ class Store extends Model
     {
         $schedule = $this->getTodaySchedule();
         if (!$schedule) return 'Horario no disponible';
-        
+
         if ($schedule['closed']) return 'Cerrado hoy';
-        
+
         return "Hoy: {$schedule['open']} - {$schedule['close']}";
     }
 
@@ -217,7 +217,7 @@ class Store extends Model
             'showroom' => 'Showroom',
             'otro' => 'Otro'
         ];
-        
+
         return $types[$this->type] ?? 'No especificado';
     }
 
@@ -227,7 +227,7 @@ class Store extends Model
         return [
             'tienda_principal' => 'Tienda Principal',
             'tienda' => 'Tienda',
-            'oficina' => 'Oficina', 
+            'oficina' => 'Oficina',
             'almacen' => 'Almacén',
             'showroom' => 'Showroom',
             'otro' => 'Otro'
@@ -238,11 +238,17 @@ class Store extends Model
     public static function hasMainStore($excludeId = null)
     {
         $query = self::where('type', 'tienda_principal');
-        
+
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
         }
-        
+
         return $query->exists();
+    }
+
+
+    public function items()
+    {
+        return $this->hasMany(Item::class);
     }
 }

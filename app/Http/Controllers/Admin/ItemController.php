@@ -19,6 +19,7 @@ use SoDe\Extend\Crypto;
 use SoDe\Extend\Text;
 use Exception;
 use App\Models\ItemSpecification;
+use App\Models\Store;
 
 class ItemController extends BasicController
 {
@@ -161,18 +162,20 @@ class ItemController extends BasicController
         $categories = Category::where('status', 1)->get();
         $brands = Brand::where('status', 1)->get();
         $collections = Collection::where('status', 1)->get();
+        $stores = Store::where('status', 1)->get();
 
         return [
             'categories' => $categories,
             'brands' => $brands,
-            'collections' => $collections
+            'collections' => $collections,
+            'stores' => $stores
         ];
     }
 
     public function setPaginationInstance(Request $request, string $model)
     {
         return $model::select(['items.*'])
-            ->with(['category', 'subcategory', 'brand', 'images', 'collection', 'specifications', 'features'])
+            ->with(['category', 'store', 'subcategory', 'brand', 'images', 'collection', 'specifications', 'features'])
             ->leftJoin('categories AS category', 'category.id', 'items.category_id');
     }
 

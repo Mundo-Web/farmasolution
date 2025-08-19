@@ -45,7 +45,8 @@ class Item extends Model
         'pdf',
         'linkvideo',
         'size',
-        'grouper'
+        'grouper',
+        'store_id'
     ];
 
     static function getForeign(Builder $builder, string $model, $relation)
@@ -100,6 +101,11 @@ class Item extends Model
     public function brand()
     {
         return $this->hasOne(Brand::class, 'id', 'brand_id');
+    }
+
+    public function store()
+    {
+        return $this->hasOne(Store::class,'id', 'store_id');
     }
 
     public function tags()

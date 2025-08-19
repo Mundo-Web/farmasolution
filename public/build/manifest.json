@@ -1223,7 +1223,7 @@
     "isEntry": true
   },
   "resources/js/About.jsx": {
-    "file": "assets/About-D4r4DrpW.js",
+    "file": "assets/About-Dd0_xYR6.js",
     "name": "About",
     "src": "resources/js/About.jsx",
     "isEntry": true,
@@ -2221,7 +2221,7 @@
     ]
   },
   "resources/js/Admin/Items.jsx": {
-    "file": "assets/Items-CYX5SZD1.js",
+    "file": "assets/Items-BO19v1ux.js",
     "name": "Items",
     "src": "resources/js/Admin/Items.jsx",
     "isEntry": true,
@@ -3043,7 +3043,7 @@
     ]
   },
   "resources/js/Blog.jsx": {
-    "file": "assets/Blog-CvWYLTbn.js",
+    "file": "assets/Blog-GlAnWCKF.js",
     "name": "Blog",
     "src": "resources/js/Blog.jsx",
     "isEntry": true,
@@ -3087,7 +3087,7 @@
     ]
   },
   "resources/js/BlogArticle.jsx": {
-    "file": "assets/BlogArticle-D0vVhgPx.js",
+    "file": "assets/BlogArticle-CJGC1wIi.js",
     "name": "BlogArticle",
     "src": "resources/js/BlogArticle.jsx",
     "isEntry": true,
@@ -4464,7 +4464,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Banner.jsx": {
-    "file": "assets/Banner-D8sFW4Nt.js",
+    "file": "assets/Banner-CLwHMJiQ.js",
     "name": "Banner",
     "src": "resources/js/Components/Tailwind/Banner.jsx",
     "isDynamicEntry": true,
@@ -4489,7 +4489,8 @@
       "resources/js/Components/Tailwind/Banners/BannerSimpleD2.jsx",
       "resources/js/Components/Tailwind/Banners/BannerBananaLab.jsx",
       "resources/js/Components/Tailwind/Banners/BannerCTAMakita.jsx",
-      "resources/js/Components/Tailwind/Banners/BannerContactMakita.jsx"
+      "resources/js/Components/Tailwind/Banners/BannerContactMakita.jsx",
+      "resources/js/Components/Tailwind/Banners/BannerPidelo.jsx"
     ]
   },
   "resources/js/Components/Tailwind/Banners/BannerAd.jsx": {
@@ -4552,6 +4553,18 @@
     "file": "assets/BannerFullWidth--pJTheE3.js",
     "name": "BannerFullWidth",
     "src": "resources/js/Components/Tailwind/Banners/BannerFullWidth.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BOnQTV8N.js",
+      "_index-yBjzXJbu.js",
+      "__commonjsHelpers-D6-XlEtG.js"
+    ]
+  },
+  "resources/js/Components/Tailwind/Banners/BannerPidelo.jsx": {
+    "file": "assets/BannerPidelo--pJTheE3.js",
+    "name": "BannerPidelo",
+    "src": "resources/js/Components/Tailwind/Banners/BannerPidelo.jsx",
     "isEntry": true,
     "imports": [
       "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
@@ -4669,7 +4682,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Base.jsx": {
-    "file": "assets/Base-C3PDIXp7.js",
+    "file": "assets/Base-BHGRuMPe.js",
     "name": "Base",
     "src": "resources/js/Components/Tailwind/Base.jsx",
     "isDynamicEntry": true,
@@ -7236,7 +7249,7 @@
     ]
   },
   "resources/js/Components/Tailwind/Header.jsx": {
-    "file": "assets/Header-S8cSYH_Z.js",
+    "file": "assets/Header-IUk1EzZl.js",
     "name": "Header",
     "src": "resources/js/Components/Tailwind/Header.jsx",
     "isEntry": true,
@@ -7259,7 +7272,8 @@
       "resources/js/Components/Tailwind/Headers/HeaderSearchMenu.jsx",
       "resources/js/Components/Tailwind/Headers/HeaderSearchMenuSF.jsx",
       "resources/js/Components/Tailwind/Scraping/Components/HeaderScraping.jsx",
-      "resources/js/Components/Tailwind/Headers/HeaderMakita.jsx"
+      "resources/js/Components/Tailwind/Headers/HeaderMakita.jsx",
+      "resources/js/Components/Tailwind/Headers/HeaderPidelo.jsx"
     ]
   },
   "resources/js/Components/Tailwind/Headers/Components/LiveSearchBar.jsx": {
@@ -7427,35 +7441,10 @@
       "_index-CeCfhSXL.js"
     ]
   },
-  "resources/js/Components/Tailwind/Headers/HeaderSearch.jsx": {
-    "file": "assets/HeaderSearch-DsiY_iPi.js",
-    "name": "HeaderSearch",
-    "src": "resources/js/Components/Tailwind/Headers/HeaderSearch.jsx",
-    "isEntry": true,
-    "imports": [
-      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
-      "_index-BOnQTV8N.js",
-      "resources/js/Components/Tailwind/Checkouts/Components/PolicyModal.jsx",
-      "_CartItemRow-DmaxKgYF.js",
-      "_Number2Currency-B5ZenVq9.js",
-      "_proxy-B0QLMKEh.js",
-      "_index-BZvh78jk.js",
-      "_index-yBjzXJbu.js",
-      "__commonjsHelpers-D6-XlEtG.js",
-      "_index-B6ujFmsw.js",
-      "_index-Chjiymov.js",
-      "_tippy-react.esm-DmkRJDEW.js",
-      "_index-pSueRYGM.js",
-      "_trash-2-DU7LB6-f.js",
-      "_createLucideIcon-DfjclApS.js",
-      "_plus-CTIomuuF.js",
-      "_General-BmbBKdsB.js"
-    ]
-  },
-  "resources/js/Components/Tailwind/Headers/HeaderSearchB.jsx": {
-    "file": "assets/HeaderSearchB-BVQiEIup.js",
-    "name": "HeaderSearchB",
-    "src": "resources/js/Components/Tailwind/Headers/HeaderSearchB.jsx",
+  "resources/js/Components/Tailwind/Headers/HeaderPidelo.jsx": {
+    "file": "assets/HeaderPidelo-zUJHlE5d.js",
+    "name": "HeaderPidelo",
+    "src": "resources/js/Components/Tailwind/Headers/HeaderPidelo.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
@@ -7471,6 +7460,7 @@
       "_house-DDB4Ooi5.js",
       "_shopping-cart-DLRnxGTD.js",
       "_x-fof_H3Vv.js",
+      "_check-D5vaIe6v.js",
       "_search-BQ59Robe.js",
       "_user-BZB1h7Cv.js",
       "_settings-jey665c1.js",
@@ -7498,6 +7488,62 @@
       "_chevron-down-uIVDLcM-.js",
       "_chevron-left-JcR9Fe4w.js",
       "_chevron-right-Cug7tVUE.js"
+    ]
+  },
+  "resources/js/Components/Tailwind/Headers/HeaderSearch.jsx": {
+    "file": "assets/HeaderSearch-DsiY_iPi.js",
+    "name": "HeaderSearch",
+    "src": "resources/js/Components/Tailwind/Headers/HeaderSearch.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BOnQTV8N.js",
+      "resources/js/Components/Tailwind/Checkouts/Components/PolicyModal.jsx",
+      "_CartItemRow-DmaxKgYF.js",
+      "_Number2Currency-B5ZenVq9.js",
+      "_proxy-B0QLMKEh.js",
+      "_index-BZvh78jk.js",
+      "_index-yBjzXJbu.js",
+      "__commonjsHelpers-D6-XlEtG.js",
+      "_index-B6ujFmsw.js",
+      "_index-Chjiymov.js",
+      "_tippy-react.esm-DmkRJDEW.js",
+      "_index-pSueRYGM.js",
+      "_trash-2-DU7LB6-f.js",
+      "_createLucideIcon-DfjclApS.js",
+      "_plus-CTIomuuF.js",
+      "_General-BmbBKdsB.js"
+    ]
+  },
+  "resources/js/Components/Tailwind/Headers/HeaderSearchB.jsx": {
+    "file": "assets/HeaderSearchB-C-qrrPUD.js",
+    "name": "HeaderSearchB",
+    "src": "resources/js/Components/Tailwind/Headers/HeaderSearchB.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BOnQTV8N.js",
+      "resources/js/Components/Tailwind/Headers/HeaderSearch.jsx",
+      "_main-B6F2O9-U.js",
+      "resources/js/Components/Tailwind/Headers/Components/MobileMenu.jsx",
+      "_index-yBjzXJbu.js",
+      "__commonjsHelpers-D6-XlEtG.js",
+      "resources/js/Components/Tailwind/Checkouts/Components/PolicyModal.jsx",
+      "_index-B6ujFmsw.js",
+      "_index-Chjiymov.js",
+      "_CartItemRow-DmaxKgYF.js",
+      "_Number2Currency-B5ZenVq9.js",
+      "_General-BmbBKdsB.js",
+      "_tippy-react.esm-DmkRJDEW.js",
+      "_index-pSueRYGM.js",
+      "_proxy-B0QLMKEh.js",
+      "_trash-2-DU7LB6-f.js",
+      "_createLucideIcon-DfjclApS.js",
+      "_plus-CTIomuuF.js",
+      "_index-BZvh78jk.js",
+      "____vite-browser-external_commonjs-proxy-DDYoOVPM.js",
+      "_BasicRest-DBO1iUsn.js",
+      "_index-CeCfhSXL.js"
     ]
   },
   "resources/js/Components/Tailwind/Headers/HeaderSearchContact.jsx": {
@@ -9737,7 +9783,7 @@
     ]
   },
   "resources/js/Contact.jsx": {
-    "file": "assets/Contact-UuHhGoZP.js",
+    "file": "assets/Contact-Dm3onGI2.js",
     "name": "Contact",
     "src": "resources/js/Contact.jsx",
     "isEntry": true,
@@ -9780,7 +9826,7 @@
     ]
   },
   "resources/js/CourseDetails.jsx": {
-    "file": "assets/CourseDetails-CboAyGmq.js",
+    "file": "assets/CourseDetails-BryWzs3T.js",
     "name": "CourseDetails",
     "src": "resources/js/CourseDetails.jsx",
     "isEntry": true,
@@ -9815,7 +9861,7 @@
     ]
   },
   "resources/js/Courses.jsx": {
-    "file": "assets/Courses-CxHFYP6X.js",
+    "file": "assets/Courses-LIz3Y9m1.js",
     "name": "Courses",
     "src": "resources/js/Courses.jsx",
     "isEntry": true,
@@ -9908,7 +9954,7 @@
     "isEntry": true
   },
   "resources/js/Home.jsx": {
-    "file": "assets/Home-BiWF1mSu.js",
+    "file": "assets/Home-DRY2punj.js",
     "name": "Home",
     "src": "resources/js/Home.jsx",
     "isEntry": true,
@@ -10108,7 +10154,7 @@
     ]
   },
   "resources/js/System.jsx": {
-    "file": "assets/System-BeOntLKw.js",
+    "file": "assets/System-Db02Ye4F.js",
     "name": "System",
     "src": "resources/js/System.jsx",
     "isEntry": true,
