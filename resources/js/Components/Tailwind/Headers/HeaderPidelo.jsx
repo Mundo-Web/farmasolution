@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import CartModal from "../Components/CartModal";
 import Logout from "../../../Actions/Logout";
-import MobileMenu from "./Components/MobileMenu";
+import MobileMenuPidelo from "./Components/MobileMenuPidelo";
 import ProfileImage from "./Components/ProfileImage";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -1094,14 +1094,19 @@ const HeaderPidelo = ({
                                             </div>
                                         </form>
 
-                                        <AnimatePresence>
-                                            <SearchSuggestions
-                                                suggestions={searchSuggestions}
-                                                isLoading={isLoadingSuggestions}
-                                                onSelect={selectSuggestion}
-                                                selectedIndex={selectedSuggestionIndex}
-                                            />
-                                        </AnimatePresence>
+                                        {/* Sugerencias para búsqueda móvil expandible */}
+                                        <div className="relative">
+                                            <div className="absolute left-0 right-0 mt-2 z-50">
+                                                <AnimatePresence>
+                                                    <SearchSuggestions
+                                                        suggestions={searchSuggestions}
+                                                        isLoading={isLoadingSuggestions}
+                                                        onSelect={selectSuggestion}
+                                                        selectedIndex={selectedSuggestionIndex}
+                                                    />
+                                                </AnimatePresence>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -1142,14 +1147,19 @@ const HeaderPidelo = ({
                                 </button>
                             </form>
 
-                            <AnimatePresence>
-                                <SearchSuggestions
-                                    suggestions={searchSuggestions}
-                                    isLoading={isLoadingSuggestions}
-                                    onSelect={selectSuggestion}
-                                    selectedIndex={selectedSuggestionIndex}
-                                />
-                            </AnimatePresence>
+                            {/* Sugerencias para nueva sección móvil */}
+                            <div className="relative">
+                                <div className="absolute left-0 right-0 mt-2 z-50">
+                                    <AnimatePresence>
+                                        <SearchSuggestions
+                                            suggestions={searchSuggestions}
+                                            isLoading={isLoadingSuggestions}
+                                            onSelect={selectSuggestion}
+                                            selectedIndex={selectedSuggestionIndex}
+                                        />
+                                    </AnimatePresence>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -1164,12 +1174,22 @@ const HeaderPidelo = ({
                         transition={{ duration: 0.2 }}
                         className="lg:hidden bg-transparent text-textWhite shadow-lg w-full min-h-screen absolute z-10 top-20"
                     >
-                        <MobileMenu
+                        <MobileMenuPidelo
                             search={search}
                             setSearch={setSearch}
                             pages={pages}
                             items={items}
                             onClose={() => setOpenMenu(!openMenu)}
+                            searchSuggestions={searchSuggestions}
+                            isLoadingSuggestions={isLoadingSuggestions}
+                            fetchSearchSuggestions={fetchSearchSuggestions}
+                            clearSuggestions={clearSuggestions}
+                            selectSuggestion={selectSuggestion}
+                            selectedSuggestionIndex={selectedSuggestionIndex}
+                            handleKeyDown={handleKeyDown}
+                            stores={stores}
+                            selectedStore={selectedStore}
+                            setSelectedStore={setSelectedStore}
                         />
                     </motion.div>
                 )}
