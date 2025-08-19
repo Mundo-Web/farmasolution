@@ -183,7 +183,12 @@ const HeaderPidelo = ({
             window.location.href = `/product/${suggestion.slug}`;
         } else {
             let url = `/catalogo?search=${encodeURIComponent(suggestion.name)}`;
-            if (selectedStore) url += `&store=${encodeURIComponent(selectedStore)}`;
+            // Buscar el store seleccionado para obtener su slug
+            if (selectedStore) {
+                const selectedStoreObj = stores.find(store => store.id === selectedStore);
+                const storeSlug = selectedStoreObj?.slug || selectedStore;
+                url += `&store=${encodeURIComponent(storeSlug)}`;
+            }
             window.location.href = url;
         }
     };
@@ -382,7 +387,11 @@ const HeaderPidelo = ({
         if (search.trim()) {
             const trimmedSearch = search.trim();
             let url = `/catalogo?search=${encodeURIComponent(trimmedSearch)}`;
-            if (selectedStore) url += `&store=${encodeURIComponent(selectedStore)}`;
+            if (selectedStore) {
+                const selectedStoreObj = stores.find(store => store.id === selectedStore);
+                const storeSlug = selectedStoreObj?.slug || selectedStore;
+                url += `&store=${encodeURIComponent(storeSlug)}`;
+            }
             window.location.href = url;
         }
         return false; // Prevenir comportamiento por defecto adicional
@@ -396,7 +405,11 @@ const HeaderPidelo = ({
             const trimmedSearch = search.trim();
             setSearchMobile(false); // Cerrar el input móvil
             let url = `/catalogo?search=${encodeURIComponent(trimmedSearch)}`;
-            if (selectedStore) url += `&store=${encodeURIComponent(selectedStore)}`;
+            if (selectedStore) {
+                const selectedStoreObj = stores.find(store => store.id === selectedStore);
+                const storeSlug = selectedStoreObj?.slug || selectedStore;
+                url += `&store=${encodeURIComponent(storeSlug)}`;
+            }
             window.location.href = url;
         }
         return false;

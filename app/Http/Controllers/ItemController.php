@@ -1304,6 +1304,12 @@ class ItemController extends BasicController
                 $collectionIds = Collection::whereIn('slug', $collectionSlugs)->pluck('id')->toArray();
                 $result['collection_ids'] = $collectionIds;
             }
+
+            if ($request->has('store_slugs') && !empty($request->store_slugs)) {
+                $storeSlugs = is_array($request->store_slugs) ? $request->store_slugs : explode(',', $request->store_slugs);
+                $storeIds = Store::whereIn('slug', $storeSlugs)->pluck('id')->toArray();
+                $result['store_ids'] = $storeIds;
+            }
             
             $response->status = 200;
             $response->message = 'Slugs convertidos correctamente';

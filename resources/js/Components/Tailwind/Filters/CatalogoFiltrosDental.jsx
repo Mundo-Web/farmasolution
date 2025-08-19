@@ -324,27 +324,36 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
             }
             if (GET.store) {
                 params.store_slugs = GET.store;
+                console.log("🏪 Store slug desde URL:", GET.store);
             }
 
             // Solo hacer la petición si hay slugs que convertir
             if (Object.keys(params).length > 0) {
+                console.log("📝 Enviando parámetros para conversión:", params);
                 const response = await itemsRest.convertSlugs(params);
-                console.log("Estamos fuera de estatus 200")
+                console.log("📦 Respuesta de conversión de slugs:", response);
+                
                 if (response.status === 200) {
-                    console.log("Estamos dentro de estatus 200")
-                    console.log("Response data:", response.data);
-                    setSelectedFilters(prev => ({
-                        ...prev,
+                    console.log("✅ Conversión exitosa, aplicando filtros...");
+                    const newFilters = {
+                        ...selectedFilters,
                         category_id: Array.isArray(response.data.category_ids) ? response.data.category_ids : (response.data.category_ids ? [response.data.category_ids] : []),
                         brand_id: GET.brand ? [GET.brand] : [],
                         subcategory_id: Array.isArray(response.data.subcategory_ids) ? response.data.subcategory_ids : (response.data.subcategory_ids ? [response.data.subcategory_ids] : []),
                         collection_id: Array.isArray(response.data.collection_ids) ? response.data.collection_ids : (response.data.collection_ids ? [response.data.collection_ids] : []),
                         store_id: Array.isArray(response.data.store_ids) ? response.data.store_ids : (response.data.store_ids ? [response.data.store_ids] : []),
-                    }));
+                    };
+                    
+                    console.log("🔄 Estableciendo filtros desde URL:", newFilters);
+                    setSelectedFilters(newFilters);
+                    
+                    if (response.data.store_ids) {
+                        console.log("🏪 Store IDs encontrados:", response.data.store_ids);
+                    }
                 }
             }
         } catch (error) {
-            console.error('Error converting slugs to IDs:', error);
+            console.error('❌ Error converting slugs to IDs:', error);
         }
     };
 
@@ -435,29 +444,15 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
             transformedFilters.push(ArrayJoin(brandConditions, 'or'));
         }
 
-        if (filters.store_id && filters.store_id.length > 0) {
-            const storeConditions = filters.store_id.map((slug) => {
-                // Buscar la tienda en el array para obtener su ID
-                const store = stores.find(s => s.slug === slug);
-
-                if (store) {
-                    // Si encontramos la tienda, usar su slug
-                    return [
-                        "store.slug",
-                        "=",
-                        store.slug,
-                    ];
-                } else {
-                    // Si no la encontramos, usar slug
-                    return [
-                        "store.slug",
-                        "=",
-                        slug,
-                    ];
-                }
-            });
+         if (filters.store_id.length > 0) {
+            const storeConditions = filters.store_id.map((slug) => [
+                "store.id",
+                "=",
+                stores.find(s => s.slug === slug)?.id || slug,
+            ]);
             transformedFilters.push(ArrayJoin(storeConditions, 'or'));
         }
+       
 
         if (filters.tag_id && filters.tag_id.length > 0) {
             const tagConditions = filters.tag_id.map((tagId) => [
@@ -1071,10 +1066,12 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
             setSubcategories(filteredData.subcategories || []);
             setStores(filteredData.stores || []);
             setPriceRanges(filteredData.priceRanges || []);
+            
+            // Convert slugs from GET parameters to IDs AFTER data is loaded
+            setTimeout(() => {
+                convertSlugsToIds();
+            }, 50);
         }
-
-        // Convert slugs from GET parameters to IDs
-        convertSlugsToIds();
 
         // Aplicar búsqueda inteligente si hay un término de búsqueda inicial
         if (GET.search && intelligentSearchEnabled) {
@@ -1082,7 +1079,7 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
             setTimeout(() => {
                 console.log("🚀 Inicializando búsqueda inteligente para:", GET.search);
                 handleIntelligentSearch(GET.search);
-            }, 100);
+            }, 150);
         }
 
         // Initial fetch to get products and update summary data (no es filtrado)
@@ -1708,13 +1705,13 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
                                                                         <input
                                                                             type="checkbox"
                                                                             className={modernFilterStyles.checkbox}
-                                                                            onChange={() => handleFilterChange("store_id", store.slug)}
-                                                                            checked={selectedFilters.store_id?.includes(store.slug)}
+                                                                            onChange={() => handleFilterChange("store_id", store.id)}
+                                                                            checked={selectedFilters.store_id?.includes(store.id)}
                                                                         />
                                                                         <span className="text-sm font-medium line-clamp-1 customtext-neutral-dark  transition-colors duration-200">
                                                                             {store.name}
                                                                         </span>
-                                                                        {selectedFilters.store_id?.includes(store.slug) && (
+                                                                        {selectedFilters.store_id?.includes(store.id) && (
                                                                             <motion.div
                                                                                 className="ml-auto"
                                                                                 initial={{ scale: 0 }}
@@ -2162,12 +2159,12 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
                                                             })}
 
                                                             {/* Chips de tiendas con AnimatedBadge */}
-                                                            {selectedFilters.store_id?.map((storeSlug) => {
-                                                                const store = stores.find(s => s.slug === storeSlug);
+                                                            {selectedFilters.store_id?.map((storeId) => {
+                                                                const store = stores.find(s => s.id === storeId);
                                                                 return store ? (
                                                                     <AnimatedBadge
-                                                                        key={storeSlug}
-                                                                        onClick={() => handleFilterChange("store_id", storeSlug)}
+                                                                        key={storeId}
+                                                                        onClick={() => handleFilterChange("store_id", storeId)}
                                                                     >
                                                                         <Store className="h-3 w-3" />
                                                                         <span>{store.name}</span>
