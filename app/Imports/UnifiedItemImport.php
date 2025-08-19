@@ -9,6 +9,7 @@ use App\Models\Collection;
 use App\Models\Brand;
 use App\Models\ItemSpecification;
 use App\Models\ItemImage;
+use App\Models\Store;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -68,6 +69,7 @@ class UnifiedItemImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsO
             'color' => ['color', 'colour'],
             'talla' => ['size', 'talla', 'size_talla'],
             'agrupador' => ['agrupador'],
+            'tienda' => ['tienda', 'store', 'store_id', 'Tienda'],
             'especificaciones_principales' => [
                 'especificaciones_principales_separadas_por_comas',
                 'especificaciones_principales_separadas_por_coma',
@@ -233,6 +235,20 @@ class UnifiedItemImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsO
             $discountPercent = $this->calculateDiscountPercent($precio, $descuento);
 
             // 7️⃣ Crear el producto
+            // 7️⃣ Obtener tienda/store_id si existe
+            $store = null;
+            if ($this->hasField($row, 'tienda')) {
+                $store = $this->getFieldValue($row, 'tienda');
+                if ($store) {
+                     $store = Store::firstOrCreate(
+                        ['name' => $store],
+                        ['slug' => Str::slug($store)]
+                    );
+                    
+                  
+                }
+            }
+
             $itemData = [
                 'sku' => $sku,
                 'grouper' => $this->getFieldValue($row, 'agrupador', ''),
@@ -247,6 +263,7 @@ class UnifiedItemImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsO
                 'subcategory_id' => $subCategory ? $subCategory->id : null,
                 'collection_id' => $collection ? $collection->id : null,
                 'brand_id' => $brand ? $brand->id : null,
+                'store_id' => $store ? $store->id : null,
                 'image' => $this->getMainImage($row, 'sku'),
                 'slug' => $slug,
                 'stock' => $this->getNumericValue($row, 'stock', 10),
