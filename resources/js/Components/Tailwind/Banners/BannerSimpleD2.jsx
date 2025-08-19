@@ -18,7 +18,7 @@ const BannerSimpleD2 = ({ data }) => {
                          <TextWithHighlightD2en1 clase="text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl" text={data?.name} />
                     </h1>
 
-                    <p className="text-white italic text-base md:text-lg lg:text-xl 2xl:text-2xl font-normal">{data?.description}</p>
+                    <p className="text-white italic text-base md:text-lg lg:text-xl 2xl:text-2xl font-paragraph">{data?.description}</p>
                     
                     <div className="flex flex-wrap justify-center items-center gap-4 lg:gap-8 customtext-primary font-semibold w-full py-5 max-w-lg 2xl:max-w-xl mx-auto">
 

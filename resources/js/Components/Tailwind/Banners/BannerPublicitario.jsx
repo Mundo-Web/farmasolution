@@ -27,7 +27,9 @@ const BannerPublicitario = ({ data }) => {
                 >
                     <div className="flex flex-col md:flex-row items-center justify-between h-full gap-8">
                         {/* Left side - Image */}
-                        <motion.div 
+                       
+
+  <motion.div 
                             className={`order-1 md:order-none w-full md:w-7/12 relative z-10 flex items-center justify-center h-full ${data?.class_image || ''}`}
                         >
                             <motion.img
@@ -43,6 +45,8 @@ const BannerPublicitario = ({ data }) => {
                                 alt={data?.name}
                             />
                         </motion.div>
+                       
+                      
 
                         {/* Right side - Content */}
                         <motion.div 

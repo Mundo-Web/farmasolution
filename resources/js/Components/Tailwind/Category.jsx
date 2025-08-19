@@ -11,7 +11,7 @@ const CategoryFlex = React.lazy(() => import('./Categories/CategoryFlex'))
 const CategoryGridInfinite = React.lazy(() => import('./Categories/CategoryGridInfinite'))
 const CategoriesScraping = React.lazy(() => import('./Scraping/Components/CategoriesScraping'))
 const CategoryBoxSwiper = React.lazy(() => import('./Categories/CategoryBoxSwiper'))
-
+const CategoryPidelo = React.lazy(() => import('./Categories/CategoryPidelo'))
 const Category = ({ which, data, items }) => {
   const getCategory = () => {
     switch (which) {
@@ -35,7 +35,11 @@ const Category = ({ which, data, items }) => {
         return <CategoriesScraping data={data} items={items} />
       case 'CategoryBoxSwiper':
         return <CategoryBoxSwiper data={data} items={items} />
-      default:
+      case 'CategoryPidelo':
+        return <CategoryPidelo data={data} items={items} />
+      
+      
+        default:
         return <div className="w-full px-[5%] replace-max-w-here p-4 mx-auto">- No Hay componente <b>{which}</b> -</div>
     }
   }

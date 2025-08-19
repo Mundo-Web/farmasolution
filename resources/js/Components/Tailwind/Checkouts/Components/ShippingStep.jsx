@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import AsyncSelect from "react-select/async";
-import Number2Currency from "../../../../Utils/Number2Currency";
+import Number2Currency, { CurrencySymbol } from "../../../../Utils/Number2Currency";
 import DeliveryPricesRest from "../../../../Actions/DeliveryPricesRest";
 import CouponsRest from "../../../../Actions/CouponsRest";
 import { processCulqiPayment } from "../../../../Actions/culqiPayment";
@@ -16,6 +16,7 @@ import { Notify } from "sode-extend-react";
 import { debounce } from "lodash";
 import { toast } from "sonner";
 import Global from "../../../../Utils/Global";
+import Tippy from "@tippyjs/react";
 
 export default function ShippingStep({
     data,
@@ -28,6 +29,9 @@ export default function ShippingStep({
     noContinue,
     subTotal,
     igv,
+    fleteTotal,
+    seguroImportacionTotal,
+    derechoArancelarioTotal,
     totalFinal,
     user,
     setEnvio,
@@ -45,6 +49,7 @@ export default function ShippingStep({
     conversionScripts,
     setConversionScripts,
     onPurchaseComplete,
+    generals
 }) {
     const [selectedUbigeo, setSelectedUbigeo] = useState(null);
     const [defaultUbigeoOption, setDefaultUbigeoOption] = useState(null);
@@ -1337,7 +1342,7 @@ export default function ShippingStep({
                             <div>
                                 <h4 className="font-medium">{item.name}</h4>
                                 <p className="text-sm customtext-neutral-dark">Cantidad: {item.quantity}</p>
-                                <p className="text-sm customtext-neutral-dark">S/ {Number2Currency(item.final_price)}</p>
+                                <p className="text-sm customtext-neutral-dark">{CurrencySymbol()}{Number2Currency(item.final_price)}</p>
                             </div>
                         </div>
                     ))}
@@ -1346,15 +1351,40 @@ export default function ShippingStep({
                 <div className="space-y-4 mt-6">
                     <div className="flex justify-between">
                         <span>Subtotal:</span>
-                        <span>S/ {Number2Currency(roundToTwoDecimals(subTotal))}</span>
+                        <span>{CurrencySymbol()}{Number2Currency(roundToTwoDecimals(subTotal))}</span>
                     </div>
-                    <div className="flex justify-between">
-                        <span>IGV (18%):</span>
-                        <span>S/ {Number2Currency(roundToTwoDecimals(igv))}</span>
-                    </div>
+                    {
+                        Number(generals?.find(x => x.correlative === 'igv_checkout')?.description) > 0 &&
+                        <div className="flex justify-between">
+                            <span>IGV ({Number(generals?.find(x => x.correlative === 'igv_checkout')?.description || 18)}%):</span>
+                            <span>{CurrencySymbol()}{Number2Currency(roundToTwoDecimals(igv))}</span>
+                        </div>
+                    }
+                    {
+                        Number(generals?.find(x => x.correlative === 'importation_seguro')?.description) > 0 &&
+                        <div className="flex justify-between">
+                            <span>Seguro ({Number(generals?.find(x => x.correlative === 'importation_seguro')?.description || 0).toFixed(2)}%):</span>
+                            <span>{CurrencySymbol()}{Number2Currency(roundToTwoDecimals(seguroImportacionTotal))}</span>
+                        </div>
+                    }
+                    {
+                        Number(generals?.find(x => x.correlative === 'importation_derecho_arancelario')?.description) > 0 &&
+                        <div className="flex justify-between">
+                            <span>
+                                Derecho arancelario
+                                {
+                                    generals?.find(x => x.correlative === 'importation_derecho_arancelario_descripcion')?.description &&
+                                    <Tippy content={<p className="whitespace-pre-line">{generals?.find(x => x.correlative === 'importation_derecho_arancelario_descripcion')?.description}</p>} allowHTML>
+                                        <i className="mdi mdi-information ms-1"></i>
+                                    </Tippy>
+                                }
+                            </span>
+                            <span>{CurrencySymbol()}{Number2Currency(roundToTwoDecimals(derechoArancelarioTotal))}</span>
+                        </div>
+                    }
                     <div className="flex justify-between">
                         <span>Envío:</span>
-                        <span>S/ {Number2Currency(roundToTwoDecimals(envio))}</span>
+                        <span>{CurrencySymbol()}{Number2Currency(roundToTwoDecimals(envio))}</span>
                     </div>
 
                     {/* Sección de cupón */}
@@ -1426,7 +1456,7 @@ export default function ShippingStep({
                                                 <p className="customtext-primary font-semibold text-sm">
                                                     Descto. {appliedCoupon.type === 'percentage' 
                                                         ? `${appliedCoupon.value}%` 
-                                                        : `S/${Number2Currency(appliedCoupon.value)}`}
+                                                        : `${CurrencySymbol()}${Number2Currency(appliedCoupon.value)}`}
                                                 </p>
                                                 <p className="customtext-primary text-xs mt-1">
                                                     {appliedCoupon.code}
@@ -1435,7 +1465,7 @@ export default function ShippingStep({
                                         </div>
                                         <div className="text-right w-4/12">
                                             <span className="customtext-primary font-bold text-base">
-                                                -S/ {Number2Currency(roundToTwoDecimals(couponDiscount))}
+                                                -{CurrencySymbol()}{Number2Currency(roundToTwoDecimals(couponDiscount))}
                                             </span>
                                            {/* <p className="customtext-primary text-xs">Descuento aplicado</p> */}
                                         </div>
@@ -1474,7 +1504,7 @@ export default function ShippingStep({
                                             </div>
                                             <div className="text-right w-4/12">
                                                 <span className="customtext-neutral-dark font-bold text-base">
-                                                    -S/ {Number2Currency(discount.amount)}
+                                                    -{CurrencySymbol()}{Number2Currency(discount.amount)}
                                                 </span>
                                             </div>
                                         </div>
@@ -1485,7 +1515,7 @@ export default function ShippingStep({
                                         <div className="flex justify-between items-center">
                                             <span className="customtext-neutral-dark font-semibold">Total descuentos automáticos:</span>
                                             <span className="customtext-neutral-dark font-bold text-lg">
-                                                -S/ {Number2Currency(automaticDiscountTotal)}
+                                                -{CurrencySymbol()}{Number2Currency(automaticDiscountTotal)}
                                             </span>
                                         </div>
                                     </div>
@@ -1503,7 +1533,7 @@ export default function ShippingStep({
                     <div className="pt-4 border-t-2">
                         <div className="flex justify-between font-bold text-lg">
                             <span>Total:</span>
-                            <span>S/ {Number2Currency(roundToTwoDecimals(finalTotalWithCoupon))}</span>
+                            <span>{CurrencySymbol()}{Number2Currency(roundToTwoDecimals(finalTotalWithCoupon))}</span>
                         </div>
                     </div>
 
@@ -1535,7 +1565,7 @@ export default function ShippingStep({
                         loading={paymentLoading}
                         className={`w-full mt-6 ${data?.class_button || 'text-white'} ${(!Global.CULQI_ENABLED || !Global.CULQI_PUBLIC_KEY) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        {paymentLoading ? "Procesando..." : !Global.CULQI_ENABLED ? "Pago no disponible" : !Global.CULQI_PUBLIC_KEY ? "Configuración pendiente" : `Pagar S/ ${Number2Currency(roundToTwoDecimals(finalTotalWithCoupon))}`}
+                        {paymentLoading ? "Procesando..." : !Global.CULQI_ENABLED ? "Pago no disponible" : !Global.CULQI_PUBLIC_KEY ? "Configuración pendiente" : `Pagar ${CurrencySymbol()}${Number2Currency(roundToTwoDecimals(finalTotalWithCoupon))}`}
                     </ButtonPrimary>
 
                     <ButtonSecondary 

@@ -119,6 +119,9 @@ const Generals = ({ generals }) => {
     shippingFree:
       generals.find((x) => x.correlative == "shipping_free")
         ?.description ?? "",
+    currency:
+      generals.find((x) => x.correlative == "currency")
+        ?.description ?? "",
     location: {
       lat: Number(location.split(",").map((x) => x.trim())[0]),
       lng: Number(location.split(",").map((x) => x.trim())[1]),
@@ -150,6 +153,11 @@ const Generals = ({ generals }) => {
           description: ""
         }
       ],
+    // Importation calculations
+    importation_flete: generals.find(x => x.correlative == 'importation_flete')?.description ?? "",
+    importation_seguro: generals.find(x => x.correlative == 'importation_seguro')?.description ?? "",
+    importation_derecho_arancelario: generals.find(x => x.correlative == 'importation_derecho_arancelario')?.description ?? "",
+    importation_derecho_arancelario_descripcion: generals.find(x => x.correlative == 'importation_derecho_arancelario_descripcion')?.description ?? "",
     // Píxeles de tracking
     googleAnalyticsId:
       generals.find((x) => x.correlative == "google_analytics_id")
@@ -339,6 +347,36 @@ const Generals = ({ generals }) => {
         description: formData.igvCheckout || "",
       },
       {
+        correlative: 'currency',
+        name: 'Moneda',
+        description: formData.currency || "",
+      },
+      {
+        correlative: "shipping_free",
+        name: "Envio gratis a partir de",
+        description: formData.shippingFree || "",
+      },
+      {
+        correlative: "importation_flete",
+        name: "Flete",
+        description: formData.importation_flete || "",
+      },
+      {
+        correlative: "importation_seguro",
+        name: "Seguro",
+        description: formData.importation_seguro || "",
+      },
+      {
+        correlative: "importation_derecho_arancelario",
+        name: "Derecho arancelario",
+        description: formData.importation_derecho_arancelario || "",
+      },
+      {
+        correlative: "importation_derecho_arancelario_descripcion",
+        name: "Descripción derecho arancelario",
+        description: formData.importation_derecho_arancelario_descripcion || "",
+      },
+      {
         correlative: "checkout_culqi",
         name: "Habilitar Culqi",
         description: formData.checkout_culqi || "",
@@ -427,11 +465,6 @@ const Generals = ({ generals }) => {
         correlative: "location",
         name: "Ubicación",
         description: `${formData.location.lat},${formData.location.lng}`,
-      },
-      {
-        correlative: 'shipping_free',
-        name: 'Envio gratis a partir de',
-        description: formData.shippingFree || "",
       },
       // Píxeles de tracking
       {
@@ -592,6 +625,17 @@ const Generals = ({ generals }) => {
               role="tab"
             >
               Métodos de Pago
+            </button>
+          </li>
+          <li className="nav-item" role="presentation">
+            <button
+              className={`nav-link ${activeTab === "importation" ? "active" : ""
+                }`}
+              onClick={() => setActiveTab("importation")}
+              type="button"
+              role="tab"
+            >
+              Cálculos de importación
             </button>
           </li>
           <li className="nav-item" role="presentation">
@@ -839,6 +883,29 @@ const Generals = ({ generals }) => {
                   })
                 }
               />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="currency"
+                className="form-label"
+              >
+                Moneda
+                <small className="d-block text-muted" style={{ fontWeight: 'lighter' }}>¿Qué moneda maneja tu empresa?</small>
+              </label>
+              <select
+                className="form-control"
+                id="currency"
+                value={formData.currency}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    currency: e.target.value,
+                  })
+                }
+              >
+                <option value="pen">Soles (S/)</option>
+                <option value="usd">Dólares ($)</option>
+              </select>
             </div>
           </div>
         </div>
@@ -1595,6 +1662,117 @@ const Generals = ({ generals }) => {
                   })}
                 />
               </div>
+          </div>
+
+          <div
+            className={`tab-pane fade ${activeTab === "importation" ? "show active" : ""}`}
+            role="tabpanel"
+          >
+            <div className="row mb-2">
+              <div className="col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3">
+                <div className="mb-3">
+                  <label
+                    htmlFor="importation_flete"
+                    className="form-label"
+                  >
+                    Precio por peso (flete)
+                  </label>
+                  <div className="input-group">
+                    <span className="input-group-text">
+                      <i className="mdi mdi-circle-multiple"></i>
+                    </span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      id="importation_flete"
+                      value={formData.importation_flete}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          importation_flete: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                    <span className="input-group-text">por kg</span>
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="importation_seguro"
+                    className="form-label"
+                  >
+                    Seguro de importación
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      id="importation_seguro"
+                      value={formData.importation_seguro}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          importation_seguro: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                    <span className="input-group-text">%</span>
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="importation_derecho_arancelario"
+                    className="form-label"
+                  >
+                    Derechos arancelarios
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      id="importation_derecho_arancelario"
+                      value={formData.importation_derecho_arancelario}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          importation_derecho_arancelario: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                    <span className="input-group-text">%</span>
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="importation_derecho_arancelario_descripcion"
+                    className="form-label"
+                  >
+                    Descripción de derechos arancelarios
+                    <small className="text-muted d-block">Qué porcentajes se están considerando en cálculo de derechos arancelarios</small>
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="importation_derecho_arancelario_descripcion"
+                    value={formData.importation_derecho_arancelario_descripcion}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        importation_derecho_arancelario_descripcion: e.target.value,
+                      })
+                    }
+                    rows={3}
+                    style={{ minHeight: (3 * 27), fieldSizing: 'content' }}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           <div

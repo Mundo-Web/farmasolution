@@ -1,20 +1,26 @@
-import Number2Currency from "../../../../Utils/Number2Currency";
+import Number2Currency, { CurrencySymbol } from "../../../../Utils/Number2Currency";
 import ButtonPrimary from "./ButtonPrimary";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
-export default function ConfirmationStep({ cart, code, delivery, couponDiscount = 0, couponCode = null, conversionScripts = null, automaticDiscounts = [], automaticDiscountTotal = 0 }) {
-    const totalPrice = cart.reduce((acc, item) => {
-        const finalPrice = item?.final_price;
-        return acc + finalPrice * item?.quantity;
-    }, 0);
-
-   
-    const subTotal = parseFloat((totalPrice / 1.18).toFixed(2));
-    const igv = parseFloat((totalPrice - subTotal).toFixed(2));
-
-    const totalBeforeDiscount = parseFloat(subTotal) + parseFloat(igv) + parseFloat(delivery);
-    const totalFinal = totalBeforeDiscount - couponDiscount - automaticDiscountTotal;
+export default function ConfirmationStep({ 
+    cart, 
+    code, 
+    delivery, 
+    subTotal,
+    igv,
+    fleteTotal = 0,
+    seguroImportacionTotal = 0,
+    derechoArancelarioTotal = 0,
+    totalFinal,
+    couponDiscount = 0, 
+    couponCode = null, 
+    conversionScripts = null, 
+    automaticDiscounts = [], 
+    automaticDiscountTotal = 0,
+    generals
+}) {
+    // Use the totalFinal passed as prop instead of calculating locally
 
     // Execute conversion scripts when component mounts
     useEffect(() => {
@@ -107,7 +113,7 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                                             <div className="flex flex-col sm:flex-row sm:justify-between mb-3">
                                                 <h3 className="font-semibold text-xl lg:w-8/12 line-clamp-3">{item?.name}</h3>
                                                 <div className="mt-2 sm:mt-0 text-center lg:text-right lg:w-4/12">
-                                                    <div className="font-bold text-lg customtext-primary">S/ {Number2Currency(item?.final_price * item?.quantity)}</div>
+                                                    <div className="font-bold text-lg customtext-primary">{CurrencySymbol()}{Number2Currency(item?.final_price * item?.quantity)}</div>
 
                                                 </div>
                                             </div>
@@ -129,13 +135,15 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                             className="space-y-4 mt-6"
                         >
                             {[
-                                { label: "Subtotal", value: subTotal },
-                                { label: "IGV", value: igv },
-                                { label: "Envío", value: delivery }
-                            ].map((item, index) => (
+                                { label: "Subtotal", value: subTotal, show: true },
+                                { label: "IGV", value: igv, show: Number(generals?.find(x => x.correlative === 'igv_checkout')?.description) > 0 },
+                                { label: "Seguro", value: seguroImportacionTotal, show: Number(generals?.find(x => x.correlative === 'importation_seguro')?.description) > 0 },
+                                { label: "Derecho arancelario", value: derechoArancelarioTotal, show: Number(generals?.find(x => x.correlative === 'importation_derecho_arancelario')?.description) > 0 },
+                                { label: "Envío", value: delivery, show: true }
+                            ].filter(item => item.show).map((item, index) => (
                                 <div key={index} className="flex justify-between items-center py-2">
                                     <span className="customtext-neutral-dark">{item?.label}</span>
-                                    <span className="font-semibold">S/ {Number2Currency(item?.value)}</span>
+                                    <span className="font-semibold">{CurrencySymbol()}{Number2Currency(item?.value)}</span>
                                 </div>
                             ))}
 
@@ -146,7 +154,7 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                                         Cupón: <br className="lg:hidden"/>
                                         <span className="font-semibold text-xs lg:text-base">({couponCode})</span>
                                     </span>
-                                    <span className="font-semibold">-S/ {Number2Currency(couponDiscount)}</span>
+                                    <span className="font-semibold">-{CurrencySymbol()}{Number2Currency(couponDiscount)}</span>
                                 </div>
                             )}
 
@@ -167,13 +175,13 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                                       )}
                                     </span>
                                     <span className="customtext-neutral-dark font-semibold">
-                                      -S/ {Number2Currency(discount.amount)}
+                                      -{CurrencySymbol()}{Number2Currency(discount.amount)}
                                     </span>
                                   </div>
                                 ))}
                                 <div className="flex justify-between text-sm font-semibold customtext-neutral-dark pt-1">
                                   <span>Total descuentos:</span>
-                                  <span>-S/ {Number2Currency(automaticDiscountTotal)}</span>
+                                  <span>-{CurrencySymbol()}{Number2Currency(automaticDiscountTotal)}</span>
                                 </div>
                               </div>
                             )}
@@ -181,7 +189,7 @@ export default function ConfirmationStep({ cart, code, delivery, couponDiscount 
                             <div className="py-4 border-y-2 mt-6">
                                 <div className="flex justify-between font-bold text-xl md:text-2xl items-center">
                                     <span>Total</span>
-                                    <span>S/ {Number2Currency(totalFinal)}</span>
+                                    <span>{CurrencySymbol()}{Number2Currency(totalFinal)}</span>
                                 </div>
                             </div>
                         </motion.div>

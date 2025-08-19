@@ -13,8 +13,8 @@ const CarruselBenefitsInifinite = ({ items=[], data }) => {
   });
 
   return (
-    <div ref={benefitsRef} className={`${data?.background ? data?.background : 'bg-primary' }  py-4 lg:py-6 overflow-hidden`}>
-      <div className="px-primary 2xl:px-0 2xl:max-w-7xl mx-auto relative">
+    <div ref={benefitsRef} className={` py-4 lg:py-6 overflow-hidden ${data?.background || 'bg-primary' } `}>
+      <div className={`px-primary 2xl:px-0 2xl:max-w-7xl mx-auto relative ${data?.class_container }`}>
         <Swiper
           slidesPerView={2}
           spaceBetween={32}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Number2Currency from "../../../../Utils/Number2Currency.jsx";
+import Number2Currency, { CurrencySymbol } from "../../../../Utils/Number2Currency.jsx";
 import ButtonPrimary from "./ButtonPrimary";
 import ButtonSecondary from "./ButtonSecondary";
 import CardItem from "./CardItem";
@@ -7,6 +7,7 @@ import DiscountRulesRest from "../../../../Actions/DiscountRulesRest";
 import FreeItemsDisplay from "./FreeItemsDisplay";
 import PromotionSuggestion from "./PromotionSuggestion";
 import PromotionModal from "./PromotionModal";
+import Tippy from "@tippyjs/react";
 
 export default function CartStep({ 
     data,
@@ -16,6 +17,9 @@ export default function CartStep({
     subTotal, 
     envio, 
     igv, 
+    fleteTotal,
+    seguroImportacionTotal,
+    derechoArancelarioTotal,
     totalFinal, 
     openModal,
     categorias,
@@ -23,7 +27,8 @@ export default function CartStep({
     setAutomaticDiscounts,
     automaticDiscountTotal,
     setAutomaticDiscountTotal,
-    totalWithoutDiscounts
+    totalWithoutDiscounts,
+    generals
 }) {
     const [appliedDiscounts, setAppliedDiscounts] = useState(automaticDiscounts || []);
     const [totalDiscount, setTotalDiscount] = useState(automaticDiscountTotal || 0);
@@ -262,15 +267,40 @@ export default function CartStep({
                 <div className="space-y-3 md:space-y-4">
                     <div className="flex justify-between">
                         <span className="customtext-neutral-dark">Subtotal</span>
-                        <span className="font-semibold">S/ {Number2Currency(subTotal)}</span>
+                        <span className="font-semibold">{CurrencySymbol()}{Number2Currency(subTotal)}</span>
                     </div>
-                    <div className="flex justify-between">
-                        <span className="customtext-neutral-dark">IGV</span>
-                        <span className="font-semibold">S/ {Number2Currency(igv)}</span>
-                    </div>
+                    {
+                        Number(generals?.find(x => x.correlative === 'igv_checkout')?.description) > 0 &&
+                        <div className="flex justify-between">
+                            <span className="customtext-neutral-dark">IGV</span>
+                            <span className="font-semibold">{CurrencySymbol()}{Number2Currency(igv)}</span>
+                        </div>
+                    }
+                    {
+                        Number(generals?.find(x => x.correlative === 'importation_seguro')?.description) > 0 &&
+                        <div className="flex justify-between">
+                            <span className="customtext-neutral-dark">Seguro ({Number(generals?.find(x => x.correlative === 'importation_seguro')?.description || 0).toFixed(2)}%)</span>
+                            <span className="font-semibold">{CurrencySymbol()}{Number2Currency(seguroImportacionTotal)}</span>
+                        </div>
+                    }
+                    {
+                        Number(generals?.find(x => x.correlative === 'importation_derecho_arancelario')?.description) > 0 &&
+                        <div className="flex justify-between">
+                            <span className="customtext-neutral-dark">
+                                Derecho arancelario
+                                {
+                                    generals?.find(x => x.correlative === 'importation_derecho_arancelario_descripcion')?.description &&
+                                    <Tippy content={<p className="whitespace-pre-line">{generals?.find(x => x.correlative === 'importation_derecho_arancelario_descripcion')?.description}</p>} allowHTML>
+                                        <i className="mdi mdi-information ms-1"></i>
+                                    </Tippy>
+                                }
+                            </span>
+                            <span className="font-semibold">{CurrencySymbol()}{Number2Currency(derechoArancelarioTotal)}</span>
+                        </div>
+                    }
                     <div className="flex justify-between">
                         <span className="customtext-neutral-dark">Envío</span>
-                        <span className="font-semibold">S/ {Number2Currency(envio)}</span>
+                        <span className="font-semibold">{CurrencySymbol()}{Number2Currency(envio)}</span>
                     </div>
                     
                     {/* Descuentos Automáticos */}
@@ -297,13 +327,13 @@ export default function CartStep({
                                         )}
                                     </span>
                                     <span className="customtext-neutral-dark font-semibold">
-                                        -S/ {Number2Currency(discount.amount)}
+                                        -{CurrencySymbol()}{Number2Currency(discount.amount)}
                                     </span>
                                 </div>
                             ))}
                             <div className="flex justify-between text-sm font-semibold customtext-neutral-dark pt-1">
                                 <span>Total descuentos:</span>
-                                <span>-S/ {Number2Currency(totalDiscount)}</span>
+                                <span>-{CurrencySymbol()}{Number2Currency(totalDiscount)}</span>
                             </div>
                         </div>
                     )}
@@ -314,13 +344,13 @@ export default function CartStep({
                     <div className="py-3 border-y-2 mt-4 md:mt-6">
                         <div className="flex justify-between font-bold text-lg md:text-[20px] items-center">
                             <span>Total</span>
-                            <span>S/ {Number2Currency(totalFinal)}</span>
+                            <span>{CurrencySymbol()}{Number2Currency(totalFinal)}</span>
                         </div>
                         {totalDiscount > 0 && (
                             <div className="text-sm text-gray-500 mt-1">
-                                <span className="line-through">S/ {Number2Currency(totalWithoutDiscounts || (totalFinal + totalDiscount))}</span>
+                                <span className="line-through">{CurrencySymbol()}{Number2Currency(totalWithoutDiscounts || (totalFinal + totalDiscount))}</span>
                                 <span className="ml-2 customtext-neutral-dark font-semibold">
-                                    Ahorras S/ {Number2Currency(totalDiscount)}
+                                    Ahorras {CurrencySymbol()}{Number2Currency(totalDiscount)}
                                 </span>
                             </div>
                         )}

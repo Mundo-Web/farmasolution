@@ -18,6 +18,7 @@ const SliderFeaturedMakita = React.lazy(() =>
 const SliderTwoColumnSwiper = React.lazy(() =>
     import("./Sliders/SliderTwoColumnSwiper")
 );
+const SliderPideloPe = React.lazy(() => import("./Sliders/SliderPideloPe"));
 
 const Slider = ({ which, data, sliders ,generals=[]}) => {
     const getSlider = () => {
@@ -43,7 +44,10 @@ const Slider = ({ which, data, sliders ,generals=[]}) => {
                 return <SliderFeaturedMakita data={data} items={sliders} />;
             case "SliderTwoColumnSwiper":
                 return <SliderTwoColumnSwiper data={data} items={sliders} />;
-            default:
+            case "SliderPideloPe":
+                return <SliderPideloPe data={data} items={sliders} />;
+            
+                default:
                 return (
                     <div className="w-full px-[5%] replace-max-w-here p-4 mx-auto">
                         - No Hay componente <b>{which}</b> -

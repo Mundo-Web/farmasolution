@@ -26,6 +26,27 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
     const igv = parseFloat((totalPrice - subTotal).toFixed(2));
     const [envio, setEnvio] = useState(0);
     
+    // Cálculos de importación
+    // Flete
+    const pesoTotal = cart.reduce((acc, item) => {
+        const weight = Number(item.weight) || 0;
+        return acc + weight * item.quantity; // Peso total considerando cantidad
+    }, 0);
+    
+    const costoxpeso = Number(generals?.find(x => x.correlative === 'importation_flete')?.description) || 0;
+    const fleteTotal = costoxpeso > 0 ? pesoTotal * costoxpeso : 0;
+    
+    // Seguro de importación
+    const seguroImportacion = (Number(generals?.find(x => x.correlative === 'importation_seguro')?.description) || 0) / 100;
+    const seguroImportacionTotal = subTotal * seguroImportacion;
+    
+    // CIF (Cost, Insurance, Freight)
+    const CIF = parseFloat(subTotal) + parseFloat(fleteTotal) + parseFloat(seguroImportacionTotal);
+    
+    // Derecho arancelario
+    const derechoArancelario = (Number(generals?.find(x => x.correlative === 'importation_derecho_arancelario')?.description) || 0) / 100;
+    const derechoArancelarioTotal = CIF * derechoArancelario;
+    
     // Estados para el cupón
     const [couponDiscount, setCouponDiscount] = useState(0);
     const [couponCode, setCouponCode] = useState(null);
@@ -34,8 +55,8 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
     const [automaticDiscounts, setAutomaticDiscounts] = useState([]);
     const [automaticDiscountTotal, setAutomaticDiscountTotal] = useState(0);
     
-    // Calcular total final con todos los descuentos
-    const totalWithoutDiscounts = subTotal + igv + parseFloat(envio);
+    // Calcular total final con todos los descuentos e importaciones
+    const totalWithoutDiscounts = subTotal + igv + parseFloat(envio) + parseFloat(derechoArancelarioTotal);
     const totalAllDiscounts = couponDiscount + automaticDiscountTotal;
     const totalFinal = Math.max(0, totalWithoutDiscounts - totalAllDiscounts);
     
@@ -136,6 +157,9 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                         subTotal={subTotal}
                         envio={envio}
                         igv={igv}
+                        fleteTotal={fleteTotal}
+                        seguroImportacionTotal={seguroImportacionTotal}
+                        derechoArancelarioTotal={derechoArancelarioTotal}
                         totalFinal={totalFinal}
                         openModal={openModal}
                         categorias={categorias}
@@ -144,6 +168,7 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                         automaticDiscountTotal={automaticDiscountTotal}
                         setAutomaticDiscountTotal={setAutomaticDiscountTotal}
                         totalWithoutDiscounts={totalWithoutDiscounts}
+                        generals={generals}
                     />
                 )}
 
@@ -162,6 +187,9 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                         envio={envio}
                         setEnvio={setEnvio}
                         igv={igv}
+                        fleteTotal={fleteTotal}
+                        seguroImportacionTotal={seguroImportacionTotal}
+                        derechoArancelarioTotal={derechoArancelarioTotal}
                         totalFinal={totalFinal}
                         user={user}
                         ubigeos={ubigeos}
@@ -179,6 +207,7 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                         onPurchaseComplete={(orderId, scripts) => {
                             trackPurchase(orderId, scripts);
                         }}
+                        generals={generals}
                     />
                 )}
 
@@ -190,6 +219,9 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                         subTotal={subTotal}
                         envio={envio}
                         igv={igv}
+                        fleteTotal={fleteTotal}
+                        seguroImportacionTotal={seguroImportacionTotal}
+                        derechoArancelarioTotal={derechoArancelarioTotal}
                         totalFinal={totalFinal}
                         couponDiscount={couponDiscount}
                         couponCode={couponCode}
@@ -201,6 +233,7 @@ export default function CheckoutSteps({ cart, setCart, user, ubigeos = [], items
                         onPurchaseComplete={(orderId, scripts) => {
                             trackPurchase(orderId, scripts);
                         }}
+                        generals={generals}
                     />
                 )}
             </div>

@@ -25,6 +25,7 @@ const Sliders = () => {
   const idRef = useRef()
   const nameRef = useRef()
   const descriptionRef = useRef()
+  const imageRef = useRef()
   const bgImageRef = useRef()
   const bgVideoRef = useRef()
   const buttonTextRef = useRef()
@@ -45,6 +46,8 @@ const Sliders = () => {
     descriptionRef.current.value = data?.description ?? ''
     setActiveTab(data?.bg_type ?? 'image')
     setIframeSrc(data?.bg_video ?? '')
+    imageRef.current.value = null
+    imageRef.current.src = `/storage/images/slider/${data?.image}`
     bgImageRef.current.value = null
     bgImageRef.image.src = `/storage/images/slider/${data?.bg_image}`
     bgVideoRef.current.value = data?.bg_video ? `https://youtu.be/${data.bg_video}` : ''
@@ -76,6 +79,11 @@ const Sliders = () => {
       const file = bgImageRef.current.files[0]
       if (file) {
         formData.append('bg_image', file)
+      }
+
+       const image = imageRef.current.files[0]
+      if (image) {
+        formData.append('image', image)
       }
     } else {
       formData.append('bg_image', null)
@@ -230,7 +238,8 @@ const Sliders = () => {
           </ul>
           <div class="tab-content">
             <div class={`tab-pane ${activeTab == 'image' && 'show active'}`} id="tab-image">
-              <ImageFormGroup eRef={bgImageRef} label='Imagen' />
+              <ImageFormGroup eRef={bgImageRef} label='Imagen de fondo' />
+              <ImageFormGroup eRef={imageRef} label='Imagen' />
             </div>
             <div class={`tab-pane ${activeTab == 'video' && 'show active'}`} id="tab-video">
               <InputFormGroup eRef={bgVideoRef} label='URL (Youtube)' type='link' onChange={e => setIframeSrc(getYTVideoId(e.target.value))} />

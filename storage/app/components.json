@@ -353,7 +353,8 @@
                 "id": "CarruselBenefitsInifinite",
                 "name": "Beneficios",
                 "data": [
-                    "background"
+                    "background",
+                    "class_container"
                 ],
                 "using": {
                     "model": "Indicator"
@@ -542,6 +543,22 @@
                         "name",
                         "description",
                         "bg_image",
+                        "button_text",
+                        "button_link"
+                    ]
+                }
+            },
+              {
+                "id": "SliderPideloPe",
+                "name": "SliderPideloPe",
+                "image": "slider-simple.png",
+                "using": {
+                    "model": "Slider",
+                    "fields": [
+                        "name",
+                        "description",
+                        "bg_image",
+                        "image",
                         "button_text",
                         "button_link"
                     ]
@@ -1215,6 +1232,20 @@
             {
                 "id": "InfiniteCategory",
                 "name": "category-infinito",
+                "image": "categories-simple.png",
+                "data": [
+                    "title",
+                    "path",
+                    "backgroundColor"
+                ],
+                "using": {
+                    "model": "Category",
+                    "limit": 10
+                }
+            },
+            {
+                "id": "CategoryPidelo",
+                "name": "category-pidelo",
                 "image": "categories-simple.png",
                 "data": [
                     "title",
@@ -2098,6 +2129,11 @@
                 "data": [
                     "title",
                     "class_button"
+                ],
+                "generals":[
+                    "importation_flete",
+                    "importation_seguro",
+                    "importation_derecho_arancelario"
                 ]
             },
             {
