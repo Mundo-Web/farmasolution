@@ -100,6 +100,18 @@ const HeaderPidelo = ({
         setIsLoadingSuggestions(true);
 
         try {
+            // Build base filter for text fields
+            const baseFilter = [
+                ['name', 'contains', query],
+                'or',
+                ['summary', 'contains', query],
+                'or',
+                ['description', 'contains', query]
+            ];
+
+            // If a store is selected, combine with store_id equality using 'and'
+            const finalFilter = selectedStore ? ([['store_id', '=', selectedStore], 'and', baseFilter]) : baseFilter;
+
             const response = await fetch('/api/items/paginate', {
                 method: 'POST',
                 headers: {
@@ -109,13 +121,7 @@ const HeaderPidelo = ({
                 body: JSON.stringify({
                     take: 8, // Máximo 8 sugerencias
                     skip: 0,
-                    filter: [
-                        ['name', 'contains', query],
-                        'or',
-                        ['summary', 'contains', query],
-                        'or',
-                        ['description', 'contains', query]
-                    ],
+                    filter: finalFilter,
                     sort: [{ selector: 'name', desc: false }],
                     requireTotalCount: false,
                     with: 'category,brand' // Incluir relaciones necesarias
@@ -172,12 +178,14 @@ const HeaderPidelo = ({
         setShowSuggestions(false);
         setSearchMobile(false);
 
-        // Navegar a la página del producto
-        const url = suggestion.slug
-            ? `/product/${suggestion.slug}`
-            : `/catalogo?search=${encodeURIComponent(suggestion.name)}`;
-
-        window.location.href = url;
+        // Navegar a la página del producto (si no hay slug, abrir catálogo filtrado por nombre)
+        if (suggestion.slug) {
+            window.location.href = `/product/${suggestion.slug}`;
+        } else {
+            let url = `/catalogo?search=${encodeURIComponent(suggestion.name)}`;
+            if (selectedStore) url += `&store=${encodeURIComponent(selectedStore)}`;
+            window.location.href = url;
+        }
     };
 
     useEffect(() => {
@@ -248,7 +256,7 @@ const HeaderPidelo = ({
                 } else if (highlightedStoreIndex > 0 && highlightedStoreIndex <= filteredStores.length) {
                     const s = filteredStores[highlightedStoreIndex - 1];
                     if (s) {
-                        setSelectedStore(s.slug || s.id);
+                        setSelectedStore(s.id);
                         setStoreDropdownOpen(false);
                     }
                 }
@@ -373,7 +381,9 @@ const HeaderPidelo = ({
         clearSuggestions();
         if (search.trim()) {
             const trimmedSearch = search.trim();
-            window.location.href = `/catalogo?search=${encodeURIComponent(trimmedSearch)}`;
+            let url = `/catalogo?search=${encodeURIComponent(trimmedSearch)}`;
+            if (selectedStore) url += `&store=${encodeURIComponent(selectedStore)}`;
+            window.location.href = url;
         }
         return false; // Prevenir comportamiento por defecto adicional
     };
@@ -385,7 +395,9 @@ const HeaderPidelo = ({
         if (search.trim()) {
             const trimmedSearch = search.trim();
             setSearchMobile(false); // Cerrar el input móvil
-            window.location.href = `/catalogo?search=${encodeURIComponent(trimmedSearch)}`;
+            let url = `/catalogo?search=${encodeURIComponent(trimmedSearch)}`;
+            if (selectedStore) url += `&store=${encodeURIComponent(selectedStore)}`;
+            window.location.href = url;
         }
         return false;
     };
@@ -751,7 +763,7 @@ const HeaderPidelo = ({
                                             className="h-10 flex items-center gap-2 pl-4 pr-3 bg-transparent border-none rounded-l-full font-normal customtext-neutral-dark focus:outline-none text-sm cursor-pointer"
                                         >
                                             <span className="truncate max-w-[140px] text-sm">
-                                                {selectedStore ? (stores.find(s => (s.slug || s.id) == selectedStore)?.name ?? selectedStore) : 'Todas las tiendas'}
+                                                {selectedStore ? (stores.find(s => s.id == selectedStore)?.name ?? selectedStore) : 'Todas las tiendas'}
                                             </span>
                                             <svg className={`w-3 h-3 transition-transform ${storeDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
                                                 <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" />
@@ -778,13 +790,13 @@ const HeaderPidelo = ({
                                                         </li>
                                                         {Array.isArray(filteredStores) && filteredStores.map((store, idx) => (
                                                             <li
-                                                                key={store.slug || store.id || idx}
+                                                                key={store.id || idx}
                                                                 className={`px-4 py-2 cursor-pointer truncate flex items-center justify-between ${highlightedStoreIndex === idx + 1 ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
                                                                 onMouseEnter={() => setHighlightedStoreIndex(idx + 1)}
-                                                                onClick={() => { setSelectedStore(store.slug || store.id); setStoreDropdownOpen(false); }}
+                                                                onClick={() => { setSelectedStore(store.id); setStoreDropdownOpen(false); }}
                                                             >
                                                                 <span className="truncate pr-2">{store.name}</span>
-                                                                {(selectedStore === (store.slug || store.id)) && (
+                                                                {(selectedStore === store.id) && (
                                                                     <Check className="text-primary w-4 h-4" />
                                                                 )}
                                                             </li>

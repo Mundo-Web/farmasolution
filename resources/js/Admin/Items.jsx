@@ -147,7 +147,7 @@ const Items = ({ categories, brands, collections,stores }) => {
 
             console.log("data item:", data)
         $(storeRef.current)
-            .val(data?.store_id || null)
+            .val(data?.store_id && data.store_id !== "" ? data.store_id : "")
             .trigger("change");
 
         nameRef.current.value = data?.name || "";
@@ -247,7 +247,7 @@ const Items = ({ categories, brands, collections,stores }) => {
             features: cleanFeatures,
             specifications: cleanSpecs,
             linkvideo: linkvideoRef.current.value,
-            store_id: storeRef.current.value || null,
+            store_id: storeRef.current.value && storeRef.current.value !== "" ? storeRef.current.value : null,
         };
 
 
@@ -730,6 +730,7 @@ const Items = ({ categories, brands, collections,stores }) => {
                             }
                             hidden={!Fillable.has('items', 'store_id')}
                         >
+                            <option value="">Seleccionar tienda (opcional)</option>
                             {stores.map((item, index) => (
                                 <option key={index} value={item.id}>
                                     {item.name}

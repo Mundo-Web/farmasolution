@@ -11,6 +11,7 @@ use App\Models\ItemTag;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Routing\ResponseFactory;
@@ -157,6 +158,28 @@ class ItemController extends BasicController
         }
     }
 */
+    public function beforeSave(Request $request)
+    {
+        $body = $request->all();
+        
+        // Procesar campos que pueden ser null
+        $nullableFields = ['store_id', 'collection_id', 'subcategory_id', 'brand_id'];
+        
+        foreach ($nullableFields as $field) {
+            if (isset($body[$field]) && ($body[$field] === '' || $body[$field] === 'null')) {
+                $body[$field] = null;
+            }
+        }
+        
+        // Log para debug
+        Log::info('ItemController beforeSave - Processing store_id:', [
+            'original' => $request->input('store_id'),
+            'processed' => $body['store_id'] ?? 'not set'
+        ]);
+        
+        return $body;
+    }
+
     public function setReactViewProperties(Request $request)
     {
         $categories = Category::where('status', 1)->get();
