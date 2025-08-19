@@ -749,7 +749,13 @@
                     "description",
                     "link_cart",
                     "class_button",
-                    "show_price"
+                    "show_price",
+                    "section_brands",
+                    "section_categories",
+                    "section_subcategories",
+                    "section_prices",
+                    "section_stores"
+
                 ],
                 "options": [
                     {

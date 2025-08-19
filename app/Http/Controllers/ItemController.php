@@ -8,6 +8,7 @@ use App\Models\Collection;
 use App\Models\Combo;
 use App\Models\Item;
 use App\Models\ItemTag;
+use App\Models\Store;
 use App\Models\SubCategory;
 use App\Models\Tag;
 use App\Models\WebDetail;
@@ -43,7 +44,7 @@ class ItemController extends BasicController
             $limite = $request->limit ?? 0;
             
             // Obtener el producto principal por slug
-            $product = Item::with(['category', 'brand', 'images', 'specifications'])
+            $product = Item::with(['category',"store", 'brand', 'images', 'specifications'])
                 ->where('slug', $request->slug)
                 ->firstOrFail();
 
@@ -89,7 +90,7 @@ class ItemController extends BasicController
             $limite = $request->limit ?? 0;
             
             // Obtener el producto principal por slug
-            $product = Item::with(['category', 'brand', 'images', 'specifications'])
+            $product = Item::with(['category',"store", 'brand', 'images', 'specifications'])
                 ->where('slug', $request->slug)
                 ->firstOrFail();
 
@@ -127,7 +128,7 @@ class ItemController extends BasicController
         try {
           
             // Obtener el producto principal por slug
-            $product = Item::with(['category', 'brand', 'images', 'specifications'])
+            $product = Item::with(['category',"store", 'brand', 'images', 'specifications'])
             ->where('slug', $request->slug)
             ->firstOrFail();
 
@@ -179,11 +180,12 @@ class ItemController extends BasicController
         //dump('[STEP 1] setPaginationInstance INICIO', $request->all());
         //dump('[STEP 2] Antes de armar query base');
         $query = $model::select(['items.*'])
-            ->with(['collection', 'category', 'subcategory', 'brand', 'tags'])
+            ->with(['collection', 'category', 'subcategory', 'brand', 'store', 'tags'])
             ->leftJoin('collections AS collection', 'collection.id', 'items.collection_id')
             ->leftJoin('categories AS category', 'category.id', 'items.category_id')
             ->leftJoin('sub_categories AS subcategory', 'subcategory.id', 'items.subcategory_id')
             ->leftJoin('brands AS brand', 'brand.id', 'items.brand_id')
+            ->leftJoin('stores AS store', 'store.id', 'items.store_id')
             ->leftJoin('item_tags AS item_tag', 'item_tag.item_id', 'items.id')
             ->where('items.status', true)
             ->where('items.visible', true)
@@ -218,6 +220,14 @@ class ItemController extends BasicController
             ->where(function ($query) {
                 $query->where('brand.visible', true)
                     ->orWhereNull('brand.id');
+            })
+            ->where(function ($query) {
+                $query->where('store.status', true)
+                    ->orWhereNull('store.id');
+            })
+            ->where(function ($query) {
+                $query->where('store.visible', true)
+                    ->orWhereNull('store.id');
             });
         //dump('[STEP 3] Query base armada');
 
@@ -375,10 +385,11 @@ class ItemController extends BasicController
             $selectedCategories = $request->input('category_id', []);
             $selectedSubcategories = $request->input('subcategory_id', []);
             $selectedCollections = $request->input('collection_id', []);
+            $selectedStores = $request->input('store_id', []);
             $selectedTags = []; // Inicializar array para tags seleccionados
 
             // Extraer filtros del filtro complejo si no hay filtros directos
-            if ((empty($selectedBrands) && empty($selectedCategories) && empty($selectedSubcategories) && empty($selectedCollections)) && $request->filter) {
+            if ((empty($selectedBrands) && empty($selectedCategories) && empty($selectedSubcategories) && empty($selectedCollections) && empty($selectedStores)) && $request->filter) {
                 $filter = $request->filter;
                 if (is_array($filter)) {
                     foreach ($filter as $f1) {
@@ -395,6 +406,8 @@ class ItemController extends BasicController
                                         $selectedSubcategories[] = $f2[2];
                                     } elseif (($f2[0] === 'collection.slug' || $f2[0] === 'collection.id') && $f2[1] === '=') {
                                         $selectedCollections[] = $f2[2];
+                                    } elseif (($f2[0] === 'store.slug' || $f2[0] === 'store.id') && $f2[1] === '=') {
+                                        $selectedStores[] = $f2[2];
                                     } elseif ($f2[0] === 'item_tag.tag_id' && $f2[1] === '=') {
                                         $selectedTags[] = $f2[2];
                                     }
@@ -411,6 +424,8 @@ class ItemController extends BasicController
                                     $selectedSubcategories[] = $f1[2];
                                 } elseif (($f1[0] === 'collection.slug' || $f1[0] === 'collection.id') && $f1[1] === '=') {
                                     $selectedCollections[] = $f1[2];
+                                } elseif (($f1[0] === 'store.slug' || $f1[0] === 'store.id') && $f1[1] === '=') {
+                                    $selectedStores[] = $f1[2];
                                 } elseif ($f1[0] === 'item_tag.tag_id' && $f1[1] === '=') {
                                     $selectedTags[] = $f1[2];
                                 }
@@ -445,6 +460,7 @@ class ItemController extends BasicController
             $i4category = clone $originalBuilder;
             $i4subcategory = clone $originalBuilder;
             $i4brand = clone $originalBuilder;
+            $i4store = clone $originalBuilder;
             $i4tag = clone $originalBuilder;
             
             // PADRES: aplicar filtros cruzados para mejor UX
@@ -517,6 +533,48 @@ class ItemController extends BasicController
                     : Item::getForeign($i4brand, Brand::class, 'brand_id');
             }
 
+            // STORES: Filtrar tiendas según el contexto
+            if (!empty($selectedTags)) {
+                // FILTRADO DINÁMICO POR TAGS: Solo mostrar tiendas de productos que tienen el tag seleccionado
+                $storeBuilder = clone $originalBuilder;
+                $storeBuilder->whereIn('item_tag.tag_id', $selectedTags);
+                $stores = Item::getForeign($storeBuilder, Store::class, 'store_id');
+            } elseif ($parentCategoryId && !in_array('store_id', $filterSequence)) {
+                // Si hay subcategoría seleccionada, filtrar tiendas por la categoría padre
+                $storeBuilder = clone $originalBuilder;
+                $storeBuilder->whereIn('items.category_id', [$parentCategoryId]);
+                $stores = Item::getForeign($storeBuilder, Store::class, 'store_id');
+            } elseif (!empty($selectedCategories) && !in_array('store_id', $filterSequence)) {
+                // Si hay categorías seleccionadas directamente, filtrar tiendas por esas categorías
+                $storeBuilder = clone $originalBuilder;
+                if (!empty($selectedCategories)) {
+                    $storeBuilder->whereIn('items.category_id', $selectedCategories);
+                }
+                $stores = Item::getForeign($storeBuilder, Store::class, 'store_id');
+            } elseif (!empty($selectedBrands) && !in_array('store_id', $filterSequence)) {
+                // Si hay marcas seleccionadas, filtrar tiendas por esas marcas
+                $storeBuilder = clone $originalBuilder;
+                $brandIds = [];
+                foreach ($selectedBrands as $brandValue) {
+                    if (is_numeric($brandValue)) {
+                        $brandIds[] = $brandValue;
+                    } else {
+                        $brand = Brand::where('slug', $brandValue)->first();
+                        if ($brand) {
+                            $brandIds[] = $brand->id;
+                        }
+                    }
+                }
+                if (!empty($brandIds)) {
+                    $storeBuilder->whereIn('brand_id', $brandIds);
+                }
+                $stores = Item::getForeign($storeBuilder, Store::class, 'store_id');
+            } else {
+                $stores = in_array('store_id', $filterSequence)
+                    ? Item::getForeign($originalBuilder, Store::class, 'store_id')
+                    : Item::getForeign($i4store, Store::class, 'store_id');
+            }
+
             // CATEGORIAS: lógica mejorada con filtros cruzados
             if (!empty($selectedTags)) {
                 // FILTRADO DINÁMICO POR TAGS: Solo mostrar categorías de productos que tienen el tag seleccionado
@@ -530,23 +588,44 @@ class ItemController extends BasicController
                     ->where('visible', true)
                     ->first();
                 $categories = $parentCategory ? collect([$parentCategory]) : collect([]);
-            } elseif (!empty($selectedBrands) && !in_array('category_id', $filterSequence)) {
-                // Si hay marcas seleccionadas pero no categorías en secuencia, filtrar categorías por marcas
+            } elseif ((!empty($selectedBrands) || !empty($selectedStores)) && !in_array('category_id', $filterSequence)) {
+                // Si hay marcas o tiendas seleccionadas pero no categorías en secuencia, filtrar categorías por marcas/tiendas
                 $catBuilder = clone $originalBuilder;
                 
-                $brandIds = [];
-                foreach ($selectedBrands as $brandValue) {
-                    if (is_numeric($brandValue)) {
-                        $brandIds[] = $brandValue;
-                    } else {
-                        $brand = Brand::where('slug', $brandValue)->first();
-                        if ($brand) {
-                            $brandIds[] = $brand->id;
+                // Filtrar por marcas si existen
+                if (!empty($selectedBrands)) {
+                    $brandIds = [];
+                    foreach ($selectedBrands as $brandValue) {
+                        if (is_numeric($brandValue)) {
+                            $brandIds[] = $brandValue;
+                        } else {
+                            $brand = Brand::where('slug', $brandValue)->first();
+                            if ($brand) {
+                                $brandIds[] = $brand->id;
+                            }
                         }
                     }
+                    if (!empty($brandIds)) {
+                        $catBuilder->whereIn('brand_id', $brandIds);
+                    }
                 }
-                if (!empty($brandIds)) {
-                    $catBuilder->whereIn('brand_id', $brandIds);
+                
+                // Filtrar por tiendas si existen
+                if (!empty($selectedStores)) {
+                    $storeIds = [];
+                    foreach ($selectedStores as $storeValue) {
+                        if (is_numeric($storeValue)) {
+                            $storeIds[] = $storeValue;
+                        } else {
+                            $store = Store::where('slug', $storeValue)->first();
+                            if ($store) {
+                                $storeIds[] = $store->id;
+                            }
+                        }
+                    }
+                    if (!empty($storeIds)) {
+                        $catBuilder->whereIn('store_id', $storeIds);
+                    }
                 }
                 
                 $categories = Item::getForeign($catBuilder, Category::class, 'category_id');
@@ -580,7 +659,7 @@ class ItemController extends BasicController
                 } else {
                     $subcategories = collect([]);
                 }
-            } elseif (in_array('subcategory_id', $filterSequence) || !empty($selectedBrands) || !empty($selectedCategories)) {
+            } elseif (in_array('subcategory_id', $filterSequence) || !empty($selectedBrands) || !empty($selectedCategories) || !empty($selectedStores)) {
                 // Filtrar subcategorías cuando hay otros filtros activos
                 $subcatBuilder = clone $originalBuilder;
                 
@@ -599,6 +678,24 @@ class ItemController extends BasicController
                     }
                     if (!empty($brandIds)) {
                         $subcatBuilder->whereIn('brand_id', $brandIds);
+                    }
+                }
+                
+                // Aplicar filtro de tiendas si existe
+                if (!empty($selectedStores)) {
+                    $storeIds = [];
+                    foreach ($selectedStores as $storeValue) {
+                        if (is_numeric($storeValue)) {
+                            $storeIds[] = $storeValue;
+                        } else {
+                            $store = Store::where('slug', $storeValue)->first();
+                            if ($store) {
+                                $storeIds[] = $store->id;
+                            }
+                        }
+                    }
+                    if (!empty($storeIds)) {
+                        $subcatBuilder->whereIn('store_id', $storeIds);
                     }
                 }
                 
@@ -652,6 +749,7 @@ class ItemController extends BasicController
                 'categories' => $categories,
                 'subcategories' => $subcategories,
                 'brands' => $brands,
+                'stores' => $stores,
                 'tags' => $tags
             ];
         } catch (\Throwable $th) {
