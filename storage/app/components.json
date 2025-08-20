@@ -2039,6 +2039,29 @@
                     ]
                 }
             },
+                {
+                "id": "ProductDetailPidelo",
+                "name": "ProductDetailPidelo",
+                "data": [
+                    "link_cart",
+                    "class_badge"
+                ],
+                "using": {
+                    "model": "Item",
+                    "field": "slug",
+                    "with": [
+                        "variants",
+                        "images",
+                        "specifications",
+                        "features"
+                    ],
+                    "relations": [
+                        "category",
+                        "brand",
+                        "subcategory"
+                    ]
+                }
+            },
             {
                 "id": "ProductDetailAko",
                 "name": "ProductDetailAko",

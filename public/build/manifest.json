@@ -8097,7 +8097,7 @@
     ]
   },
   "resources/js/Components/Tailwind/ProductDetail.jsx": {
-    "file": "assets/ProductDetail-Vl5qAp0i.js",
+    "file": "assets/ProductDetail-D5cm1pHV.js",
     "name": "ProductDetail",
     "src": "resources/js/Components/Tailwind/ProductDetail.jsx",
     "isDynamicEntry": true,
@@ -8117,7 +8117,8 @@
       "resources/js/Components/Tailwind/ProductDetails/ProductDetailKuchara.jsx",
       "resources/js/Components/Tailwind/ProductDetails/ProductDetailPaani.jsx",
       "resources/js/Components/Tailwind/ProductDetails/ProductDetailAko.jsx",
-      "resources/js/Components/Tailwind/ProductDetails/ProductDetailDental.jsx"
+      "resources/js/Components/Tailwind/ProductDetails/ProductDetailDental.jsx",
+      "resources/js/Components/Tailwind/ProductDetails/ProductDetailPidelo.jsx"
     ]
   },
   "resources/js/Components/Tailwind/ProductDetails/ProductDetailAko.jsx": {
@@ -8347,6 +8348,47 @@
     "file": "assets/ProductDetailPaani-AEEso5fL.js",
     "name": "ProductDetailPaani",
     "src": "resources/js/Components/Tailwind/ProductDetails/ProductDetailPaani.jsx",
+    "isEntry": true,
+    "imports": [
+      "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
+      "_index-BOnQTV8N.js",
+      "_main-B6F2O9-U.js",
+      "_index-CeCfhSXL.js",
+      "resources/js/Components/Tailwind/Components/ProductCard.jsx",
+      "resources/js/Components/Tailwind/Blogs/BlogCarousel.jsx",
+      "resources/js/Components/Tailwind/Blogs/Components/BlogCarrusel.jsx",
+      "resources/js/Components/Tailwind/Products/ProductMakita.jsx",
+      "resources/js/Components/Tailwind/Products/ProductNavigation.jsx",
+      "resources/js/Components/Tailwind/Headers/HeaderSearch.jsx",
+      "_index-yBjzXJbu.js",
+      "__commonjsHelpers-D6-XlEtG.js",
+      "____vite-browser-external_commonjs-proxy-DDYoOVPM.js",
+      "_index-pSueRYGM.js",
+      "_index-B6ujFmsw.js",
+      "_ItemsRest-BK1bmGZY.js",
+      "_BasicRest-DBO1iUsn.js",
+      "_proxy-B0QLMKEh.js",
+      "_eye-ScgfreHn.js",
+      "_createLucideIcon-DfjclApS.js",
+      "resources/js/Components/Tailwind/Checkouts/Components/PolicyModal.jsx",
+      "_index-Chjiymov.js",
+      "_CartItemRow-DmaxKgYF.js",
+      "_Number2Currency-B5ZenVq9.js",
+      "_General-BmbBKdsB.js",
+      "_tippy-react.esm-DmkRJDEW.js",
+      "_trash-2-DU7LB6-f.js",
+      "_plus-CTIomuuF.js",
+      "_index-BZvh78jk.js"
+    ],
+    "css": [
+      "swiper.css",
+      "tippy.css"
+    ]
+  },
+  "resources/js/Components/Tailwind/ProductDetails/ProductDetailPidelo.jsx": {
+    "file": "assets/ProductDetailPidelo-AEEso5fL.js",
+    "name": "ProductDetailPidelo",
+    "src": "resources/js/Components/Tailwind/ProductDetails/ProductDetailPidelo.jsx",
     "isEntry": true,
     "imports": [
       "resources/js/Components/Tailwind/AboutUs/AboutSimple.jsx",
@@ -10173,7 +10215,7 @@
     ]
   },
   "resources/js/System.jsx": {
-    "file": "assets/System-BYguX9kZ.js",
+    "file": "assets/System-KJH5xiJi.js",
     "name": "System",
     "src": "resources/js/System.jsx",
     "isEntry": true,

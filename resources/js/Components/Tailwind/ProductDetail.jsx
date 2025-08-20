@@ -11,6 +11,7 @@ const ProductDetailKuchara = React.lazy(() => import('./ProductDetails/ProductDe
 const ProductDetailPaani = React.lazy(() => import('./ProductDetails/ProductDetailPaani'))
 const ProductDetailAko = React.lazy(() => import('./ProductDetails/ProductDetailAko'))
 const ProductDetailDental = React.lazy(() => import('./ProductDetails/ProductDetailDental'))
+const ProductDetailPidelo = React.lazy(() => import('./ProductDetails/ProductDetailPidelo'))
 const ProductDetail = ({ which, item, cart, setCart,data, generals = [],favorites,setFavorites, textstatic, contacts }) => {
   
   const getProductDetail = () => {
@@ -33,7 +34,9 @@ const ProductDetail = ({ which, item, cart, setCart,data, generals = [],favorite
           return <ProductDetailAko item={item} cart={cart} setCart={setCart} textstatic={textstatic} contacts={contacts} />
       case 'ProductDetailDental':
           return <ProductDetailDental item={item} cart={cart} setCart={setCart} generals={generals} favorites={favorites} setFavorites={setFavorites} />
-      default:
+      case 'ProductDetailPidelo':
+             return <ProductDetailPidelo item={item} cart={cart} setCart={setCart} textstatic={textstatic} contacts={contacts} data={data} />
+          default:
         return <div className="w-full px-[5%] replace-max-w-here p-4 mx-auto">- No Hay componente <b>{which}</b> -</div>
     }
   }
