@@ -1,9 +1,132 @@
 import { ChevronLeft, ChevronRight, Tag, MessageCircle } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { adjustTextColor } from "../../../Functions/adjustTextColor";
 import Global from "../../../Utils/Global";
 
 const SliderInteractive = ({ items, data, generals = [] }) => {
+
+  const imageVariants = {
+        initial: {
+            scale: 1,
+            opacity: 1
+        },
+        animate: {
+            scale: [1, 1.2, 1],
+                x: [1, -50, 1],
+            opacity: 1,
+            transition: {
+                duration: 20,
+             
+                  repeat: Infinity,
+            repeatType: "loop"
+            }
+        },
+        exit: {
+            scale: 1,
+            opacity: 0.8,
+            transition: {
+                duration: 0.3,
+                ease: "easeInOut"
+            }
+        }
+    };
+
+
+
+    // Variantes de animación para los textos
+    const titleVariants = {
+        initial: { 
+            opacity: 0, 
+            y: 60,
+            scale: 0.8
+        },
+        animate: { 
+            opacity: 1, 
+            y: 0,
+            scale: 1,
+            transition: {
+                duration: 0.8,
+                delay: 0.8,
+                ease: "easeOut"
+            }
+        },
+        exit: { 
+            opacity: 0, 
+            y: -30,
+            scale: 0.9,
+            transition: { 
+                duration: 0.4,
+                ease: "easeInOut"
+            }
+        }
+    };
+
+    const descriptionVariants = {
+        initial: { 
+            opacity: 0, 
+            y: 40,
+            filter: "blur(10px)"
+        },
+        animate: { 
+            opacity: 1, 
+            y: 0,
+        
+            filter: "blur(0px)",
+            transition: {
+                duration: 0.7,
+                delay: 1.3,
+                ease: "easeOut"
+            }
+        },
+        exit: { 
+            opacity: 0, 
+            y: -20,
+            filter: "blur(8px)",
+            transition: { 
+                duration: 0.3,
+                ease: "easeInOut"
+            }
+        }
+    };
+
+    const buttonsVariants = {
+        initial: { 
+            opacity: 0, 
+            y: 40,
+            scale: 0.9
+        },
+        animate: { 
+            opacity: 1, 
+            y: 0,
+            scale: 1,
+            transition: {
+                duration: 0.6,
+                delay: 1.6,
+                ease: "easeOut"
+            }
+        },
+        exit: { 
+            opacity: 0, 
+            y: 20,
+            scale: 0.8,
+            transition: { 
+                duration: 0.2,
+                ease: "easeInOut"
+            }
+        }
+    };
+
+    const containerVariants = {
+        initial: {},
+        animate: {
+            transition: {
+                staggerChildren: 0.1
+            }
+        },
+        exit: {}
+    };
+
     //TODO: Validación y conversión de infiniteLoop
     const parseInfiniteLoop = (value) => {
         const validTrueValues = ["true", "si"];
@@ -252,9 +375,10 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
             >
                 <div
                     ref={sliderRef}
-                    className="flex transition-transform duration-500 ease-in-out"
+                    className="flex"
                     style={{
                         transform: `translateX(-${currentIndex * 100}%)`,
+                        transition: 'transform 0.5s ease-in-out'
                     }}
                 >
                     {duplicatedItems.map((item, index) => (
@@ -262,81 +386,100 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
                             key={`slide-${index}`}
                             className="w-full h-[589px] lg:h-auto  flex-shrink-0 relative"
                         >
-                            <img
-                                src={`/storage/images/slider/${
-                                    item.bg_image || "undefined"
-                                }`}
-                                alt={item.name}
-                                loading="lazy"
-                                className={`absolute top-0  left-0 h-full md:h-full  w-screen md:w-full object-cover ${data?.imageBgPosition || "object-right-25 "} md:object-center  z-0  md:mr-20 lg:mr-0`}
-                            />
+                           <AnimatePresence>
+                                {currentIndex === index && (
+                                    <motion.img
+                                        key={`image-${index}`}
+                                        src={`/storage/images/slider/${item.bg_image || "undefined"}`}
+                                        alt={item.name}
+                                        loading="lazy"
+                                        className={`absolute top-0 left-0 h-full md:h-full w-screen md:w-full object-cover ${data?.imageBgPosition || "object-right-25"} md:object-center z-0 md:mr-20 lg:mr-0`}
+                                        variants={imageVariants}
+                                        initial="initial"
+                                        animate="animate"
+                                        exit="exit"
+                                    />
+                                )}
+                            </AnimatePresence>
 
                           {data?.overlayMobile && (
                               <div className="md:hidden absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
                           )}
 
                             <div className={`relative w-full px-primary 2xl:px-0 2xl:max-w-7xl  mx-auto  h-[530px] md:h-[600px] flex flex-col items-start justify-end md:justify-center ${isDarkBg ? "text-white" : "customtext-neutral-dark"}`}>
-                                <div className="flex flex-col gap-5 lg:gap-10 items-start">
-                                    <h2
-                                        className={`${Global.APP_CORRELATIVE==="stechperu" ?"w-9/12  md:w-full md:max-w-md " :"w-full  md:w-full md:max-w-lg "} font-title text-[40px] leading-tight sm:text-5xl md:text-6xl tracking-normal font-bold ${isDarkBg ? "text-white" : "customtext-neutral-dark"} ${data?.class_title}`}
-                                        style={{
-                                            textShadow: "0 0 20px rgba(0, 0, 0, .25)",
-                                        }}
+                                <AnimatePresence mode="wait">
+                                    <motion.div 
+                                        key={`content-${currentIndex}-${item.name}`}
+                                        variants={containerVariants}
+                                        initial="initial"
+                                        animate="animate"
+                                        exit="exit"
+                                        className="flex flex-col gap-5 lg:gap-10 items-start"
                                     >
-                                        {item.name}
-                                    </h2>
-                                    <p
-                                        className={`${Global.APP_CORRELATIVE==="stechperu" ?"w-8/12" :"w-full"} md:w-full md:max-w-md text-lg leading-tight font-paragraph ${isDarkBg ? "text-white" : "customtext-neutral-dark"} ${data?.class_description}`}
-                                        style={{
-                                            textShadow: "0 0 20px rgba(0, 0, 0, .25)",
-                                        }}
-                                    >
-                                        {item.description}
-                                    </p>
-                                    {item.button_text && item.button_link && (
-                                      <div className="flex flex-row gap-5 md:gap-10 justify-center items-start">
-                                        <a
-                                          href={item.button_link}
-                                          ref={(el) => (buttonsRef.current[index] = el)}
-                                          className={`bg-primary border-none flex flex-row items-center gap-3 px-10 py-4 text-base rounded-xl tracking-wide font-bold hover:opacity-90 transition-all duration-300 ${data?.class_button_primary || ""}`}
-                                          onClick={e => {
-                                            e.stopPropagation();
-                                          }}
-                                          onMouseDown={e => e.stopPropagation()}
-                                          onTouchStart={e => e.stopPropagation()}
-                                        >
-                                          {item.button_text}
-                                          <Tag
-                                            width={"1.25rem"}
-                                            className={`transform rotate-90 ${data?.class_icon_primary || ""}`}
-                                          />
-                                        </a>
-
-
-                                        {/* Botón de WhatsApp */}
-                                        {data?.whatsapp_info && phoneWhatsapp && (
-                                          <a
-                                            href={`https://wa.me/${phoneWhatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(messageWhatsapp || '¡Hola! Me interesa obtener más información sobre sus productos.')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="bg-white border-2 border-neutral-dark backdrop-blur-sm text-gray-800 flex flex-row items-center gap-3 px-6 lg:px-8 py-3 lg:py-4 text-sm lg:text-base rounded-xl tracking-wide font-bold hover:bg-white hover:shadow-lg transition-all duration-300"
-                                            onClick={e => {
-                                              e.stopPropagation();
+                                        <motion.h2
+                                            variants={titleVariants}
+                                            className={`${Global.APP_CORRELATIVE==="stechperu" ?"w-9/12  md:w-full md:max-w-md " :"w-full  md:w-full md:max-w-lg "} font-title text-[40px] leading-tight sm:text-5xl md:text-6xl tracking-normal font-bold ${isDarkBg ? "text-white" : "customtext-neutral-dark"} ${data?.class_title}`}
+                                            style={{
+                                                textShadow: "0 0 20px rgba(0, 0, 0, .25)",
                                             }}
-                                            onMouseDown={e => e.stopPropagation()}
-                                            onTouchStart={e => e.stopPropagation()}
-                                          >
-                                            <MessageCircle
-                                              width={"1.25rem"}
-                                              className="customtext-neutral-dark"
-                                            />
-                                            Hablar con un asesor
-                                          </a>
+                                        >
+                                            {item.name}
+                                        </motion.h2>
+                                        <motion.p
+                                            variants={descriptionVariants}
+                                            className={`${Global.APP_CORRELATIVE==="stechperu" ?"w-8/12" :"w-full"} md:w-full md:max-w-md text-lg leading-tight font-paragraph ${isDarkBg ? "text-white" : "customtext-neutral-dark"} ${data?.class_description}`}
+                                            style={{
+                                                textShadow: "0 0 20px rgba(0, 0, 0, .25)",
+                                            }}
+                                        >
+                                            {item.description}
+                                        </motion.p>
+                                        {item.button_text && item.button_link && (
+                                            <motion.div 
+                                                variants={buttonsVariants}
+                                                className="flex flex-row gap-5 md:gap-10 justify-center items-start"
+                                            >
+                                                <a
+                                                  href={item.button_link}
+                                                  ref={(el) => (buttonsRef.current[index] = el)}
+                                                  className={`bg-primary border-none flex flex-row items-center gap-3 px-10 py-4 text-base rounded-xl tracking-wide font-bold text-white ${data?.class_button_primary || "text-white"}`}
+                                                  onClick={e => {
+                                                    e.stopPropagation();
+                                                  }}
+                                                  onMouseDown={e => e.stopPropagation()}
+                                                  onTouchStart={e => e.stopPropagation()}
+                                                >
+                                                  {item.button_text}
+                                                  <Tag
+                                                    width={"1.25rem"}
+                                                    className={`transform rotate-90 ${data?.class_icon_primary || ""}`}
+                                                  />
+                                                </a>
+
+                                                {/* Botón de WhatsApp */}
+                                                {data?.whatsapp_info && phoneWhatsapp && (
+                                                  <a
+                                                    href={`https://wa.me/${phoneWhatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(messageWhatsapp || '¡Hola! Me interesa obtener más información sobre sus productos.')}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="bg-white border-2 border-neutral-dark backdrop-blur-sm text-gray-800 flex flex-row items-center gap-3 px-6 lg:px-8 py-3 lg:py-4 text-sm lg:text-base rounded-xl tracking-wide font-bold"
+                                                    onClick={e => {
+                                                      e.stopPropagation();
+                                                    }}
+                                                    onMouseDown={e => e.stopPropagation()}
+                                                    onTouchStart={e => e.stopPropagation()}
+                                                  >
+                                                    <MessageCircle
+                                                      width={"1.25rem"}
+                                                      className="customtext-neutral-dark"
+                                                    />
+                                                    Hablar con un asesor
+                                                  </a>
+                                                )}
+                                            </motion.div>
                                         )}
-                                      </div>
-                                    )}
-                                  
-                                </div>
+                                    </motion.div>
+                                </AnimatePresence>
                             </div>
                         </div>
                     ))}
@@ -350,7 +493,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
                     >
                         <button
                             onClick={prevSlide}
-                            className="bg-secondary rounded-r-lg text-white w-12 h-12 flex items-center justify-center transition-colors duration-300"
+                            className="bg-secondary rounded-r-lg text-white w-12 h-12 flex items-center justify-center"
                         >
                             <ChevronLeft width={"1rem"} />
                         </button>
@@ -360,7 +503,7 @@ const SliderInteractive = ({ items, data, generals = [] }) => {
                     >
                         <button
                             onClick={nextSlide}
-                            className="bg-secondary rounded-l-lg text-white w-12 h-12 flex items-center justify-center transition-colors duration-300"
+                            className="bg-secondary rounded-l-lg text-white w-12 h-12 flex items-center justify-center"
                         >
                             <ChevronRight width={"1rem"} />
                         </button>

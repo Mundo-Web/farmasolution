@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import General from "../../../Utils/General";
 import { useRef } from "react";
 import { adjustTextColor } from "../../../Functions/adjustTextColor";
+import AnimatedCintillo from "../Components/AnimatedCintillo";
 
 const TopBarSimple = ({}) => {
     const divRef = useRef(null);
@@ -16,7 +17,9 @@ const TopBarSimple = ({}) => {
             ref={divRef}
             className="hidden bg-primary py-3 font-bold px-primary md:flex justify-center items-center text-sm font-font-secondary"
         >
-            <p>{General.get("cintillo")}</p>
+            <p>
+                <AnimatedCintillo />
+            </p>
         </div>
     );
 };

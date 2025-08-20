@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\SliderController as AdminSliderController;
 use App\Http\Controllers\Admin\TestimonyController as AdminTestimonyController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\BlogCategoryController as AdminBlogCategoryController;
+
 use App\Http\Controllers\Admin\CollectionController as AdminCollectionController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\SocialController as AdminSocialController;
@@ -341,6 +343,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/categories/status', [AdminCategoryController::class, 'status']);
     Route::patch('/categories/{field}', [AdminCategoryController::class, 'boolean']);
     Route::delete('/categories/{id}', [AdminCategoryController::class, 'delete']);
+
+
+ Route::post('/blog-categories', [AdminBlogCategoryController::class, 'save']);
+    Route::post('/blog-categories/paginate', [AdminBlogCategoryController::class, 'paginate']);
+    Route::patch('/blog-categories/status', [AdminBlogCategoryController::class, 'status']);
+    Route::patch('/blog-categories/{field}', [AdminBlogCategoryController::class, 'boolean']);
+    Route::delete('/blog-categories/{id}', [AdminBlogCategoryController::class, 'delete']);
+
 
     Route::post('/collections', [AdminCollectionController::class, 'save']);
     Route::post('/collections/paginate', [AdminCollectionController::class, 'paginate']);

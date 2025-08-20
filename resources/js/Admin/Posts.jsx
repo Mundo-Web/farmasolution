@@ -174,7 +174,7 @@ const Posts = ({ details }) => {
         <input ref={idRef} type='hidden' />
 
         <ImageFormGroup eRef={imageRef} label='Imagen' />
-        <SelectAPIFormGroup eRef={categoryRef} searchAPI='/api/admin/categories/paginate' searchBy='name' label='Categoría' required dropdownParent='#posts-container' />
+        <SelectAPIFormGroup eRef={categoryRef} searchAPI='/api/admin/blog-categories/paginate' searchBy='name' label='Categoría' required dropdownParent='#posts-container' />
         <InputFormGroup eRef={nameRef} label='Título' rows={2} required />
         <QuillFormGroup eRef={descriptionRef} label='Contenido' />
         {/* <TextareaFormGroup eRef={tagsRef} label='Tags (Separado por comas)' rows={1} /> */}

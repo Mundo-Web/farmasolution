@@ -3,6 +3,7 @@ import General from "../../../Utils/General"
 import { adjustTextColor } from "../../../Functions/adjustTextColor";
 import Tippy from "@tippyjs/react";
 import Global from "../../../Utils/Global";
+import AnimatedCintillo from "../Components/AnimatedCintillo";
 
 
 const TopBarPages = ({ items, data, pages = [] }) => {
@@ -54,7 +55,7 @@ key={index}
         </div>
         <p className="hidden md:block text-xs">{data.isCopyright ?
           ` Copyright © ${new Date().getFullYear()} ${Global.APP_NAME}. Reservados todos los derechos.`
-          : General.get('cintillo')}</p>
+          : <AnimatedCintillo />}</p>
 
 
       </div>

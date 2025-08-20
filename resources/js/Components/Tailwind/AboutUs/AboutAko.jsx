@@ -109,11 +109,32 @@ const AboutAko = ({ data, filteredData, items }) => {
                     variants={fadeInUp}
                     transition={{ delay: 0.2 }}
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 customtext-neutral-dark text-base md:text-lg"
-                        dangerouslySetInnerHTML={{
-                            __html: history?.description?.replace(/<p><br><\/p>/g, '') || ''
-                        }}
-                    />
+                    {(() => {
+                        // Función para detectar si el texto es largo
+                        const textLength = history?.description?.replace(/<[^>]*>/g, '')?.length || 0;
+                        const isLongText = textLength > 500; // Umbral de 500 caracteres
+                        
+                        // Si el texto es largo, usar 2 columnas, si no, centrar en una columna
+                        if (isLongText) {
+                            return (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 xl:gap-8 customtext-neutral-dark text-base md:text-lg"
+                                    dangerouslySetInnerHTML={{
+                                        __html: history?.description?.replace(/<p><br><\/p>/g, '') || ''
+                                    }}
+                                />
+                            );
+                        } else {
+                            return (
+                                <div className="max-w-4xl mx-auto text-center">
+                                    <div className="customtext-neutral-dark text-base md:text-lg lg:text-xl leading-relaxed"
+                                        dangerouslySetInnerHTML={{
+                                            __html: history?.description?.replace(/<p><br><\/p>/g, '') || ''
+                                        }}
+                                    />
+                                </div>
+                            );
+                        }
+                    })()}
                 </motion.div>
             </motion.section>
 

@@ -64,7 +64,7 @@ const ProductInfinite = ({ items, data, setCart, cart }) => {
     return (
       items && items?.length > 0 && (
   <section className="relative bg-sections-color py-4">
-            <div className={`relative mx-auto px-[5%] py-[2.5%]`}>
+            <div className={`relative mx-auto px-[5%] 2xl:px-0 2xl:max-w-7xl py-[2.5%]`}>
                 <div className={`${data?.class_content || ''}`}>
                     {/* Header */}
                 <div className={`md:flex justify-between items-center mb-8 pb-4 border-b customborder-neutral-light ${data?.class_header || ''}`}>

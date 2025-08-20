@@ -183,8 +183,8 @@ const Combos = ({ items }) => {
 
   const onDeleteClicked = async (id) => {
     const { isConfirmed } = await Swal.fire({
-      title: 'Eliminar curso',
-      text: '¿Estás seguro de eliminar este curso?',
+      title: 'Eliminar combo',
+      text: '¿Estás seguro de eliminar este combo?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',
@@ -281,7 +281,7 @@ const Combos = ({ items }) => {
           allowExporting: false
         }
       ]} />
-    <Modal modalRef={modalRef} title={isEditing ? 'Editar curso' : 'Agregar curso'} onSubmit={onModalSubmit} size='lg'>
+    <Modal modalRef={modalRef} title={isEditing ? 'Editar combo' : 'Agregar combo'} onSubmit={onModalSubmit} size='lg'>
       <div className='row' id='combo-container'>
         <input ref={idRef} type='hidden' />
         <div className="col-md-6">

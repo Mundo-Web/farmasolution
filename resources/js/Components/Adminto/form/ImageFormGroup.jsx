@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react"
 
-const ImageFormGroup = ({ id, col, label, eRef, required = false, onChange = () => { }, aspect = '21/9'}) => {
+const ImageFormGroup = ({ id, col, label, eRef, required = false, onChange = () => { }, aspect = '21/9', hidden = false }) => {
 
   if (!id) id = `ck-${crypto.randomUUID()}`
   if (!eRef) eRef = useRef()
@@ -18,7 +18,7 @@ const ImageFormGroup = ({ id, col, label, eRef, required = false, onChange = () 
     eRef.image = imageRef.current
   }, [null])
 
-  return <div className={`form-group ${col} mb-2`}>
+  return <div className={`form-group ${col} mb-2`} hidden={hidden}>
     <label htmlFor={id} className="form-label">
       {label} {required && <b className="text-danger">*</b>}
     </label>

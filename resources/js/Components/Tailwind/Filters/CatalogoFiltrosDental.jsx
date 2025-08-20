@@ -308,9 +308,9 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
             if (GET.category) {
                 params.category_slugs = GET.category;
             }
-            {/*if (GET.brand) {
+            if (GET.brand) {
                 params.brand_slugs = GET.brand;
-            } */}
+            } 
             if (GET.subcategory) {
                 params.subcategory_slugs = GET.subcategory;
             }
@@ -328,7 +328,7 @@ const CatalogoFiltrosDental = ({ items, data, filteredData, cart, setCart, setFa
                     setSelectedFilters(prev => ({
                         ...prev,
                         category_id: Array.isArray(response.data.category_ids) ? response.data.category_ids : (response.data.category_ids ? [response.data.category_ids] : []),
-                        brand_id: GET.brand || [],
+                        brand_id:  [GET.brand] || [],
                         subcategory_id: Array.isArray(response.data.subcategory_ids) ? response.data.subcategory_ids : (response.data.subcategory_ids ? [response.data.subcategory_ids] : []),
                         collection_id: Array.isArray(response.data.collection_ids) ? response.data.collection_ids : (response.data.collection_ids ? [response.data.collection_ids] : []),
                     }));

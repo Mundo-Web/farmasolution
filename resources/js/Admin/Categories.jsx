@@ -35,9 +35,9 @@ const Categories = () => {
         idRef.current.value = data?.id ?? "";
         nameRef.current.value = data?.name ?? "";
         descriptionRef.current.value = data?.description ?? "";
-        bannerRef.image.src = `/storage/images/category/${data?.banner}`;
+        bannerRef.image.src = `/storage/images/blog_category/${data?.banner}`;
         bannerRef.current.value = null;
-        imageRef.image.src = `/storage/images/category/${data?.image}`;
+        imageRef.image.src = `/storage/images/blog_category/${data?.image}`;
         imageRef.current.value = null;
 
         $(modalRef.current).modal("show");

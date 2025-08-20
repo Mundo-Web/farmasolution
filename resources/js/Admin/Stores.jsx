@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 import StoresRest from "../Actions/Admin/StoresRest";
 import CreateReactScript from "../Utils/CreateReactScript";
@@ -14,6 +15,7 @@ import SwitchFormGroup from "../Components/Adminto/form/SwitchFormGroup";
 import SelectFormGroup from "../Components/Adminto/form/SelectFormGroup";
 import DxButton from "../Components/dx/DxButton";
 import Swal from "sweetalert2";
+import Global from "../Utils/Global";
 
 const storesRest = new StoresRest();
 
@@ -32,13 +34,20 @@ const Stores = ({ ubigeos = [] }) => {
     const latitudeRef = useRef();
     const longitudeRef = useRef();
     const imageRef = useRef();
-    const statusRef = useRef();
+ 
     const business_hoursRef = useRef();
     const managerRef = useRef();
     const capacityRef = useRef();
     const typeRef = useRef();
 
     const [isEditing, setIsEditing] = useState(false);
+    
+    // Estados para el mapa de Google
+    const [mapCenter, setMapCenter] = useState({
+        lat: -12.046374,
+        lng: -77.042793
+    }); // Lima por defecto
+    const [markerPosition, setMarkerPosition] = useState(null);
     
     // Estados para horarios de atención
     const [businessHours, setBusinessHours] = useState([
@@ -78,14 +87,66 @@ const Stores = ({ ubigeos = [] }) => {
             .val(data?.ubigeo ?? null)
             .trigger("change");
 
-        $(typeRef.current)
-            .val(data?.type ?? "tienda")
-            .trigger("change");
-
-        if (statusRef.current) {
-            statusRef.current.checked = data?.status ?? true;
+        // Verificar si ya existe una tienda principal al abrir el modal
+        if (!data?.id) {
+            // Si es una nueva tienda, verificar si ya existe una principal
+            storesRest.paginate({ 
+                filter: JSON.stringify({ type: 'tienda_principal' })
+            }).then(response => {
+                console.log('Verificando tiendas principales existentes:', response);
+                const hasMainStore = response?.data && Array.isArray(response.data) && response.data.length > 0;
+                const typeSelect = $(typeRef.current);
+                
+                // Si ya existe una tienda principal, deshabilitar esa opción
+                if (hasMainStore) {
+                    console.log('Se encontraron tiendas principales:', response.data);
+                    typeSelect.find('option[value="tienda_principal"]').prop('disabled', true);
+                } else {
+                    console.log('No se encontraron tiendas principales');
+                    typeSelect.find('option[value="tienda_principal"]').prop('disabled', false);
+                }
+                
+                typeSelect.val(data?.type ?? "tienda").trigger("change");
+            }).catch(error => {
+                console.error('Error al verificar tiendas principales:', error);
+            });
+        } else {
+            // Si es edición, verificar si hay otra tienda principal diferente a la actual
+            storesRest.paginate({ 
+                filter: JSON.stringify({ type: 'tienda_principal' })
+            }).then(response => {
+                console.log('Verificando tiendas principales para edición:', response);
+                const typeSelect = $(typeRef.current);
+                
+                if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+                    // Verificar si hay otra tienda principal diferente a la actual
+                    const otherMainStore = response.data.find(store => store.id !== data.id);
+                    
+                    if (otherMainStore) {
+                        console.log('Existe otra tienda principal:', otherMainStore);
+                        // Si la tienda actual NO es principal, deshabilitar la opción
+                        if (data.type !== 'tienda_principal') {
+                            typeSelect.find('option[value="tienda_principal"]').prop('disabled', true);
+                        } else {
+                            typeSelect.find('option[value="tienda_principal"]').prop('disabled', false);
+                        }
+                    } else {
+                        console.log('No existe otra tienda principal');
+                        typeSelect.find('option[value="tienda_principal"]').prop('disabled', false);
+                    }
+                } else {
+                    console.log('No hay tiendas principales');
+                    typeSelect.find('option[value="tienda_principal"]').prop('disabled', false);
+                }
+                
+                typeSelect.val(data?.type ?? "tienda").trigger("change");
+            }).catch(error => {
+                console.error('Error al verificar tiendas principales:', error);
+                $(typeRef.current).val(data?.type ?? "tienda").trigger("change");
+            });
         }
 
+      
         // Cargar horarios de atención si existen
         if (data?.business_hours) {
             try {
@@ -109,11 +170,74 @@ const Stores = ({ ubigeos = [] }) => {
             ]);
         }
 
+        // Configurar el mapa con las coordenadas existentes
+        if (data?.latitude && data?.longitude) {
+            const lat = parseFloat(data.latitude);
+            const lng = parseFloat(data.longitude);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                const position = { lat, lng };
+                setMapCenter(position);
+                setMarkerPosition(position);
+            }
+        } else {
+            // Resetear mapa a Lima por defecto
+            const defaultPosition = { lat: -12.046374, lng: -77.042793 };
+            setMapCenter(defaultPosition);
+            setMarkerPosition(null);
+        }
+
         $(modalRef.current).modal("show");
     };
 
     const onModalSubmit = async (e) => {
         e.preventDefault();
+
+        // Verificar si se está intentando crear o editar a tienda principal
+        if (typeRef.current.value === 'tienda_principal') {
+            try {
+                const currentId = idRef.current.value; // ID del registro actual (si es edición)
+                
+                // Verificar si ya existe una tienda principal
+                const response = await storesRest.paginate({ 
+                    filter: JSON.stringify({ type: 'tienda_principal' })
+                });
+                console.log('Respuesta de validación tienda principal:', response);
+
+                // Verificar si hay tiendas principales existentes
+                if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+                    // Si es edición, verificar que no sea otra tienda diferente
+                    if (currentId) {
+                        const existingMainStore = response.data.find(store => store.id !== currentId);
+                        if (existingMainStore) {
+                            console.log('Ya existe otra tienda principal:', existingMainStore);
+                            Swal.fire({
+                                title: "Error",
+                                text: "Ya existe una Tienda Principal. Solo puede haber una tienda de este tipo.",
+                                icon: "error"
+                            });
+                            return;
+                        }
+                    } else {
+                        // Si es creación nueva, no permitir
+                        console.log('Tiendas principales encontradas:', response.data);
+                        Swal.fire({
+                            title: "Error",
+                            text: "Ya existe una Tienda Principal. Solo puede haber una tienda de este tipo.",
+                            icon: "error"
+                        });
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error al verificar tienda principal:', error);
+                Swal.fire({
+                    title: "Error",
+                    text: "Error al verificar si existe una tienda principal",
+                    icon: "error"
+                });
+                return;
+            }
+        }
 
         // Validar y procesar coordenadas antes de enviar
         const latitudeValue = latitudeRef.current.value.trim();
@@ -209,7 +333,7 @@ const Stores = ({ ubigeos = [] }) => {
         formData.append("manager", managerRef.current.value);
         formData.append("capacity", capacityRef.current.value);
         formData.append("type", typeRef.current.value);
-        formData.append("status", statusRef.current.checked ? 1 : 0);
+     
         formData.append("business_hours", JSON.stringify(businessHours));
 
         // Agregar imagen si existe
@@ -253,6 +377,48 @@ const Stores = ({ ubigeos = [] }) => {
         const newHours = [...businessHours];
         newHours[index][field] = value;
         setBusinessHours(newHours);
+    };
+
+    // Función para manejar clics en el mapa
+    const handleMapClick = (event) => {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        
+        console.log("Coordenadas seleccionadas:", { lat, lng });
+        
+        // Actualizar la posición del marcador
+        setMarkerPosition({ lat, lng });
+        
+        // Actualizar los campos de latitud y longitud
+        if (latitudeRef.current) {
+            latitudeRef.current.value = lat.toFixed(8);
+        }
+        if (longitudeRef.current) {
+            longitudeRef.current.value = lng.toFixed(8);
+        }
+        
+        // Mostrar notificación
+        Swal.fire({
+            title: "Ubicación seleccionada",
+            text: `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end"
+        });
+    };
+
+    // Función para centrar el mapa en las coordenadas ingresadas manualmente
+    const handleCoordinateChange = () => {
+        const lat = parseFloat(latitudeRef.current?.value);
+        const lng = parseFloat(longitudeRef.current?.value);
+        
+        if (!isNaN(lat) && !isNaN(lng)) {
+            const newPosition = { lat, lng };
+            setMapCenter(newPosition);
+            setMarkerPosition(newPosition);
+        }
     };
 
     // Función para validar formato de coordenadas según restricciones de base de datos
@@ -378,6 +544,7 @@ const Stores = ({ ubigeos = [] }) => {
                         width: "100px",
                         cellTemplate: (container, { data }) => {
                             const typeLabels = {
+                                'tienda_principal': 'Tienda Principal',
                                 'tienda': 'Tienda',
                                 'oficina': 'Oficina',
                                 'almacen': 'Almacén',
@@ -385,6 +552,7 @@ const Stores = ({ ubigeos = [] }) => {
                                 'otro': 'Otro'
                             };
                             const typeColors = {
+                                'tienda_principal': 'danger',
                                 'tienda': 'success',
                                 'oficina': 'primary',
                                 'almacen': 'warning',
@@ -504,6 +672,7 @@ const Stores = ({ ubigeos = [] }) => {
                             required
                             dropdownParent={'#form-container'}
                         >
+                            <option value="tienda_principal">Tienda Principal</option>
                             <option value="tienda">Tienda</option>
                             <option value="oficina">Oficina</option>
                             <option value="almacen">Almacén</option>
@@ -564,53 +733,100 @@ const Stores = ({ ubigeos = [] }) => {
                     </div>
 
                     <div className="col-12">
-                        <div className="alert alert-info">
-                            <h6><i className="fas fa-map-marker-alt"></i> Cómo obtener coordenadas exactas:</h6>
-                            <ol className="mb-2">
-                                <li>Ve a <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">Google Maps</a></li>
-                                <li>Busca la dirección exacta de tu tienda</li>
-                                <li>Haz clic derecho en el marcador del lugar</li>
-                                <li>Selecciona "¿Qué hay aquí?" o haz clic en las coordenadas que aparecen</li>
-                                <li>Copia los valores que aparecen (ej: -12.0464, -77.0428)</li>
-                            </ol>
-                            <small>
-                                <strong>Importante:</strong> Las coordenadas deben estar en formato decimal, no en grados/minutos/segundos.
-                                Para Lima, la latitud típica es alrededor de -12 y la longitud alrededor de -77.
-                            </small>
-                        </div>
-                    </div>
+                        <div className="card">
+                            <div className="card-header">
+                                <h5 className="card-title mb-0">
+                                    <i className="fas fa-map-marker-alt me-2"></i>
+                                    Ubicación de la Tienda
+                                </h5>
+                            </div>
+                            <div className="card-body">
+                               
 
-                    <div className="col-md-6">
-                        <InputFormGroup
-                            eRef={latitudeRef}
-                            label="Latitud (Google Maps)"
-                            col="col-12"
-                            type="number"
-                            step="0.000000000000001"
-                            min="-18.5"
-                            max="-0.1"
-                            placeholder="Ej: -12.042626777544823"
-                        />
-                        <small className="text-muted">
-                            Rango válido para Perú: -18.5 a -0.1<br/>
-                            Acepta hasta 15 dígitos decimales de precisión
-                        </small>
-                    </div>
-                    <div className="col-md-6">
-                        <InputFormGroup
-                            eRef={longitudeRef}
-                            label="Longitud (Google Maps)"
-                            col="col-12"
-                            type="number"
-                            step="0.000000000000001"
-                            min="-81.5"
-                            max="-68.5"
-                            placeholder="Ej: -77.04753389161506"
-                        />
-                        <small className="text-muted">
-                            Rango válido para Perú: -81.5 a -68.5<br/>
-                            Acepta hasta 15 dígitos decimales de precisión
-                        </small>
+                                {/* Mapa de Google */}
+                                <div className="mb-3">
+                                    <LoadScript
+                                        googleMapsApiKey={Global.GMAPS_API_KEY}
+                                    >
+                                        <GoogleMap
+                                            mapContainerStyle={{
+                                                width: "100%",
+                                                height: "400px",
+                                                borderRadius: "8px"
+                                            }}
+                                            center={mapCenter}
+                                            zoom={15}
+                                            onClick={handleMapClick}
+                                            options={{
+                                                streetViewControl: true,
+                                                mapTypeControl: true,
+                                                fullscreenControl: true
+                                            }}
+                                        >
+                                            {markerPosition && (
+                                                <Marker
+                                                    position={markerPosition}
+                                                    title="Ubicación de la tienda"
+                                                />
+                                            )}
+                                        </GoogleMap>
+                                    </LoadScript>
+                                </div>
+
+                                {/* Campos de coordenadas */}
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <InputFormGroup
+                                            eRef={latitudeRef}
+                                            label="Latitud"
+                                            col="col-12"
+                                            type="number"
+                                            step="0.00000001"
+                                            min="-18.5"
+                                            max="-0.1"
+                                            placeholder="Ej: -12.042626777544823"
+                                            onChange={handleCoordinateChange}
+                                        />
+                                      
+                                    </div>
+                                    <div className="col-md-6">
+                                        <InputFormGroup
+                                            eRef={longitudeRef}
+                                            label="Longitud"
+                                            col="col-12"
+                                            type="number"
+                                            step="0.00000001"
+                                            min="-81.5"
+                                            max="-68.5"
+                                            placeholder="Ej: -77.04753389161506"
+                                            onChange={handleCoordinateChange}
+                                        />
+                                      
+                                    </div>
+                                </div>
+
+                                {/* Botones de acción rápida */}
+                                <div className="row mt-3">
+                                    <div className="col-12">
+                                        <div className="d-flex gap-2 flex-wrap">
+                                            
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary btn-sm"
+                                                onClick={() => {
+                                                    setMarkerPosition(null);
+                                                    latitudeRef.current.value = "";
+                                                    longitudeRef.current.value = "";
+                                                }}
+                                            >
+                                                <i className="fas fa-eraser me-1"></i>
+                                                Limpiar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="col-md-6">
@@ -623,13 +839,7 @@ const Stores = ({ ubigeos = [] }) => {
                         />
                     </div>
 
-                    <div className="col-md-6">
-                        <SwitchFormGroup
-                            eRef={statusRef}
-                            label="Tienda activa"
-                            col="col-12"
-                        />
-                    </div>
+                 
 
                     <div className="col-12">
                         <ImageFormGroup
